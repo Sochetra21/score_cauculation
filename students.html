@@ -50,6 +50,42 @@
         .action-buttons {
           min-width: 80px;
         }
+        
+        /* Mobile table styling */
+        .mobile-table th,
+        .mobile-table td {
+          white-space: nowrap;
+        }
+        
+        .mobile-table th:nth-child(1),
+        .mobile-table td:nth-child(1) {
+          min-width: 50px;
+        }
+        
+        .mobile-table th:nth-child(2),
+        .mobile-table td:nth-child(2) {
+          min-width: 90px;
+        }
+        
+        .mobile-table th:nth-child(3),
+        .mobile-table td:nth-child(3) {
+          min-width: 140px;
+        }
+        
+        .mobile-table th:nth-child(4),
+        .mobile-table td:nth-child(4) {
+          min-width: 70px;
+        }
+        
+        .mobile-table th:nth-child(5),
+        .mobile-table td:nth-child(5) {
+          min-width: 110px;
+        }
+        
+        .mobile-table th:nth-child(6),
+        .mobile-table td:nth-child(6) {
+          min-width: 100px;
+        }
       }
       
       /* Dropdown styles */
@@ -94,6 +130,25 @@
           width: 100%;
           padding: 20px;
         }
+      }
+      
+      /* Ensure table scrolls on small screens */
+      @media (max-width: 768px) {
+        .table-responsive {
+          max-height: 500px;
+          overflow-y: auto;
+        }
+      }
+      
+      /* ID warning badge */
+      .id-warning {
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
       }
     </style>
   </head>
@@ -233,7 +288,7 @@
 
       <!-- Student Table -->
       <div class="bg-white rounded-xl shadow overflow-hidden">
-        <div class="table-responsive">
+        <div class="table-responsive mobile-table">
           <table class="w-full">
             <thead class="bg-gray-50">
               <tr>
@@ -324,77 +379,183 @@
       // Sample data with 10 students
       let students = [];
 
+      // Khmer month names
+      const khmerMonths = [
+        "មករា",
+        "កុម្ភៈ",
+        "មីនា",
+        "មេសា",
+        "ឧសភា",
+        "មិថុនា",
+        "កក្កដា",
+        "សីហា",
+        "កញ្ញា",
+        "តុលា",
+        "វិច្ឆិកា",
+        "ធ្នូ"
+      ];
+
+      // Helper function to format date in Khmer
+      function formatKhmerDate(dateString) {
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = khmerMonths[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+      }
+
+      // Helper function to generate consistent 6-digit ID from student data
+      function generate6DigitID(student) {
+        // Create a consistent hash from student name and dob
+        const str = student.name + student.dob;
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash = hash & hash; // Convert to 32bit integer
+        }
+        
+        // Get 6-digit number (100000 to 999999)
+        let num = Math.abs(hash) % 900000 + 100000;
+        return num.toString();
+      }
+
+      // Validate ID format (6 digits)
+      function isValidStudentID(id) {
+        return /^\d{6}$/.test(id);
+      }
+
+      // Convert existing STU IDs to 6-digit format
+      function convertSTUto6Digit(studentArray) {
+        const usedIDs = new Set();
+        const convertedStudents = [];
+        
+        // First pass: keep valid 6-digit IDs
+        studentArray.forEach(student => {
+          if (isValidStudentID(student.id)) {
+            usedIDs.add(student.id);
+            convertedStudents.push(student);
+          }
+        });
+        
+        // Second pass: convert STU IDs
+        studentArray.forEach(student => {
+          if (!isValidStudentID(student.id)) {
+            let newID;
+            let attempts = 0;
+            
+            // Generate unique 6-digit ID
+            do {
+              newID = generate6DigitID(student);
+              attempts++;
+              
+              // If too many attempts, generate random ID
+              if (attempts > 10) {
+                newID = Math.floor(100000 + Math.random() * 900000).toString();
+              }
+            } while (usedIDs.has(newID) && attempts < 20);
+            
+            usedIDs.add(newID);
+            convertedStudents.push({
+              ...student,
+              id: newID
+            });
+          }
+        });
+        
+        return convertedStudents;
+      }
+
       // Initialize data
       function initializeData() {
         const savedData = localStorage.getItem("class10A_students");
 
         if (!savedData) {
-          // Add 10 sample students if no data exists
+          // Add 10 sample students with 6-digit IDs
           students = [
             {
-              id: "STU001",
+              id: "123456",
               name: "សុខ សារឿន",
               gender: "male",
               dob: "2007-03-15",
+              notes: ""
             },
             {
-              id: "STU002",
+              id: "234567",
               name: "មាស សំណាង",
               gender: "female",
               dob: "2007-05-22",
+              notes: ""
             },
             {
-              id: "STU003",
+              id: "345678",
               name: "វិចិត្រ រស់",
               gender: "male",
               dob: "2007-08-10",
+              notes: ""
             },
             {
-              id: "STU004",
+              id: "456789",
               name: "សុផល ម៉េង",
               gender: "female",
               dob: "2007-01-30",
+              notes: ""
             },
             {
-              id: "STU005",
+              id: "567890",
               name: "រតនា ស៊ីណា",
               gender: "female",
               dob: "2007-07-12",
+              notes: ""
             },
             {
-              id: "STU006",
+              id: "678901",
               name: "ពិសិដ្ឋ ហង្ស",
               gender: "male",
               dob: "2007-04-05",
+              notes: ""
             },
             {
-              id: "STU007",
+              id: "789012",
               name: "សំអាត ចន្ថា",
               gender: "female",
               dob: "2007-11-18",
+              notes: ""
             },
             {
-              id: "STU008",
+              id: "890123",
               name: "ឆាយ រដ្ឋា",
               gender: "male",
               dob: "2007-09-25",
+              notes: ""
             },
             {
-              id: "STU009",
+              id: "901234",
               name: "បញ្ញា វ៉ាន់ដា",
               gender: "female",
               dob: "2007-02-14",
+              notes: ""
             },
             {
-              id: "STU010",
+              id: "012345",
               name: "សុខគង្គ ផល្លី",
               gender: "male",
               dob: "2007-06-08",
+              notes: ""
             },
           ];
           localStorage.setItem("class10A_students", JSON.stringify(students));
         } else {
           students = JSON.parse(savedData);
+          
+          // Check if any students need conversion from STU format
+          const hasInvalidIDs = students.some(student => !isValidStudentID(student.id));
+          
+          if (hasInvalidIDs) {
+            students = convertSTUto6Digit(students);
+            localStorage.setItem("class10A_students", JSON.stringify(students));
+            showToast("ទិន្នន័យត្រូវបានធ្វើបច្ចុប្បន្នភាពទៅលេខ ៦ ខ្ទង់!");
+          }
         }
       }
 
@@ -455,37 +616,34 @@
               ? '<i class="fas fa-mars text-blue-500"></i>'
               : '<i class="fas fa-venus text-pink-500"></i>';
 
-          // Format date for mobile (short format)
-          const dobDate = new Date(student.dob);
-          let formattedDOB;
-          if (window.innerWidth <= 640) {
-            formattedDOB = dobDate.toLocaleDateString("km-KH", {
-              month: "short",
-              day: "numeric",
-            });
-          } else {
-            formattedDOB = dobDate.toLocaleDateString("km-KH", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            });
-          }
+          // Format date using Khmer month names
+          const formattedDOB = formatKhmerDate(student.dob);
+
+          // Check ID validity
+          const idValid = isValidStudentID(student.id);
+          const idClass = idValid ? "text-blue-600 font-mono" : "text-red-600 font-mono id-warning";
 
           tableHTML += `
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
                         <td class="table-cell px-4 py-3 text-center text-gray-700 font-medium">${
                           index + 1
                         }</td>
-                        <td class="table-cell px-4 py-3 text-blue-600">${
-                          student.id
-                        }</td>
+                        <td class="table-cell px-4 py-3 ${idClass}">
+                          ${student.id}
+                          ${
+                            !idValid 
+                              ? '<span class="ml-2 text-xs bg-red-100 text-red-800 px-2 py-1 rounded">៦ខ្ទង់</span>' 
+                              : ''
+                          }
+                        </td>
                         <td class="table-cell px-4 py-3">${student.name}</td>
                         <td class="table-cell px-4 py-3">
                             <div class="flex items-center space-x-2">
+                                ${genderIcon}
                                 <span>${genderText}</span>
                             </div>
                         </td>
-                        <td class="table-cell px-4 py-3 text-gray-600">${formattedDOB}</td>
+                        <td class="table-cell px-4 py-3 text-gray-600 whitespace-nowrap">${formattedDOB}</td>
                         <td class="table-cell px-4 py-3 action-buttons">
                             <div class="flex space-x-2">
                                 <a href="edit-student.html?id=${student.id}" 
@@ -563,14 +721,13 @@
           const femaleCount = students.filter(s => s.gender === "female").length;
           const total = students.length;
           
-          // Get current date in Khmer
+          // Get current date in Khmer with Khmer months
           const now = new Date();
-          const dateString = now.toLocaleDateString('km-KH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long'
-          });
+          const day = now.getDate();
+          const month = khmerMonths[now.getMonth()];
+          const year = now.getFullYear();
+          const weekday = now.toLocaleDateString('km-KH', { weekday: 'long' });
+          const dateString = `${weekday} ទី ${day} ${month} ${year}`;
           
           // Create print HTML
           let printHTML = `
@@ -665,7 +822,7 @@
                 <div class="print-title">បញ្ជីសិស្សថ្នាក់ទី ១០អេ</div>
                 <div class="print-subtitle">អនុវិទ្យាល័យ សំណាងសិរី</div>
                 <div class="print-subtitle">ឆ្នាំសិក្សា៖ ២០២៣-២០២៤</div>
-                <div class="print-subtitle">បានបង្កើតនៅថ្ងៃទី ${dateString}</div>
+                <div class="print-subtitle">បានបង្កើតនៅថ្ងៃ ${dateString}</div>
               </div>
               
               <div class="print-stats">
@@ -696,14 +853,9 @@
                 <tbody>
           `;
           
-          // Add student rows
+          // Add student rows with Khmer month names
           students.forEach((student, index) => {
-            const dob = new Date(student.dob);
-            const dobFormatted = dob.toLocaleDateString('km-KH', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            });
+            const dobFormatted = formatKhmerDate(student.dob);
             
             printHTML += `
               <tr>
@@ -759,12 +911,7 @@
           ];
           
           const data = students.map((student, index) => {
-            const dob = new Date(student.dob);
-            const dobFormatted = dob.toLocaleDateString('km-KH', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            });
+            const dobFormatted = formatKhmerDate(student.dob);
             
             return [
               index + 1,
@@ -843,12 +990,7 @@
           const headers = ["ល.រ", "អត្តលេខ", "ឈ្មោះសិស្ស", "ភេទ", "ថ្ងៃខែឆ្នាំកំណើត"];
           
           const rows = students.map((student, index) => {
-            const dob = new Date(student.dob);
-            const dobFormatted = dob.toLocaleDateString('km-KH', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            });
+            const dobFormatted = formatKhmerDate(student.dob);
             
             return [
               index + 1,
@@ -888,6 +1030,16 @@
         } catch (error) {
           console.error("CSV Export Error:", error);
           alert("មានបញ្ហាក្នុងការបង្កើត CSV៖ " + error.message);
+        }
+      }
+      
+      // Utility function to manually fix all IDs (can be called from console if needed)
+      window.fixAllStudentIDs = function() {
+        if (confirm("តើអ្នកចង់បំប្លែងអត្តលេខសិស្សទាំងអស់ទៅជា ៦ ខ្ទង់មែនទេ?")) {
+          students = convertSTUto6Digit(students);
+          localStorage.setItem("class10A_students", JSON.stringify(students));
+          renderTable();
+          showToast("អត្តលេខសិស្សទាំងអស់ត្រូវបានបំប្លែងជោគជ័យ!");
         }
       }
     </script>

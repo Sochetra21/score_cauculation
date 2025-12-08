@@ -76,11 +76,16 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-id-card text-gray-400"></i>
                                 </div>
-                                <input type="text" id="studentId" required
+                                <input type="text" 
+                                       id="studentId" 
+                                       required
+                                       inputmode="numeric"
+                                       pattern="\d{6}"
+                                       maxlength="6"
                                        class="form-input pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                                       placeholder="STU011">
+                                       placeholder="123456">
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">លេខសម្គាល់ត្រូវតែមានតួអក្សរធំ និងលេខ</p>
+                            <p class="text-xs text-gray-500 mt-1">ត្រូវបញ្ចូលលេខ 6 ខ្ទងតែប៉ុណ្ណោះ (ឧ. 123456)</p>
                         </div>
                         
                         <!-- Student Name -->
@@ -176,7 +181,7 @@
                 </h3>
                 <ul class="text-sm text-blue-700 space-y-1">
                     <li>• ត្រូវបំពេញព័ត៌មានដែលមានសញ្ញា *</li>
-                    <li>• អត្តលេខមិនអាចសរសេរទួលៗគ្នាបានទេ</li>
+                    <li>• អត្តលេខត្រូវតែជាលេខ 6 ខ្ទង មិនអាចធ្វើម្តងទៀតបានទេ</li>
                     <li>• ទិន្នន័យនឹងត្រូវរក្សាទុកក្នុងឧបករណ៍របស់អ្នក</li>
                 </ul>
             </div>
@@ -191,26 +196,26 @@
     </footer>
 
     <script>
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Set default DOB to 15 years ago
             const today = new Date();
             const defaultDOB = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate());
             document.getElementById('studentDOB').valueAsDate = defaultDOB;
             
-            // Form submission
             document.getElementById('studentForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 saveStudent();
             });
-            
-            // Focus on first input
+
             setTimeout(function() {
                 document.getElementById('studentId').focus();
             }, 300);
+
+            // Optional: auto-format as digits only while typing
+            document.getElementById('studentId').addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
         });
 
-        // Save student function
         function saveStudent() {
             const studentId = document.getElementById('studentId').value.trim();
             const studentName = document.getElementById('studentName').value.trim();
@@ -218,30 +223,25 @@
             const studentDOB = document.getElementById('studentDOB').value;
             const studentNotes = document.getElementById('studentNotes').value.trim();
             
-            // Validate required fields
             if (!studentId || !studentName || !studentGender || !studentDOB) {
                 showFormStatus('សូមបំពេញព័ត៌មានចាំបាច់ទាំងអស់!', 'error');
                 return;
             }
             
-            // Validate student ID format
-            const idRegex = /^[A-Z0-9]+$/;
-            if (!idRegex.test(studentId)) {
-                showFormStatus('អត្តលេខត្រូវតែមានតួអក្សរធំ និងលេខប៉ុណ្ណោះ!', 'error');
+            // Validate: must be exactly 6 digits
+            if (!/^\d{6}$/.test(studentId)) {
+                showFormStatus('អត្តលេខត្រូវតែជាលេខ 6 ខ្ទង (ឧ. 123456)!', 'error');
                 return;
             }
             
-            // Get existing students from localStorage
             let students = JSON.parse(localStorage.getItem('class10A_students')) || [];
             
-            // Check if student ID already exists
-            const idExists = students.some(function(s) { return s.id === studentId; });
+            const idExists = students.some(s => s.id === studentId);
             if (idExists) {
-                showFormStatus('អត្តលេខនេះមានរួចហើយ! សូមប្រើអត្តលេខផ្សេងទៀត។', 'error');
+                showFormStatus('អត្តលេខនេះមានរួចហើយ! សូមប្រើលេខផ្សេងទៀត។', 'error');
                 return;
             }
             
-            // Create student object
             const newStudent = {
                 id: studentId,
                 name: studentName,
@@ -250,30 +250,22 @@
                 notes: studentNotes || ''
             };
             
-            // Add to students array
             students.push(newStudent);
-            
-            // Save to localStorage
             localStorage.setItem('class10A_students', JSON.stringify(students));
             
-            // Show success message
             showFormStatus('សិស្សថ្មីត្រូវបានបន្ថែមដោយជោគជ័យ! កំពុងផ្លាស់ទី...', 'success');
             
-            // Redirect back to main page after 1.5 seconds
             setTimeout(function() {
                 window.location.href = 'index.html?saved=true';
             }, 1500);
         }
 
-        // Show form status message
         function showFormStatus(message, type) {
             const formStatus = document.getElementById('formStatus');
             const statusMessage = document.getElementById('statusMessage');
             
-            // Clear previous classes
             statusMessage.className = 'p-3 rounded-lg';
             
-            // Set appropriate classes based on type
             if (type === 'success') {
                 statusMessage.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-200');
             } else if (type === 'error') {
@@ -282,7 +274,6 @@
                 statusMessage.classList.add('bg-blue-100', 'text-blue-700', 'border', 'border-blue-200');
             }
             
-            // Set message
             statusMessage.innerHTML = `
                 <div class="flex items-center">
                     <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-2"></i>
@@ -290,10 +281,7 @@
                 </div>
             `;
             
-            // Show status div
             formStatus.classList.remove('hidden');
-            
-            // Scroll to status message
             formStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     </script>
