@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Khmer Mool Font -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Khmer&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Battambang&display=swap" rel="stylesheet">
+
     <style>
         * {
             font-family: 'Khmer OS Battambang', sans-serif;
@@ -18,6 +22,10 @@
         @font-face {
             font-family: 'Khmer OS Battambang';
             src: url('https://fonts.googleapis.com/css2?family=Khmer+OS+Battambang&display=swap');
+        }
+        
+        .khmer-mool {
+            font-family: 'Khmer', serif;
         }
 
         .header-gradient {
@@ -52,86 +60,158 @@
             transition: width 0.3s;
         }
 
-        @media (max-width: 768px) {
-            .mobile-sticky-column {
-                position: sticky;
-                left: 0;
-                z-index: 5;
-                background-color: white;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            }
-        }
-
-        /* Print styles for report */
+        /* Print styles for official report */
         @media print {
-            .no-print { display: none !important; }
+            @page {
+                size: A4;
+                margin: 1.5cm;
+            }
+            
             body { 
-                font-size: 10pt; 
+                font-size: 12pt !important; 
                 background: white !important;
+                color: black !important;
+                font-family: 'Khmer OS Battambang', sans-serif !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                line-height: 1.3;
             }
-            .table-container { overflow: visible; }
             
-            /* Report page specific */
-            .report-page {
-                padding: 0.5cm;
-                margin: 0;
+            .no-print { 
+                display: none !important; 
+            }
+            
+            .print-only { 
+                display: block !important; 
+            }
+            
+            .print-report {
                 width: 100%;
+                height: 100%;
             }
             
-            .report-header {
-                text-align: center;
-                margin-bottom: 10px;
-                border-bottom: 2px solid #000;
-                padding-bottom: 5px;
+            .table-container { 
+                overflow: visible !important; 
             }
             
-            .report-title {
-                font-size: 16pt;
-                font-weight: bold;
-                margin-bottom: 3px;
-            }
-            
-            .report-subtitle {
-                font-size: 12pt;
-                margin-bottom: 3px;
-            }
-            
-            .report-table {
+            /* Single table with 10 columns */
+            .ten-column-table {
                 width: 100%;
                 border-collapse: collapse;
+                font-size: 9.5pt;
+                table-layout: fixed;
+                margin-top: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .ten-column-table th,
+            .ten-column-table td {
+                border: 1px solid #000;
+                padding: 1px 2px;
+                height: 20px;
+                overflow: hidden;
+                text-align: center;
+                vertical-align: middle;
+            }
+            
+            .ten-column-table th {
+                background-color: #f0f0f0 !important;
+                font-weight: bold;
+                height: 22px;
                 font-size: 9pt;
             }
             
-            .report-table th {
-                background-color: #f0f0f0;
-                border: 1px solid #000;
-                padding: 3px;
+            .khmer-header {
                 text-align: center;
                 font-weight: bold;
+                margin-bottom: 5px;
             }
             
-            .report-table td {
-                border: 1px solid #000;
-                padding: 3px;
+            .khmer-mool {
+                font-family: 'Khmer', serif !important;
+                font-size: 16pt !important;
+            }
+            
+            .school-info {
+                margin: 10px 0;
+            }
+            
+            .left-align {
+                text-align: left;
+            }
+            
+            .center-align {
                 text-align: center;
             }
             
-            .report-footer {
-                margin-top: 10px;
-                padding-top: 5px;
+            .right-align {
+                text-align: right;
+            }
+            
+            .stats-section {
+                margin-top: 15px;
+                text-align: left;
+                font-size: 10pt;
+            }
+            
+            .footer-section {
+                margin-top: 20px;
+                font-size: 10pt;
+            }
+            
+            .signature-section {
+                margin-top: 60px;
+                display: flex;
+                justify-content: space-between;
+            }
+            
+            .signature-box {
+                text-align: center;
+                width: 40%;
+            }
+            
+            .signature-line {
                 border-top: 1px solid #000;
-                font-size: 9pt;
+                width: 200px;
+                padding-top: 5px;
+                margin: 0 auto;
             }
             
             .page-break {
                 page-break-after: always;
             }
+            
+            .no-border {
+                border: none !important;
+            }
+            
+            .separator {
+                border-top: 2px solid #000;
+                margin: 10px 0;
+            }
+            
+            /* Column widths for 10-column table */
+            .col-no { width: 4%; }
+            .col-name { width: 25%; }
+            .col-gender { width: 6%; }
+            .col-average { width: 10%; }
+            .col-rank { width: 5%; }
+            
+            .student-name {
+                text-align: left;
+                padding-left: 3px !important;
+                font-size: 9pt;
+            }
+        }
+        
+        .print-only {
+            display: none;
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
-    <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
+    <header class="header-gradient text-white shadow-lg sticky top-0 z-50 no-print">
         <div class="container mx-auto px-3 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
@@ -148,9 +228,9 @@
                         <i class="fas fa-file-excel"></i>
                         <span class="hidden md:inline ml-1">Export Excel</span>
                     </button>
-                    <button onclick="generateReport()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+                    <button onclick="generateOfficialReport()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
                         <i class="fas fa-print"></i>
-                        <span class="hidden md:inline ml-1">របាយការណ៍</span>
+                        <span class="hidden md:inline ml-1">របាយការណ៍ផ្លូវការ</span>
                     </button>
                     <button onclick="viewStudentScores()" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">
                         <i class="fas fa-eye"></i>
@@ -164,7 +244,7 @@
     <!-- Main Content -->
     <main class="container mx-auto px-3 py-4">
         <!-- Simplified Statistics -->
-        <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="grid grid-cols-3 gap-3 mb-6 no-print">
             <div class="bg-white rounded-lg shadow p-4">
                 <div class="text-center">
                     <p class="text-gray-600 text-xs mb-1">មធ្យមភាគថ្នាក់</p>
@@ -186,7 +266,7 @@
         </div>
 
         <!-- Grade Distribution -->
-        <div class="bg-white rounded-lg shadow mb-6">
+        <div class="bg-white rounded-lg shadow mb-6 no-print">
             <div class="p-3 border-b">
                 <h3 class="font-bold text-gray-800 text-sm">ការចែកចាយកម្រិតពិន្ទុ</h3>
             </div>
@@ -198,7 +278,7 @@
         </div>
 
         <!-- Ranking Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6 no-print">
             <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
                 <div class="flex items-center justify-between">
                     <h2 class="font-bold text-gray-800 text-sm">តារាងចំណាត់ថ្នាក់</h2>
@@ -214,7 +294,7 @@
                         <tr class="bg-gray-50">
                             <th class="py-2 px-2 text-center font-medium">ល.រ</th>
                             <th class="py-2 px-2 text-left font-medium">ឈ្មោះសិស្ស</th>
-                            <th class="py-2 px-2 text-left font-medium">លេខសម្គាល់</th>
+                            
                             <th class="py-2 px-2 text-center font-medium">ភេទ</th>
                             <th class="py-2 px-2 text-center font-medium">មធ្យមភាគ</th>
                             <th class="py-2 px-2 text-center font-medium">កម្រិត</th>
@@ -242,7 +322,7 @@
         </div>
 
         <!-- Legend -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs mb-6">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs mb-6 no-print">
             <h3 class="font-bold text-yellow-800 mb-1"><i class="fas fa-info-circle mr-1"></i>ការពន្យល់</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
@@ -268,7 +348,7 @@
     </main>
 
     <!-- Student Scores Page (Hidden by default) -->
-    <div id="studentScoresPage" class="hidden">
+    <div id="studentScoresPage" class="hidden no-print">
         <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
             <div class="container mx-auto px-3 py-4">
                 <div class="flex items-center justify-between">
@@ -350,62 +430,97 @@
         </main>
     </div>
 
-    <!-- Report Page (Hidden by default, only for printing) -->
-    <div id="reportPage" class="hidden">
-        <div class="report-page">
-            <!-- Report Header -->
-            <div class="report-header">
-                <div class="report-title">របាយការណ៍ពិន្ទុសិស្ស</div>
-                <div class="report-subtitle">ថ្នាក់ 10A - ឆ្នាំសិក្សា 2024-2025</div>
-                <div class="text-xs">កាលបរិច្ឆេទ៖ <span id="reportDate"></span></div>
+    <!-- Official Report Template (Hidden by default, only for printing) -->
+    <div id="officialReport" class="hidden print-only">
+        <div class="print-report">
+            <!-- Top Center: Kingdom of Cambodia with Khmer Mool font -->
+            <div class="khmer-header khmer-mool" style="margin-bottom: 5px;">
+                ព្រះរាជាណាចក្រកម្ពុជា
+            </div>
+            <div class="khmer-header khmer-mool" style="margin-bottom: 15px;">
+                ជាតិ សាសនា ព្រះមហាក្សត្រ
+            </div>
+            <div class="khmer-header" style="font-size: 20pt; margin-bottom: 10px; font-weight: normal;">
+                ៣
             </div>
             
-            <!-- Class Information -->
-            <div style="margin: 10px 0; font-size: 10pt;">
-                <div><strong>ព័ត៌មានថ្នាក់៖</strong></div>
-                <div>មធ្យមភាគថ្នាក់៖ <span id="reportClassAvg"></span></div>
-                <div>ចំនួនសិស្សសរុប៖ <span id="reportTotalStudents"></span> នាក់</div>
+            <!-- School Information - Left Aligned -->
+            <div class="school-info left-align" style="margin-bottom: 10px;">
+                <div style="font-size: 11pt; margin-bottom: 3px;">
+                    រព្ម្ងសាលាបឋមសិក្សា...................................................................
+                </div>
+                <div style="font-size: 11pt;">
+                    សាលាបឋមសិក្សា..........................................................................
+                </div>
             </div>
             
-            <!-- Main Report Table -->
-            <table class="report-table">
+            <!-- Class Information - Center Aligned -->
+            <div class="center-align" style="margin-bottom: 10px;">
+                <div style="font-size: 11pt; margin-bottom: 3px;">
+                    បញ្ជីរាយនាមសិស្សថ្នាក់ទី <span id="reportGrade">10</span> "<span id="reportClassName">ក</span>"
+                </div>
+                <div style="font-size: 11pt;">
+                    ឆ្នាំសិក្សា <span id="reportYearStart">2024</span> - <span id="reportYearEnd">2025</span>
+                </div>
+            </div>
+            
+            <!-- Single table with 10 columns (2 sets of 5 columns) -->
+            <table class="ten-column-table">
                 <thead>
                     <tr>
-                        <th rowspan="2">ល.រ</th>
-                        <th rowspan="2">ឈ្មោះសិស្ស</th>
-                        <th rowspan="2">លេខសម្គាល់</th>
-                        <th colspan="12">ពិន្ទុមុខវិជ្ជា</th>
-                        <th rowspan="2">សរុប</th>
-                        <th rowspan="2">មធ្យម</th>
-                        <th rowspan="2">កម្រិត</th>
-                        <th rowspan="2">ចំណាត់ថ្នាក់</th>
-                    </tr>
-                    <tr>
-                        <th>ខ្មែរ</th>
-                        <th>គណិត</th>
-                        <th>រូបវិទ្យា</th>
-                        <th>គីមី</th>
-                        <th>ជីវវិទ្យា</th>
-                        <th>ប្រវត្តិ</th>
-                        <th>ភូមិវិទ្យា</th>
-                        <th>អង់គ្លេស</th>
-                        <th>សីលធម៌</th>
-                        <th>ព័ត៌មាន</th>
-                        <th>អប់រំកាយ</th>
-                        <th>សិល្បៈ</th>
+                        <!-- First set of 5 columns -->
+                        <th class="col-no">ល.រ</th>
+                        <th class="col-name">នាមនិងគោតនាម</th>
+                        <th class="col-gender">ភេទ</th>
+                        <th class="col-average">មធ្យមភាគ</th>
+                        <th class="col-rank">ចំណាត់ថ្នាក់</th>
+                        
+                        <!-- Second set of 5 columns -->
+                        <th class="col-no">ល.រ</th>
+                        <th class="col-name">នាមនិងគោតនាម</th>
+                        <th class="col-gender">ភេទ</th>
+                        <th class="col-average">មធ្យមភាគ</th>
+                        <th class="col-rank">ចំណាត់ថ្នាក់</th>
                     </tr>
                 </thead>
-                <tbody id="reportTableBody">
-                    <!-- Report data will be populated here -->
+                <tbody id="officialReportTable">
+                    <!-- Table rows will be populated here -->
                 </tbody>
             </table>
             
-            <!-- Footer Notes -->
-            <div class="report-footer">
-                <div><strong>កំណត់សម្គាល់៖</strong></div>
-                <div>១. ពិន្ទុទាំងអស់គិតជាល្បឿន 0-10</div>
-                <div>២. កម្រិតពិន្ទុ៖ A(9.0-10), B(8.0-8.9), C(7.0-7.9), D(6.0-6.9), E(5.0-5.9), F(0-4.9)</div>
-                <div>៣. ចំណាត់ថ្នាក់គិតតាមមធ្យមភាគ (ខ្ពស់ → ទាប)</div>
+            <!-- Statistics Section - Below the table, Left Aligned -->
+            <div class="stats-section">
+                <div style="font-size: 10pt; margin-bottom: 2px;">
+                    - សិស្សសរុប <span id="reportTotalStudents" style="font-weight: bold;">0</span> នាក់ ស្រី <span id="reportFemaleTotal" style="font-weight: bold;">0</span> នាក់
+                </div>
+                <div style="font-size: 10pt; margin-bottom: 2px;">
+                    - ជាប់មធ្យមភាគ <span id="reportPassedStudents" style="font-weight: bold;">0</span> នាក់ ស្រី <span id="reportFemalePassed" style="font-weight: bold;">0</span> នាក់
+                </div>
+                <div style="font-size: 10pt;">
+                    - ធ្លាក់ <span id="reportFailedStudents" style="font-weight: bold;">0</span> នាក់ ស្រី <span id="reportFemaleFailed" style="font-weight: bold;">0</span> នាក់
+                </div>
+            </div>
+            
+            <!-- Footer Section - Right Aligned -->
+            <div class="footer-section right-align" style="margin-top: 20px;">
+                <div style="font-size: 10pt; margin-bottom: 5px;">
+                    ថ្ងៃ.........................ខែ..............ឆ្នាំ........... ឆស័ក ព.ស ២៥៦.......
+                </div>
+                <div style="font-size: 10pt; margin-bottom: 40px;">
+                    ធ្វើនៅ....................ថ្ងៃទី...............ខែ.............ឆ្នាំ ២០........
+                </div>
+                
+                <!-- Signatures -->
+                <div style="display: flex; justify-content: space-between; margin-top: 60px;">
+                    <div style="width: 45%; text-align: center;">
+                        <div class="signature-line"></div>
+                        <div style="font-size: 10pt; margin-top: 5px;">គ្រូបន្ទុកថ្នាក់</div>
+                    </div>
+                    <div style="width: 45%; text-align: center;">
+                        <div class="signature-line"></div>
+                        <div style="font-size: 10pt; margin-top: 5px;">នាយក</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -431,6 +546,16 @@
         let students = [];
         let scores = {};
         let rankedStudents = [];
+
+        // Configuration
+        const config = {
+            schoolName: "សាលាបឋមសិក្សា",
+            grade: "10",
+            className: "ក",
+            yearStart: "2024",
+            yearEnd: "2025",
+            passingGrade: 5.0 // Minimum average to pass
+        };
 
         // Initialize data
         function initializeData() {
@@ -502,7 +627,8 @@
                     scores: studentScores,
                     total: total,
                     average: average,
-                    grade: grade
+                    grade: grade,
+                    passed: average >= config.passingGrade
                 };
             });
             
@@ -601,9 +727,7 @@
                         <td class="py-2 px-2 font-medium">
                             ${student.name}
                         </td>
-                        <td class="py-2 px-2 text-sm font-mono">
-                            ${student.id}
-                        </td>
+                       
                         <td class="py-2 px-2 text-center">
                             <span class="px-2 py-0.5 rounded-full text-xs ${
                                 student.gender === 'male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600'
@@ -639,81 +763,130 @@
             tableBody.innerHTML = html;
         }
 
-        // Generate and print report
-        function generateReport() {
+        // Generate and print official report
+        function generateOfficialReport() {
             if (rankedStudents.length === 0) {
                 alert('មិនមានទិន្នន័យសិស្សទេ!');
                 return;
             }
             
-            // Prepare report data
-            const now = new Date();
-            const dateString = now.toLocaleDateString('km-KH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            // Calculate statistics
+            const totalStudents = rankedStudents.length;
+            const femaleStudents = rankedStudents.filter(s => s.gender === 'female').length;
             
-            // Calculate class statistics
-            const averages = rankedStudents.map(s => s.average);
-            const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
+            const passedStudents = rankedStudents.filter(s => s.passed).length;
+            const femalePassed = rankedStudents.filter(s => s.passed && s.gender === 'female').length;
+            
+            const failedStudents = totalStudents - passedStudents;
+            const femaleFailed = femaleStudents - femalePassed;
             
             // Update report header
-            document.getElementById('reportDate').textContent = dateString;
-            document.getElementById('reportClassAvg').textContent = classAverage.toFixed(2);
-            document.getElementById('reportTotalStudents').textContent = rankedStudents.length;
+            document.getElementById('reportGrade').textContent = config.grade;
+            document.getElementById('reportClassName').textContent = config.className;
+            document.getElementById('reportYearStart').textContent = config.yearStart;
+            document.getElementById('reportYearEnd').textContent = config.yearEnd;
             
-            // Populate report table
-            const reportBody = document.getElementById('reportTableBody');
-            let reportHtml = '';
+            // Update summary statistics
+            document.getElementById('reportTotalStudents').textContent = totalStudents;
+            document.getElementById('reportFemaleTotal').textContent = femaleStudents;
+            document.getElementById('reportPassedStudents').textContent = passedStudents;
+            document.getElementById('reportFemalePassed').textContent = femalePassed;
+            document.getElementById('reportFailedStudents').textContent = failedStudents;
+            document.getElementById('reportFemaleFailed').textContent = femaleFailed;
             
-            rankedStudents.forEach((student, index) => {
-                reportHtml += `
+            // Prepare data for 10-column table
+            // Each row in the table will have 2 students (one in left 5 columns, one in right 5 columns)
+            const rowsNeeded = Math.ceil(rankedStudents.length / 2);
+            const tableBody = document.getElementById('officialReportTable');
+            let tableHtml = '';
+            
+            // Fill rows with students
+            for (let i = 0; i < rowsNeeded; i++) {
+                const leftStudentIndex = i * 2;
+                const rightStudentIndex = i * 2 + 1;
+                
+                const leftStudent = rankedStudents[leftStudentIndex];
+                const rightStudent = rankedStudents[rightStudentIndex];
+                
+                tableHtml += `
                     <tr>
-                        <td>${index + 1}</td>
-                        <td style="text-align: left; padding-left: 5px;">${student.name}</td>
-                        <td>${student.id}</td>
-                        <td>${student.scores[0]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[1]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[2]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[3]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[4]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[5]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[6]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[7]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[8]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[9]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[10]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.scores[11]?.toFixed(2) || '0.00'}</td>
-                        <td>${student.total.toFixed(2)}</td>
-                        <td>${student.average.toFixed(2)}</td>
-                        <td>${student.grade}</td>
-                        <td style="font-weight: bold; color: #dc2626;">${student.rank}</td>
+                        <!-- Left student (first 5 columns) -->
+                        <td>${leftStudentIndex + 1}</td>
+                        <td class="student-name">${leftStudent ? leftStudent.name : ''}</td>
+                        <td>${leftStudent ? (leftStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី') : ''}</td>
+                        <td>${leftStudent ? leftStudent.average.toFixed(2) : ''}</td>
+                        <td style="font-weight: ${leftStudent ? 'bold' : 'normal'};">${leftStudent ? leftStudent.rank : ''}</td>
+                        
+                        <!-- Right student (next 5 columns) -->
+                        <td>${rightStudentIndex + 1}</td>
+                        <td class="student-name">${rightStudent ? rightStudent.name : ''}</td>
+                        <td>${rightStudent ? (rightStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី') : ''}</td>
+                        <td>${rightStudent ? rightStudent.average.toFixed(2) : ''}</td>
+                        <td style="font-weight: ${rightStudent ? 'bold' : 'normal'};">${rightStudent ? rightStudent.rank : ''}</td>
                     </tr>
                 `;
-            });
+            }
             
-            reportBody.innerHTML = reportHtml;
+            // Add empty rows if needed to make at least 25 rows (for formatting)
+            const minRows = 25;
+            if (rowsNeeded < minRows) {
+                for (let i = rowsNeeded; i < minRows; i++) {
+                    const leftNo = i * 2 + 1;
+                    const rightNo = i * 2 + 2;
+                    
+                    tableHtml += `
+                        <tr>
+                            <!-- Empty left student -->
+                            <td>${leftNo}</td>
+                            <td class="student-name"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+                            <!-- Empty right student -->
+                            <td>${rightNo}</td>
+                            <td class="student-name"></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    `;
+                }
+            }
+            
+            tableBody.innerHTML = tableHtml;
             
             // Store current display state
-            const originalMain = document.querySelector('main').style.display;
-            const originalHeader = document.querySelector('header').style.display;
+            const originalMain = document.querySelector('main');
+            const originalHeader = document.querySelector('header');
+            const originalStudentPage = document.getElementById('studentScoresPage');
+            const originalReport = document.getElementById('officialReport');
             
-            // Hide main page
-            document.querySelector('main').style.display = 'none';
-            document.querySelector('header').style.display = 'none';
+            const mainDisplay = originalMain.style.display;
+            const headerDisplay = originalHeader.style.display;
+            const studentPageHidden = originalStudentPage.classList.contains('hidden');
             
-            // Show report page
-            document.getElementById('reportPage').classList.remove('hidden');
+            // Hide everything except report
+            originalMain.style.display = 'none';
+            originalHeader.style.display = 'none';
+            originalStudentPage.classList.add('hidden');
+            originalReport.classList.remove('hidden');
+            
+            // Add print-only class to body
+            document.body.classList.add('print-mode');
             
             // Print report
             window.print();
             
             // Restore original state
             setTimeout(() => {
-                document.querySelector('main').style.display = originalMain;
-                document.querySelector('header').style.display = originalHeader;
-                document.getElementById('reportPage').classList.add('hidden');
+                originalMain.style.display = mainDisplay;
+                originalHeader.style.display = headerDisplay;
+                if (!studentPageHidden) {
+                    originalStudentPage.classList.remove('hidden');
+                }
+                originalReport.classList.add('hidden');
+                document.body.classList.remove('print-mode');
             }, 100);
         }
 
