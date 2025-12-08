@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student - Class 10A</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-optimized {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen mobile-optimized">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="students.html" class="p-2 rounded-full bg-white/10 hover:bg-white/20 transition">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-lg font-bold">កែសម្រួលសិស្ស</h1>
+                        <p class="text-blue-100 text-xs">Edit Student - Class 10A</p>
+                    </div>
+                </div>
+                
+                <div class="text-right">
+                    <p class="text-sm" id="currentStudentId">STU001</p>
+                    <p class="text-blue-100 text-xs">អត្តលេខ</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6">
+        <div class="max-w-2xl mx-auto">
+            <!-- Form Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <!-- Card Header -->
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-800" id="studentNameHeader">កែសម្រួលព័ត៌មានសិស្ស</h2>
+                    <p class="text-gray-600 text-sm mt-1">Edit student information</p>
+                </div>
+                
+                <!-- Form -->
+                <form id="studentForm" class="p-6">
+                    <div class="space-y-6">
+                        <!-- Student ID -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                អត្តលេខសិស្ស *
+                                <span class="text-gray-500 text-xs">(Student ID)</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-id-card text-gray-400"></i>
+                                </div>
+                                <input type="text" id="studentId" required
+                                       class="form-input pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                       placeholder="STU001">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">លេខសម្គាល់ត្រូវតែមានតួអក្សរធំ និងលេខ</p>
+                        </div>
+                        
+                        <!-- Student Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                ឈ្មោះសិស្ស *
+                                <span class="text-gray-500 text-xs">(Student Name)</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input type="text" id="studentName" required
+                                       class="form-input pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                       placeholder="ឈ្មោះ នាមត្រកូល">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">សូមបញ្ចូលឈ្មោះពេញតាមអត្តសញ្ញាណប័ណ្ណ</p>
+                        </div>
+                        
+                        <!-- Gender -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                ភេទ *
+                                <span class="text-gray-500 text-xs">(Gender)</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-venus-mars text-gray-400"></i>
+                                </div>
+                                <select id="studentGender" required
+                                        class="form-input pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                    <option value="">សូមជ្រើសរើស</option>
+                                    <option value="male">ប្រុស (Male)</option>
+                                    <option value="female">ស្រី (Female)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Date of Birth -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                ថ្ងៃខែឆ្នាំកំណើត *
+                                <span class="text-gray-500 text-xs">(Date of Birth)</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-calendar-alt text-gray-400"></i>
+                                </div>
+                                <input type="date" id="studentDOB" required
+                                       class="form-input pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Info (Optional) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                ព័ត៌មានបន្ថែម
+                                <span class="text-gray-500 text-xs">(Additional Information - Optional)</span>
+                            </label>
+                            <textarea id="studentNotes"
+                                      class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                                      rows="3"
+                                      placeholder="ព័ត៌មានបន្ថែមអំពីសិស្ស..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
+                        <button type="submit" 
+                                class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-lg font-medium btn-hover mobile-optimized">
+                            <i class="fas fa-save mr-2"></i>
+                            រក្សាទុកការផ្លាស់ប្តូរ
+                        </button>
+                        <a href="students.html"
+                           class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-lg font-medium flex items-center justify-center mobile-optimized">
+                            <i class="fas fa-times mr-2"></i>
+                            បោះបង់
+                        </a>
+                        <button type="button" onclick="deleteStudent()"
+                                class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-3 rounded-lg font-medium btn-hover mobile-optimized">
+                            <i class="fas fa-trash-alt mr-2"></i>
+                            លុបសិស្ស
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Form Status -->
+                <div id="formStatus" class="px-6 pb-6 hidden">
+                    <div class="p-3 rounded-lg" id="statusMessage"></div>
+                </div>
+            </div>
+            
+            <!-- Student Info Summary -->
+            <div class="mt-6 bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <h3 class="font-medium text-gray-800 mb-3">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    ព័ត៌មានសិស្ស
+                </h3>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                        <span class="text-gray-600">អត្តលេខ:</span>
+                        <span class="font-medium ml-2" id="infoId">-</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">ឈ្មោះ:</span>
+                        <span class="font-medium ml-2" id="infoName">-</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">ភេទ:</span>
+                        <span class="font-medium ml-2" id="infoGender">-</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">ថ្ងៃកំណើត:</span>
+                        <span class="font-medium ml-2" id="infoDOB">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">Student Management System - Edit Student © 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentStudentId = '';
+        let originalStudentId = '';
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get student ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            currentStudentId = urlParams.get('id');
+            
+            if (!currentStudentId) {
+                // If no ID provided, redirect to main page
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Load student data
+            loadStudentData(currentStudentId);
+            
+            // Form submission
+            document.getElementById('studentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                updateStudent();
+            });
+        });
+
+        // Load student data
+        function loadStudentData(studentId) {
+            // Get students from localStorage
+            const students = JSON.parse(localStorage.getItem('class10A_students')) || [];
+            
+            // Find the student
+            const student = students.find(function(s) { return s.id === studentId; });
+            
+            if (!student) {
+                // If student not found, redirect to main page
+                showFormStatus('សិស្សមិនត្រូវបានរកឃើញ! កំពុងផ្លាស់ទី...', 'error');
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 2000);
+                return;
+            }
+            
+            // Store original ID
+            originalStudentId = student.id;
+            
+            // Update header
+            document.getElementById('currentStudentId').textContent = student.id;
+            document.getElementById('studentNameHeader').textContent = `កែសម្រួលព័ត៌មានសិស្ស: ${student.name}`;
+            
+            // Fill form fields
+            document.getElementById('studentId').value = student.id;
+            document.getElementById('studentName').value = student.name;
+            document.getElementById('studentGender').value = student.gender;
+            document.getElementById('studentDOB').value = student.dob;
+            document.getElementById('studentNotes').value = student.notes || '';
+            
+            // Update info summary
+            document.getElementById('infoId').textContent = student.id;
+            document.getElementById('infoName').textContent = student.name;
+            document.getElementById('infoGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
+            
+            // Format date for display
+            const dobDate = new Date(student.dob);
+            const formattedDOB = dobDate.toLocaleDateString('km-KH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('infoDOB').textContent = formattedDOB;
+            
+            // Focus on first input
+            setTimeout(function() {
+                document.getElementById('studentName').focus();
+            }, 300);
+        }
+
+        // Update student function
+        function updateStudent() {
+            const studentId = document.getElementById('studentId').value.trim();
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentGender = document.getElementById('studentGender').value;
+            const studentDOB = document.getElementById('studentDOB').value;
+            const studentNotes = document.getElementById('studentNotes').value.trim();
+            
+            // Validate required fields
+            if (!studentId || !studentName || !studentGender || !studentDOB) {
+                showFormStatus('សូមបំពេញព័ត៌មានចាំបាច់ទាំងអស់!', 'error');
+                return;
+            }
+            
+            // Validate student ID format
+            const idRegex = /^[A-Z0-9]+$/;
+            if (!idRegex.test(studentId)) {
+                showFormStatus('អត្តលេខត្រូវតែមានតួអក្សរធំ និងលេខប៉ុណ្ណោះ!', 'error');
+                return;
+            }
+            
+            // Get existing students from localStorage
+            let students = JSON.parse(localStorage.getItem('class10A_students')) || [];
+            
+            // Check if new ID conflicts with another student (excluding current student)
+            if (studentId !== originalStudentId) {
+                const idExists = students.some(function(s) { 
+                    return s.id === studentId && s.id !== originalStudentId; 
+                });
+                if (idExists) {
+                    showFormStatus('អត្តលេខនេះមានរួចហើយ! សូមប្រើអត្តលេខផ្សេងទៀត។', 'error');
+                    return;
+                }
+            }
+            
+            // Find and update student
+            const studentIndex = students.findIndex(function(s) { return s.id === originalStudentId; });
+            
+            if (studentIndex === -1) {
+                showFormStatus('សិស្សមិនត្រូវបានរកឃើញ!', 'error');
+                return;
+            }
+            
+            // Update student object
+            students[studentIndex] = {
+                id: studentId,
+                name: studentName,
+                gender: studentGender,
+                dob: studentDOB,
+                notes: studentNotes || ''
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('class10A_students', JSON.stringify(students));
+            
+            // Show success message
+            showFormStatus('ព័ត៌មានសិស្សត្រូវបានកែសម្រួលដោយជោគជ័យ! កំពុងផ្លាស់ទី...', 'success');
+            
+            // Redirect back to main page after 1.5 seconds
+            setTimeout(function() {
+                window.location.href = 'students.html?saved=true';
+            }, 1500);
+        }
+
+        // Delete student function
+        function deleteStudent() {
+            if (!confirm('តើអ្នកពិតជាចង់លុបសិស្សនេះមែនទេ? សកម្មភាពនេះមិនអាចយកវិញបានទេ។')) {
+                return;
+            }
+            
+            // Get existing students from localStorage
+            let students = JSON.parse(localStorage.getItem('class10A_students')) || [];
+            
+            // Remove student
+            students = students.filter(function(s) { return s.id !== originalStudentId; });
+            
+            // Save to localStorage
+            localStorage.setItem('class10A_students', JSON.stringify(students));
+            
+            // Show success message
+            showFormStatus('សិស្សត្រូវបានលុបដោយជោគជ័យ! កំពុងផ្លាស់ទី...', 'success');
+            
+            // Redirect back to main page after 1.5 seconds
+            setTimeout(function() {
+                window.location.href = 'index.html?saved=true';
+            }, 1500);
+        }
+
+        // Show form status message
+        function showFormStatus(message, type) {
+            const formStatus = document.getElementById('formStatus');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // Clear previous classes
+            statusMessage.className = 'p-3 rounded-lg';
+            
+            // Set appropriate classes based on type
+            if (type === 'success') {
+                statusMessage.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-200');
+            } else if (type === 'error') {
+                statusMessage.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-200');
+            } else {
+                statusMessage.classList.add('bg-blue-100', 'text-blue-700', 'border', 'border-blue-200');
+            }
+            
+            // Set message
+            statusMessage.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            // Show status div
+            formStatus.classList.remove('hidden');
+            
+            // Scroll to status message
+            formStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

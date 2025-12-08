@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Management - Class 10A</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- FileSaver for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+      * {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, sans-serif;
+      }
+
+      .btn-hover:hover {
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .mobile-optimized {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      @media (max-width: 640px) {
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        .table-cell {
+          padding: 0.5rem !important;
+          font-size: 0.875rem;
+        }
+
+        .action-buttons {
+          min-width: 80px;
+        }
+      }
+      
+      /* Dropdown styles */
+      .export-dropdown {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        width: 100%;
+        z-index: 50;
+      }
+      
+      .export-group:hover .export-dropdown {
+        display: block;
+      }
+      
+      .export-dropdown button {
+        width: 100%;
+        text-align: left;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: #374151;
+      }
+      
+      .export-dropdown button:hover {
+        background-color: #f3f4f6;
+      }
+
+      /* Print-specific styles */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #print-area, #print-area * {
+          visibility: visible;
+        }
+        #print-area {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen mobile-optimized">
+    <!-- Header -->
+    <header
+      class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md sticky top-0 z-40"
+    >
+      <div class="container mx-auto px-4 py-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a href="index.html" class="flex items-center space-x-2">
+              <div class="bg-white p-2 rounded-full">
+                <i class="fa-solid fa-arrow-left text-blue-700 text-lg"></i>
+              </div>
+            </a>
+            <h1 class="text-lg font-semibold">បញ្ជីសិស្សថ្នាក់ទី 10A</h1>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-2 py-4">
+      <!-- Stats Cards - Mobile Optimized -->
+      <div class="stats-grid grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <!-- Total Students -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div
+                class="text-2xl md:text-3xl font-bold text-blue-600"
+                id="totalCount"
+              >
+                0
+              </div>
+              <p class="text-gray-600 text-sm">សិស្សសរុប</p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-lg">
+              <i class="fas fa-users text-blue-600 text-lg"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Male Students -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div
+                class="text-2xl md:text-3xl font-bold text-blue-500"
+                id="maleCount"
+              >
+                0
+              </div>
+              <p class="text-gray-600 text-sm">សិស្សប្រុស</p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-lg">
+              <i class="fas fa-male text-blue-500 text-lg"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Female Students -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div
+                class="text-2xl md:text-3xl font-bold text-pink-500"
+                id="femaleCount"
+              >
+                0
+              </div>
+              <p class="text-gray-600 text-sm">សិស្សស្រី</p>
+            </div>
+            <div class="bg-pink-100 p-3 rounded-lg">
+              <i class="fas fa-female text-pink-500 text-lg"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Card -->
+        <div class="bg-white rounded-xl shadow p-4">
+          <div class="space-y-2">
+            <a
+              href="add-student.html"
+              class="w-full block bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 rounded-lg flex items-center justify-center btn-hover mobile-optimized"
+            >
+              <i class="fas fa-user-plus mr-2"></i>
+              <span class="text-sm">បន្ថែមសិស្ស</span>
+            </a>
+            
+            <!-- Export Button with Dropdown -->
+            <div class="export-group relative">
+              <button
+                class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-3 rounded-lg flex items-center justify-center btn-hover mobile-optimized"
+              >
+                <i class="fas fa-file-export mr-2"></i>
+                <span class="text-sm">Export</span>
+                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+              </button>
+              
+              <div class="export-dropdown bg-white shadow-lg rounded-lg p-2">
+                <button
+                  onclick="printStudentList()"
+                  class="flex items-center mb-1"
+                >
+                  <i class="fas fa-print text-blue-500 mr-2 w-4"></i>
+                  <span>Print List</span>
+                </button>
+                <button
+                  onclick="exportToExcel()"
+                  class="flex items-center"
+                >
+                  <i class="fas fa-file-excel text-green-500 mr-2 w-4"></i>
+                  <span>Export as Excel</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="mb-4">
+        <div class="relative">
+          <input
+            type="text"
+            id="searchInput"
+            class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="ស្វែងរកសិស្ស..."
+          />
+          <i
+            class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+          ></i>
+        </div>
+      </div>
+
+      <!-- Student Table -->
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="table-responsive">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  ល.រ
+                </th>
+                <th
+                  class="table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  អត្តលេខ
+                </th>
+                <th
+                  class="table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  ឈ្មោះ
+                </th>
+                <th
+                  class="table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  ភេទ
+                </th>
+                <th
+                  class="table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  កំណើត
+                </th>
+                <th
+                  class="table-cell px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider action-buttons"
+                >
+                  សកម្មភាព
+                </th>
+              </tr>
+            </thead>
+            <tbody id="studentTable" class="divide-y divide-gray-200">
+              <!-- Students will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-12 hidden">
+          <div
+            class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <i class="fas fa-users text-3xl text-gray-400"></i>
+          </div>
+          <p class="text-gray-500 text-lg font-medium">
+            មិនទាន់មានទិន្នន័យសិស្សទេ
+          </p>
+          <p class="text-gray-400 text-sm mb-6">No student data available</p>
+          <a
+            href="add-student.html"
+            class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg btn-hover mobile-optimized inline-flex items-center"
+          >
+            <i class="fas fa-user-plus mr-2"></i>
+            បន្ថែមសិស្សដំបូង
+          </a>
+        </div>
+
+        <!-- Table Info -->
+        <div class="px-4 py-3 bg-gray-50 border-t border-gray-200">
+          <div class="text-sm text-gray-500" id="tableInfo">
+            កំពុងបង្ហាញ <span id="showingCount" class="font-bold">0</span> នាក់
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Success Toast -->
+    <div
+      id="successToast"
+      class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 transform transition-transform duration-300 translate-y-full"
+    >
+      <div class="flex items-center">
+        <i class="fas fa-check-circle mr-3 text-lg"></i>
+        <span id="toastMessage" class="font-medium">Operation successful!</span>
+      </div>
+    </div>
+
+    <!-- Hidden Print Area -->
+    <div id="print-area" class="hidden">
+      <!-- This will be populated when printing -->
+    </div>
+
+    <script>
+      // Sample data with 10 students
+      let students = [];
+
+      // Initialize data
+      function initializeData() {
+        const savedData = localStorage.getItem("class10A_students");
+
+        if (!savedData) {
+          // Add 10 sample students if no data exists
+          students = [
+            {
+              id: "STU001",
+              name: "សុខ សារឿន",
+              gender: "male",
+              dob: "2007-03-15",
+            },
+            {
+              id: "STU002",
+              name: "មាស សំណាង",
+              gender: "female",
+              dob: "2007-05-22",
+            },
+            {
+              id: "STU003",
+              name: "វិចិត្រ រស់",
+              gender: "male",
+              dob: "2007-08-10",
+            },
+            {
+              id: "STU004",
+              name: "សុផល ម៉េង",
+              gender: "female",
+              dob: "2007-01-30",
+            },
+            {
+              id: "STU005",
+              name: "រតនា ស៊ីណា",
+              gender: "female",
+              dob: "2007-07-12",
+            },
+            {
+              id: "STU006",
+              name: "ពិសិដ្ឋ ហង្ស",
+              gender: "male",
+              dob: "2007-04-05",
+            },
+            {
+              id: "STU007",
+              name: "សំអាត ចន្ថា",
+              gender: "female",
+              dob: "2007-11-18",
+            },
+            {
+              id: "STU008",
+              name: "ឆាយ រដ្ឋា",
+              gender: "male",
+              dob: "2007-09-25",
+            },
+            {
+              id: "STU009",
+              name: "បញ្ញា វ៉ាន់ដា",
+              gender: "female",
+              dob: "2007-02-14",
+            },
+            {
+              id: "STU010",
+              name: "សុខគង្គ ផល្លី",
+              gender: "male",
+              dob: "2007-06-08",
+            },
+          ];
+          localStorage.setItem("class10A_students", JSON.stringify(students));
+        } else {
+          students = JSON.parse(savedData);
+        }
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeData();
+        renderTable();
+        updateStats();
+
+        // Search functionality
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", function () {
+            renderTable();
+          });
+
+        // Check if redirected from add/edit page
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("saved") === "true") {
+          showToast("សិស្សត្រូវបានរក្សាទុកដោយជោគជ័យ!");
+        }
+      });
+
+      // Render student table
+      function renderTable() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const tableBody = document.getElementById("studentTable");
+        const emptyState = document.getElementById("emptyState");
+
+        // Filter students
+        const filteredStudents = students.filter(function (student) {
+          return (
+            student.name.toLowerCase().includes(searchTerm) ||
+            student.id.toLowerCase().includes(searchTerm)
+          );
+        });
+
+        // Update showing count
+        document.getElementById("showingCount").textContent =
+          filteredStudents.length;
+
+        if (filteredStudents.length === 0) {
+          tableBody.innerHTML = "";
+          emptyState.classList.remove("hidden");
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+
+        // Build table rows
+        let tableHTML = "";
+        filteredStudents.forEach(function (student, index) {
+          const genderText = student.gender === "male" ? "ប្រុស" : "ស្រី";
+          const genderIcon =
+            student.gender === "male"
+              ? '<i class="fas fa-mars text-blue-500"></i>'
+              : '<i class="fas fa-venus text-pink-500"></i>';
+
+          // Format date for mobile (short format)
+          const dobDate = new Date(student.dob);
+          let formattedDOB;
+          if (window.innerWidth <= 640) {
+            formattedDOB = dobDate.toLocaleDateString("km-KH", {
+              month: "short",
+              day: "numeric",
+            });
+          } else {
+            formattedDOB = dobDate.toLocaleDateString("km-KH", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          }
+
+          tableHTML += `
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="table-cell px-4 py-3 text-center text-gray-700 font-medium">${
+                          index + 1
+                        }</td>
+                        <td class="table-cell px-4 py-3 text-blue-600">${
+                          student.id
+                        }</td>
+                        <td class="table-cell px-4 py-3">${student.name}</td>
+                        <td class="table-cell px-4 py-3">
+                            <div class="flex items-center space-x-2">
+                                <span>${genderText}</span>
+                            </div>
+                        </td>
+                        <td class="table-cell px-4 py-3 text-gray-600">${formattedDOB}</td>
+                        <td class="table-cell px-4 py-3 action-buttons">
+                            <div class="flex space-x-2">
+                                <a href="edit-student.html?id=${student.id}" 
+                                   class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition mobile-optimized">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button onclick="deleteStudent('${
+                                  student.id
+                                }')" 
+                                        class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition mobile-optimized">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+        });
+
+        tableBody.innerHTML = tableHTML;
+      }
+
+      // Update statistics
+      function updateStats() {
+        const total = students.length;
+        const maleCount = students.filter(function (s) {
+          return s.gender === "male";
+        }).length;
+        const femaleCount = students.filter(function (s) {
+          return s.gender === "female";
+        }).length;
+
+        document.getElementById("totalCount").textContent = total;
+        document.getElementById("maleCount").textContent = maleCount;
+        document.getElementById("femaleCount").textContent = femaleCount;
+      }
+
+      // Delete student
+      function deleteStudent(studentId) {
+        if (!confirm("តើអ្នកពិតជាចង់លុបសិស្សនេះមែនទេ?")) return;
+
+        students = students.filter(function (s) {
+          return s.id !== studentId;
+        });
+        localStorage.setItem("class10A_students", JSON.stringify(students));
+
+        renderTable();
+        updateStats();
+        showToast("សិស្សត្រូវបានលុបដោយជោគជ័យ!");
+      }
+
+      // Show toast notification
+      function showToast(message) {
+        const toast = document.getElementById("successToast");
+        const toastMessage = document.getElementById("toastMessage");
+        
+        toastMessage.textContent = message;
+        toast.classList.remove("hidden");
+        toast.classList.remove("translate-y-full");
+        
+        setTimeout(() => {
+          toast.classList.add("translate-y-full");
+          setTimeout(() => {
+            toast.classList.add("hidden");
+          }, 300);
+        }, 3000);
+      }
+
+      // =====================
+      // PRINT FUNCTION
+      // =====================
+      function printStudentList() {
+        try {
+          // Calculate statistics
+          const maleCount = students.filter(s => s.gender === "male").length;
+          const femaleCount = students.filter(s => s.gender === "female").length;
+          const total = students.length;
+          
+          // Get current date in Khmer
+          const now = new Date();
+          const dateString = now.toLocaleDateString('km-KH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long'
+          });
+          
+          // Create print HTML
+          let printHTML = `
+            <style>
+              @media print {
+                body {
+                  font-family: 'Khmer OS', 'Arial', sans-serif;
+                  margin: 0;
+                  padding: 20px;
+                  color: #000;
+                }
+                .print-container {
+                  max-width: 100%;
+                }
+                .print-header {
+                  text-align: center;
+                  margin-bottom: 30px;
+                  border-bottom: 2px solid #2563eb;
+                  padding-bottom: 20px;
+                }
+                .print-title {
+                  font-size: 24px;
+                  font-weight: bold;
+                  margin-bottom: 10px;
+                  color: #1e40af;
+                }
+                .print-subtitle {
+                  font-size: 16px;
+                  color: #4b5563;
+                  margin-bottom: 5px;
+                }
+                .print-stats {
+                  display: flex;
+                  justify-content: space-between;
+                  margin: 20px 0;
+                  padding: 15px;
+                  background: #f8fafc;
+                  border-radius: 8px;
+                  border: 1px solid #e2e8f0;
+                }
+                .stat-item {
+                  text-align: center;
+                  flex: 1;
+                }
+                .stat-value {
+                  font-size: 20px;
+                  font-weight: bold;
+                  color: #2563eb;
+                }
+                .stat-label {
+                  font-size: 14px;
+                  color: #6b7280;
+                  margin-top: 5px;
+                }
+                .print-table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-top: 20px;
+                }
+                .print-table th {
+                  background: #2563eb;
+                  color: white;
+                  padding: 12px 8px;
+                  text-align: center;
+                  font-weight: bold;
+                  border: 1px solid #1d4ed8;
+                }
+                .print-table td {
+                  padding: 10px 8px;
+                  text-align: center;
+                  border: 1px solid #e5e7eb;
+                }
+                .print-table tr:nth-child(even) {
+                  background: #f9fafb;
+                }
+                .print-footer {
+                  margin-top: 30px;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #6b7280;
+                  border-top: 1px solid #e5e7eb;
+                  padding-top: 15px;
+                }
+                .page-break {
+                  page-break-after: always;
+                }
+              }
+            </style>
+            
+            <div class="print-container">
+              <div class="print-header">
+                <div class="print-title">បញ្ជីសិស្សថ្នាក់ទី ១០អេ</div>
+                <div class="print-subtitle">អនុវិទ្យាល័យ សំណាងសិរី</div>
+                <div class="print-subtitle">ឆ្នាំសិក្សា៖ ២០២៣-២០២៤</div>
+                <div class="print-subtitle">បានបង្កើតនៅថ្ងៃទី ${dateString}</div>
+              </div>
+              
+              <div class="print-stats">
+                <div class="stat-item">
+                  <div class="stat-value">${total}</div>
+                  <div class="stat-label">សិស្សសរុប</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${maleCount}</div>
+                  <div class="stat-label">សិស្សប្រុស</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value">${femaleCount}</div>
+                  <div class="stat-label">សិស្សស្រី</div>
+                </div>
+              </div>
+              
+              <table class="print-table">
+                <thead>
+                  <tr>
+                    <th width="5%">ល.រ</th>
+                    <th width="15%">អត្តលេខ</th>
+                    <th width="35%">ឈ្មោះសិស្ស</th>
+                    <th width="15%">ភេទ</th>
+                    <th width="30%">ថ្ងៃខែឆ្នាំកំណើត</th>
+                  </tr>
+                </thead>
+                <tbody>
+          `;
+          
+          // Add student rows
+          students.forEach((student, index) => {
+            const dob = new Date(student.dob);
+            const dobFormatted = dob.toLocaleDateString('km-KH', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+            
+            printHTML += `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.gender === "male" ? "ប្រុស" : "ស្រី"}</td>
+                <td>${dobFormatted}</td>
+              </tr>
+            `;
+          });
+          
+          printHTML += `
+                </tbody>
+              </table>
+              
+              <div class="print-footer">
+                <div>ទំព័រ 1/1</div>
+                <div>ប្រព័ន្ធគ្រប់គ្រងសិស្ស - ថ្នាក់ទី ១០អេ</div>
+                <div>បានបង្កើតដោយ៖ អ្នកគ្រប់គ្រងថ្នាក់</div>
+              </div>
+            </div>
+          `;
+          
+          // Set print area content
+          const printArea = document.getElementById('print-area');
+          printArea.innerHTML = printHTML;
+          
+          // Show print dialog
+          setTimeout(() => {
+            window.print();
+            showToast("បានបើកប្រអប់បោះពុម្ពដោយជោគជ័យ!");
+          }, 100);
+          
+        } catch (error) {
+          console.error("Print Error:", error);
+          alert("មានបញ្ហាក្នុងការបោះពុម្ព៖ " + error.message);
+        }
+      }
+
+      // =====================
+      // EXCEL EXPORT FUNCTION
+      // =====================
+      function exportToExcel() {
+        try {
+          // Prepare data for Excel
+          const headers = [
+            "ល.រ",
+            "អត្តលេខ",
+            "ឈ្មោះសិស្ស",
+            "ភេទ",
+            "ថ្ងៃខែឆ្នាំកំណើត"
+          ];
+          
+          const data = students.map((student, index) => {
+            const dob = new Date(student.dob);
+            const dobFormatted = dob.toLocaleDateString('km-KH', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+            
+            return [
+              index + 1,
+              student.id,
+              student.name,
+              student.gender === "male" ? "ប្រុស" : "ស្រី",
+              dobFormatted
+            ];
+          });
+          
+          // Create worksheet
+          const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
+          
+          // Set column widths
+          const wscols = [
+            { wch: 8 },  // No.
+            { wch: 15 }, // ID
+            { wch: 35 }, // Name (wider for Khmer names)
+            { wch: 12 }, // Gender
+            { wch: 25 }  // DOB
+          ];
+          ws['!cols'] = wscols;
+          
+          // Center align all cells
+          const range = XLSX.utils.decode_range(ws['!ref']);
+          for (let R = range.s.r; R <= range.e.r; ++R) {
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+              const cell_address = {c: C, r: R};
+              const cell_ref = XLSX.utils.encode_cell(cell_address);
+              if (!ws[cell_ref]) continue;
+              ws[cell_ref].s = {
+                alignment: {
+                  horizontal: 'center',
+                  vertical: 'center'
+                }
+              };
+            }
+          }
+          
+          // Style header row
+          for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cell_address = {c: C, r: 0};
+            const cell_ref = XLSX.utils.encode_cell(cell_address);
+            if (ws[cell_ref]) {
+              ws[cell_ref].s = {
+                font: { bold: true, color: { rgb: "FFFFFF" } },
+                fill: { fgColor: { rgb: "2563EB" } },
+                alignment: { horizontal: 'center', vertical: 'center' }
+              };
+            }
+          }
+          
+          // Create workbook
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, "សិស្សថ្នាក់ទី 10A");
+          
+          // Generate Excel file
+          const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+          const filename = `សិស្ស_ថ្នាក់_10A_${timestamp}.xlsx`;
+          
+          XLSX.writeFile(wb, filename);
+          showToast("Excel ត្រូវបានបង្កើតដោយជោគជ័យ!");
+          
+        } catch (error) {
+          console.error("Excel Export Error:", error);
+          alert("មានបញ្ហាក្នុងការបង្កើត Excel៖ " + error.message);
+        }
+      }
+
+      // =====================
+      // CSV EXPORT FUNCTION
+      // =====================
+      function exportToCSV() {
+        try {
+          // Prepare CSV content
+          const headers = ["ល.រ", "អត្តលេខ", "ឈ្មោះសិស្ស", "ភេទ", "ថ្ងៃខែឆ្នាំកំណើត"];
+          
+          const rows = students.map((student, index) => {
+            const dob = new Date(student.dob);
+            const dobFormatted = dob.toLocaleDateString('km-KH', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+            
+            return [
+              index + 1,
+              student.id,
+              student.name,
+              student.gender === "male" ? "ប្រុស" : "ស្រី",
+              dobFormatted
+            ];
+          });
+          
+          // Convert to CSV with proper encoding
+          const csvContent = [
+            headers.join(','),
+            ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+          ].join('\n');
+          
+          // Create blob with BOM for UTF-8
+          const blob = new Blob(['\uFEFF' + csvContent], { 
+            type: 'text/csv;charset=utf-8;' 
+          });
+          
+          // Create download link
+          const link = document.createElement('a');
+          const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+          const filename = `សិស្ស_ថ្នាក់_10A_${timestamp}.csv`;
+          
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          link.style.display = 'none';
+          
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          showToast("CSV ត្រូវបានបង្កើតដោយជោគជ័យ!");
+          
+        } catch (error) {
+          console.error("CSV Export Error:", error);
+          alert("មានបញ្ហាក្នុងការបង្កើត CSV៖ " + error.message);
+        }
+      }
+    </script>
+  </body>
+</html>

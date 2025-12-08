@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>គណនាពិន្ទុសិស្ស ថ្នាក់ 10A</title>
+    <!-- Tailwind CSS -->
+    <script src="./tailwind.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Khmer OS Battambang', sans-serif;
+        }
+        
+        @font-face {
+            font-family: 'Khmer OS Battambang';
+            src: url('https://fonts.googleapis.com/css2?family=Khmer+OS+Battambang&display=swap');
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .score-cell {
+            min-width: 60px;
+        }
+
+        .mobile-score-input {
+            width: 100%;
+            height: 40px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .subject-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .student-row-mobile {
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        /* Mobile specific styles */
+        @media (max-width: 768px) {
+            .mobile-sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+            
+            .mobile-sticky-column {
+                position: sticky;
+                left: 0;
+                z-index: 5;
+                background-color: white;
+            }
+        }
+
+        /* Score colors */
+        .score-9-10 { background-color: #dcfce7; color: #166534; } /* A */
+        .score-7-8 { background-color: #dbeafe; color: #1e40af; } /* B */
+        .score-5-6 { background-color: #fef3c7; color: #92400e; } /* C */
+        .score-3-4 { background-color: #fde68a; color: #92400e; } /* D */
+        .score-1-2 { background-color: #fecaca; color: #991b1b; } /* E */
+        .score-0 { background-color: #f3f4f6; color: #6b7280; } /* F */
+
+        .grade-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .subject-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 6px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .swipe-hint {
+            animation: swipe 2s infinite;
+        }
+
+        @keyframes swipe {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-3 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="bg-white p-2 rounded-full hover:bg-gray-100 transition">
+                        <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-lg font-bold">ពិន្ទុសិស្ស ថ្នាក់ 10A</h1>
+                        <p class="text-xs opacity-90">បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ១២</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="saveAllScores()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm">
+                        <i class="fas fa-save"></i>
+                        <span class="hidden md:inline ml-1">រក្សាទុក</span>
+                    </button>
+                    <button onclick="exportToExcel()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+                        <i class="fas fa-file-export"></i>
+                        <span class="hidden md:inline ml-1">Export</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-3 py-4">
+        <!-- Mobile Navigation Tabs -->
+        <div class="flex mb-4 overflow-x-auto border-b border-gray-200">
+            <button id="tab-table" onclick="switchView('table')" class="flex-1 py-2 px-3 text-center font-medium border-b-2 border-blue-500 text-blue-600">
+                <i class="fas fa-table mr-1"></i>
+                <span class="text-sm">តារាង</span>
+            </button>
+            <button id="tab-student" onclick="switchView('student')" class="flex-1 py-2 px-3 text-center font-medium text-gray-500">
+                <i class="fas fa-user mr-1"></i>
+                <span class="text-sm">តាមសិស្ស</span>
+            </button>
+            <button id="tab-subject" onclick="switchView('subject')" class="flex-1 py-2 px-3 text-center font-medium text-gray-500">
+                <i class="fas fa-book mr-1"></i>
+                <span class="text-sm">តាមមុខវិជ្ជា</span>
+            </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">សិស្សសរុប</p>
+                        <p class="text-lg font-bold text-blue-600" id="totalStudents">0</p>
+                    </div>
+                    <i class="fas fa-users text-blue-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">មធ្យមភាគថ្នាក់</p>
+                        <p class="text-lg font-bold text-green-600" id="classAverage">0.00</p>
+                    </div>
+                    <i class="fas fa-chart-line text-green-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">មធ្យមភាគខ្ពស់</p>
+                        <p class="text-lg font-bold text-purple-600" id="topAverage">0.00</p>
+                    </div>
+                    <i class="fas fa-trophy text-purple-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">មធ្យមភាគទាប</p>
+                        <p class="text-lg font-bold text-red-600" id="lowAverage">0.00</p>
+                    </div>
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 1: Table View (Default) -->
+        <div id="view-table" class="view-content">
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-4">
+                <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-bold text-gray-800">តារាងពិន្ទុសរុប</h2>
+                        <div class="text-xs text-gray-600">
+                            <span class="swipe-hint"><i class="fas fa-arrows-left-right mr-1"></i>អូសទៅឆ្វេង/ស្ដាំ</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="py-2 px-3 text-left mobile-sticky-column font-medium">ល.រ</th>
+                                <th class="py-2 px-3 text-left mobile-sticky-column min-w-[120px] font-medium">ឈ្មោះសិស្ស</th>
+                                <!-- Subject Headers -->
+                                <th class="py-2 px-2 text-center subject-header" title="ភាសាខ្មែរ">ខ្មែរ</th>
+                                <th class="py-2 px-2 text-center subject-header" title="គណិតវិទ្យា">គណិត</th>
+                                <th class="py-2 px-2 text-center subject-header" title="រូបវិទ្យា">រូប</th>
+                                <th class="py-2 px-2 text-center subject-header" title="គីមីវិទ្យា">គីមី</th>
+                                <th class="py-2 px-2 text-center subject-header" title="ជីវវិទ្យា">ជីវ</th>
+                                <th class="py-2 px-2 text-center subject-header" title="ប្រវត្តិវិទ្យា">ប្រវត្តិ</th>
+                                <th class="py-2 px-2 text-center subject-header" title="ភូមិវិទ្យា">ភូមិ</th>
+                                <th class="py-2 px-2 text-center subject-header" title="អង់គ្លេស">អង់គ្លេស</th>
+                                <th class="py-2 px-2 text-center subject-header" title="សីលធម៌-ពលរដ្ឋ">សីលធម៌</th>
+                                <th class="py-2 px-2 text-center subject-header" title="ព័ត៌មានវិទ្យា">ព័ត៌មាន</th>
+                                <th class="py-2 px-2 text-center subject-header" title="អប់រំកាយ">កាយ</th>
+                                <th class="py-2 px-2 text-center subject-header" title="សិល្បៈ">សិល្បៈ</th>
+                                
+                                <!-- Summary Columns -->
+                                <th class="py-2 px-2 text-center bg-blue-50 font-medium">សរុប</th>
+                                <th class="py-2 px-2 text-center bg-blue-50 font-medium">មធ្យម</th>
+                                <th class="py-2 px-2 text-center bg-blue-50 font-medium">កម្រិត</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-gray-100">
+                            <!-- Table will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 2: Student View -->
+        <div id="view-student" class="view-content hidden">
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="text" id="studentSearch" 
+                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="ស្វែងរកសិស្ស...">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div id="studentCardsContainer">
+                <!-- Student cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- View 3: Subject View -->
+        <div id="view-subject" class="view-content hidden">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <!-- Subject filters will be added here -->
+            </div>
+            
+            <div id="subjectCardsContainer">
+                <!-- Subject cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Floating Action Button for Mobile -->
+        <button onclick="saveAllScores()" 
+                class="md:hidden fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition z-40">
+            <i class="fas fa-save text-lg"></i>
+        </button>
+
+        <!-- Instructions for Mobile -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+            <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-mobile-alt mr-2"></i>ការប្រើប្រាស់នៅលើទូរស័ព្ទ</h3>
+            <ul class="text-blue-700 space-y-1">
+                <li>• បញ្ចូលពិន្ទុ 0-10 ក្នុងក្រឡានីមួយៗ</li>
+                <li>• អូសឆ្វេង/ស្ដាំដើម្បីមើលមុខវិជ្ជាទាំងអស់</li>
+                <li>• ចុចរក្សាទុកដើម្បីរក្សាទុកទិន្នន័យ</li>
+                <li>• ចុចទៅលើឈ្មោះសិស្សដើម្បីមើលពិន្ទុពិស្តារ</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Student Detail Modal -->
+    <div id="studentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
+        <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+            <div class="bg-white rounded-xl w-full max-w-md">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="font-bold text-lg" id="modalStudentName"></h3>
+                    <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-600 text-xs">លេខសម្គាល់</p>
+                            <p class="font-bold" id="modalStudentId"></p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-600 text-xs">ភេទ</p>
+                            <p class="font-bold" id="modalStudentGender"></p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold mb-3">ពិន្ទុមុខវិជ្ជា</h4>
+                    <div id="modalScoresContainer" class="space-y-2">
+                        <!-- Scores will be populated here -->
+                    </div>
+                    
+                    <div class="mt-6 p-3 bg-blue-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-600 text-xs">មធ្យមភាគសរុប</p>
+                                <p class="text-xl font-bold text-blue-600" id="modalAverage"></p>
+                            </div>
+                            <span class="grade-badge" id="modalGrade"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 border-t flex justify-end space-x-3">
+                    <button onclick="closeStudentModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                        បិទ
+                    </button>
+                    <button onclick="printStudentScores()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                        <i class="fas fa-print mr-2"></i>បោះពុម្ព
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Subjects (12 subjects)
+        const subjects = [
+            "ភាសាខ្មែរ",
+            "គណិតវិទ្យា", 
+            "រូបវិទ្យា",
+            "គីមីវិទ្យា",
+            "ជីវវិទ្យា",
+            "ប្រវត្តិវិទ្យា",
+            "ភូមិវិទ្យា",
+            "អង់គ្លេស",
+            "សីលធម៌-ពលរដ្ឋ",
+            "ព័ត៌មានវិទ្យា",
+            "អប់រំកាយ",
+            "សិល្បៈ"
+        ];
+
+        // Subjects abbreviated for table headers
+        const subjectShort = [
+            "ខ្មែរ", "គណិត", "រូប", "គីមី", "ជីវ", "ប្រវត្តិ",
+            "ភូមិ", "អង់គ្លេស", "សីលធម៌", "ព័ត៌មាន", "កាយ", "សិល្បៈ"
+        ];
+
+        // Global variables
+        let students = [];
+        let scores = {};
+        let currentView = 'table';
+        let selectedStudentId = null;
+
+        // Initialize data
+        function initializeData() {
+            // Load students from class10A_students
+            const savedStudents = localStorage.getItem('class10A_students');
+            students = savedStudents ? JSON.parse(savedStudents) : [];
+            
+            // Load scores from class10A_scores
+            const savedScores = localStorage.getItem('class10A_scores');
+            scores = savedScores ? JSON.parse(savedScores) : {};
+            
+            // Initialize scores for students who don't have scores yet
+            students.forEach(student => {
+                if (!scores[student.id]) {
+                    scores[student.id] = Array(12).fill(0); // Initialize with 0 for 12 subjects
+                }
+            });
+            
+            renderAllViews();
+            updateStats();
+        }
+
+        // Switch between views
+        function switchView(view) {
+            currentView = view;
+            
+            // Update active tab
+            document.getElementById('tab-table').classList.remove('border-blue-500', 'text-blue-600');
+            document.getElementById('tab-student').classList.remove('border-blue-500', 'text-blue-600');
+            document.getElementById('tab-subject').classList.remove('border-blue-500', 'text-blue-600');
+            document.getElementById('tab-table').classList.add('text-gray-500');
+            document.getElementById('tab-student').classList.add('text-gray-500');
+            document.getElementById('tab-subject').classList.add('text-gray-500');
+            
+            document.getElementById(`tab-${view}`).classList.add('border-blue-500', 'text-blue-600');
+            document.getElementById(`tab-${view}`).classList.remove('text-gray-500');
+            
+            // Show/hide views
+            document.getElementById('view-table').classList.add('hidden');
+            document.getElementById('view-student').classList.add('hidden');
+            document.getElementById('view-subject').classList.add('hidden');
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            
+            // Render specific view if needed
+            if (view === 'student') {
+                renderStudentView();
+            } else if (view === 'subject') {
+                renderSubjectView();
+            }
+        }
+
+        // Render table view
+        function renderTableView() {
+            const tableBody = document.getElementById('tableBody');
+            if (!tableBody) return;
+            
+            let html = '';
+            
+            students.forEach((student, index) => {
+                const studentScores = scores[student.id] || Array(12).fill(0);
+                const total = calculateTotal(studentScores);
+                const average = calculateAverage(studentScores);
+                const grade = getGradeFromScore(average * 10); // Convert to 0-100 scale
+                
+                html += `
+                    <tr class="hover:bg-gray-50" onclick="openStudentModal('${student.id}')">
+                        <td class="py-2 px-3 mobile-sticky-column text-center">${index + 1}</td>
+                        <td class="py-2 px-3 mobile-sticky-column font-medium">
+                            <div class="flex items-center">
+                                
+                                <div>
+                                    <div class="font-medium">${student.name}</div>
+                                    
+                                </div>
+                            </div>
+                        </td>
+                `;
+                
+                // Add subject scores
+                studentScores.forEach((score, subjectIndex) => {
+                    const scoreClass = getScoreColorClass(score);
+                    html += `
+                        <td class="py-2 px-2 text-center score-cell">
+                            <input type="number" 
+                                   min="0" 
+                                   max="10" 
+                                   step="0.5"
+                                   value="${score}"
+                                   class="mobile-score-input ${scoreClass} border-none focus:ring-2 focus:ring-blue-300"
+                                   data-student="${student.id}"
+                                   data-subject="${subjectIndex}"
+                                   onchange="updateScore('${student.id}', ${subjectIndex}, this.value)"
+                                   onclick="event.stopPropagation()">
+                        </td>
+                    `;
+                });
+                
+                // Add summary columns
+                html += `
+                        <td class="py-2 px-2 text-center font-bold">${total.toFixed(1)}</td>
+                        <td class="py-2 px-2 text-center font-bold ${getAverageColorClass(average)}">
+                            ${average.toFixed(2)}
+                        </td>
+                        <td class="py-2 px-2 text-center">
+                            <span class="grade-badge ${getGradeColorClass(grade)}">${grade}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+
+        // Render student view (cards)
+        function renderStudentView() {
+            const container = document.getElementById('studentCardsContainer');
+            if (!container) return;
+            
+            let html = '';
+            
+            students.forEach(student => {
+                const studentScores = scores[student.id] || Array(12).fill(0);
+                const average = calculateAverage(studentScores);
+                const grade = getGradeFromScore(average * 10);
+                
+                html += `
+                    <div class="bg-white rounded-lg shadow mb-3 student-row-mobile" onclick="openStudentModal('${student.id}')">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold text-gray-800">${student.name}</h4>
+                                    
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold ${getAverageColorClass(average)}">${average.toFixed(2)}</div>
+                                    <span class="grade-badge ${getGradeColorClass(grade)}">${grade}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-4 gap-2">
+                `;
+                
+                // Show first 8 subjects on card
+                studentScores.slice(0, 8).forEach((score, index) => {
+                    html += `
+                        <div class="text-center">
+                            <div class="text-xs text-gray-600 mb-1">${subjectShort[index]}</div>
+                            <input type="number"
+                                   min="0"
+                                   max="10"
+                                   step="0.5"
+                                   value="${score}"
+                                   class="w-full py-1 text-center rounded border ${getScoreColorClass(score)}"
+                                   data-student="${student.id}"
+                                   data-subject="${index}"
+                                   onchange="updateScore('${student.id}', ${index}, this.value)"
+                                   onclick="event.stopPropagation()">
+                        </div>
+                    `;
+                });
+                
+                html += `
+                            </div>
+                            <div class="mt-3 text-center">
+                                <span class="text-xs text-gray-500">
+                                    <i class="fas fa-ellipsis-h"></i> ចុចដើម្បីមើលទាំងអស់
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Add search functionality
+            const searchInput = document.getElementById('studentSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const cards = container.querySelectorAll('.student-row-mobile');
+                    
+                    cards.forEach(card => {
+                        const studentName = card.querySelector('h4').textContent.toLowerCase();
+                        if (studentName.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Render subject view
+        function renderSubjectView() {
+            const container = document.getElementById('subjectCardsContainer');
+            if (!container) return;
+            
+            let html = '';
+            
+            subjects.forEach((subject, index) => {
+                const subjectScores = students.map(student => ({
+                    name: student.name,
+                    score: scores[student.id]?.[index] || 0
+                }));
+                
+                const subjectAverage = subjectScores.reduce((sum, item) => sum + item.score, 0) / students.length;
+                
+                html += `
+                    <div class="bg-white rounded-lg shadow mb-4 subject-card">
+                        <div class="p-4 border-b">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-bold text-gray-800">${subject}</h4>
+                                <div class="text-right">
+                                    <div class="text-sm text-gray-600">មធ្យមភាគ</div>
+                                    <div class="text-lg font-bold ${getAverageColorClass(subjectAverage)}">${subjectAverage.toFixed(2)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="space-y-2 max-h-60 overflow-y-auto">
+                `;
+                
+                subjectScores.forEach(item => {
+                    html += `
+                        <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mr-2">
+                                    <span class="text-xs">${item.name.charAt(0)}</span>
+                                </div>
+                                <span class="text-sm">${item.name}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="number"
+                                       min="0"
+                                       max="10"
+                                       step="0.5"
+                                       value="${item.score}"
+                                       class="w-16 py-1 text-center rounded border ${getScoreColorClass(item.score)}"
+                                       data-student="${students.find(s => s.name === item.name)?.id}"
+                                       data-subject="${index}"
+                                       onchange="updateScore('${students.find(s => s.name === item.name)?.id}', ${index}, this.value)">
+                                <span class="text-xs ${getScoreColorClass(item.score)} px-2 py-1 rounded">
+                                    ${getGradeFromScore(item.score * 10)}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Render all views
+        function renderAllViews() {
+            renderTableView();
+            renderStudentView();
+            renderSubjectView();
+        }
+
+        // Update score
+        function updateScore(studentId, subjectIndex, value) {
+            // Validate score (0-10)
+            let score = parseFloat(value);
+            if (isNaN(score)) score = 0;
+            score = Math.max(0, Math.min(10, score));
+            
+            // Update scores object
+            if (!scores[studentId]) {
+                scores[studentId] = Array(12).fill(0);
+            }
+            scores[studentId][subjectIndex] = score;
+            
+            // Update all views
+            renderAllViews();
+            updateStats();
+            
+            // Show save hint
+            showNotification('ពិន្ទុត្រូវបានផ្លាស់ប្តូរ! សូមរក្សាទុក', 'info');
+        }
+
+        // Calculate total score (0-120)
+        function calculateTotal(scoresArray) {
+            return scoresArray.reduce((sum, score) => sum + score, 0);
+        }
+
+        // Calculate average (0-10)
+        function calculateAverage(scoresArray) {
+            const total = calculateTotal(scoresArray);
+            return scoresArray.length > 0 ? total / scoresArray.length : 0;
+        }
+
+        // Get grade from score (0-100 scale)
+        function getGradeFromScore(score) {
+            if (score >= 90) return 'A';
+            if (score >= 80) return 'B';
+            if (score >= 70) return 'C';
+            if (score >= 60) return 'D';
+            if (score >= 50) return 'E';
+            return 'F';
+        }
+
+        // Get score color class
+        function getScoreColorClass(score) {
+            if (score >= 9) return 'score-9-10';
+            if (score >= 7) return 'score-7-8';
+            if (score >= 5) return 'score-5-6';
+            if (score >= 3) return 'score-3-4';
+            if (score >= 1) return 'score-1-2';
+            return 'score-0';
+        }
+
+        // Get grade color class
+        function getGradeColorClass(grade) {
+            switch(grade) {
+                case 'A': return 'bg-green-100 text-green-800';
+                case 'B': return 'bg-blue-100 text-blue-800';
+                case 'C': return 'bg-yellow-100 text-yellow-800';
+                case 'D': return 'bg-orange-100 text-orange-800';
+                case 'E': return 'bg-red-100 text-red-800';
+                case 'F': return 'bg-gray-100 text-gray-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // Get average color class
+        function getAverageColorClass(average) {
+            const score100 = average * 10;
+            if (score100 >= 80) return 'text-green-600';
+            if (score100 >= 60) return 'text-blue-600';
+            if (score100 >= 50) return 'text-yellow-600';
+            return 'text-red-600';
+        }
+
+        // Update statistics
+        function updateStats() {
+            if (students.length === 0) return;
+            
+            document.getElementById('totalStudents').textContent = students.length;
+            
+            // Calculate class statistics
+            const averages = students.map(student => {
+                const studentScores = scores[student.id] || Array(12).fill(0);
+                return calculateAverage(studentScores);
+            });
+            
+            const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
+            const topAverage = Math.max(...averages);
+            const lowAverage = Math.min(...averages);
+            
+            document.getElementById('classAverage').textContent = classAverage.toFixed(2);
+            document.getElementById('topAverage').textContent = topAverage.toFixed(2);
+            document.getElementById('lowAverage').textContent = lowAverage.toFixed(2);
+        }
+
+        // Save all scores
+        function saveAllScores() {
+            localStorage.setItem('class10A_scores', JSON.stringify(scores));
+            showNotification('ពិន្ទុទាំងអស់ត្រូវបានរក្សាទុក!', 'success');
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            // Create CSV content
+            const headers = ['ល.រ', 'ឈ្មោះសិស្ស', 'លេខសម្គាល់', 'ភេទ', ...subjects, 'សរុប', 'មធ្យមភាគ', 'កម្រិត'];
+            
+            const rows = students.map((student, index) => {
+                const studentScores = scores[student.id] || Array(12).fill(0);
+                const total = calculateTotal(studentScores);
+                const average = calculateAverage(studentScores);
+                const grade = getGradeFromScore(average * 10);
+                
+                return [
+                    index + 1,
+                    student.name,
+                    student.id,
+                    student.gender === 'male' ? 'ប្រុស' : 'ស្រី',
+                    ...studentScores.map(score => score.toFixed(1)),
+                    total.toFixed(1),
+                    average.toFixed(2),
+                    grade
+                ];
+            });
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+            
+            // Create and download file
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `ពិន្ទុសិស្ស_10A_${new Date().toISOString().slice(0,10)}.csv`);
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('ទិន្នន័យត្រូវបានទាញយក!', 'success');
+        }
+
+        // Open student modal
+        function openStudentModal(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            selectedStudentId = studentId;
+            const studentScores = scores[studentId] || Array(12).fill(0);
+            const average = calculateAverage(studentScores);
+            const grade = getGradeFromScore(average * 10);
+            
+            // Set modal content
+            document.getElementById('modalStudentName').textContent = student.name;
+            document.getElementById('modalStudentId').textContent = student.id;
+            document.getElementById('modalStudentGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
+            document.getElementById('modalAverage').textContent = average.toFixed(2);
+            document.getElementById('modalGrade').textContent = grade;
+            document.getElementById('modalGrade').className = `grade-badge ${getGradeColorClass(grade)}`;
+            
+            // Render scores
+            const scoresContainer = document.getElementById('modalScoresContainer');
+            let scoresHtml = '';
+            
+            studentScores.forEach((score, index) => {
+                scoresHtml += `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <div class="font-medium">${subjects[index]}</div>
+                            <div class="text-xs text-gray-500">ពិន្ទុ 0-10</div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <input type="number"
+                                   min="0"
+                                   max="10"
+                                   step="0.5"
+                                   value="${score}"
+                                   class="w-20 py-2 text-center rounded-lg border-2 ${getScoreColorClass(score)} font-bold"
+                                   data-student="${studentId}"
+                                   data-subject="${index}"
+                                   onchange="updateScore('${studentId}', ${index}, this.value)">
+                            <span class="grade-badge ${getGradeColorClass(getGradeFromScore(score * 10))}">
+                                ${getGradeFromScore(score * 10)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            scoresContainer.innerHTML = scoresHtml;
+            
+            // Show modal
+            document.getElementById('studentModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close student modal
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Print student scores
+        function printStudentScores() {
+            // Implement print functionality if needed
+            window.print();
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-100px)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            
+            // Auto-save every 30 seconds
+            setInterval(() => {
+                saveAllScores();
+            }, 30000);
+            
+            // Prevent accidental navigation
+            window.addEventListener('beforeunload', function(e) {
+                if (JSON.stringify(scores) !== JSON.stringify(JSON.parse(localStorage.getItem('class10A_scores') || '{}'))) {
+                    e.preventDefault();
+                    e.returnValue = 'ពិន្ទុមិនទាន់រក្សាទុកទេ។ តើអ្នកពិតជាចង់ចាកចេញមែនទេ?';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

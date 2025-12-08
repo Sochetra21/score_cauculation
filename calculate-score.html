@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ចូលពិន្ទុសិស្ស - ថ្នាក់ 10A</title>
+    <!-- Tailwind CSS -->
+    <script src="./tailwind.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Khmer OS Battambang', sans-serif;
+        }
+        
+        @font-face {
+            font-family: 'Khmer OS Battambang';
+            src: url('https://fonts.googleapis.com/css2?family=Khmer+OS+Battambang&display=swap');
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .score-cell {
+            min-width: 60px;
+        }
+
+        .mobile-score-input {
+            width: 100%;
+            height: 40px;
+            text-align: center;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .mobile-score-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .mobile-score-input:hover {
+            border-color: #9ca3af;
+        }
+
+        /* Score colors for better visibility */
+        .score-9-10 { background-color: #dcfce7; border-color: #86efac; }
+        .score-7-8 { background-color: #dbeafe; border-color: #93c5fd; }
+        .score-5-6 { background-color: #fef3c7; border-color: #fcd34d; }
+        .score-3-4 { background-color: #fde68a; border-color: #fbbf24; }
+        .score-1-2 { background-color: #fecaca; border-color: #f87171; }
+        .score-0 { background-color: #f3f4f6; border-color: #d1d5db; }
+
+        .student-row-mobile {
+            border-radius: 10px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        /* Mobile specific styles */
+        @media (max-width: 768px) {
+            .mobile-sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            }
+            
+            .mobile-sticky-column {
+                position: sticky;
+                left: 0;
+                z-index: 5;
+                background-color: white;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            }
+            
+            .subject-header {
+                min-width: 70px;
+                max-width: 70px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        .swipe-hint {
+            animation: swipe 2s infinite;
+        }
+
+        @keyframes swipe {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* Auto-save indicator */
+        .auto-save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            z-index: 100;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            height: 3px;
+            background-color: #3b82f6;
+            width: 0%;
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .fab-save {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .fab-actions {
+            position: fixed;
+            bottom: 150px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 99;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .fab-actions.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fab-action {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: white;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .fab-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .fab-export {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .fab-ranking {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .fab-close {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        /* Subject Management Modal */
+        .subject-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s;
+        }
+
+        .subject-item:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .subject-item.dragging {
+            opacity: 0.5;
+            background: #f3f4f6;
+        }
+
+        .drag-handle {
+            cursor: move;
+            color: #9ca3af;
+            padding: 4px;
+        }
+
+        .drag-handle:hover {
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Auto-save Indicator -->
+    <div id="autoSaveIndicator" class="auto-save-indicator">
+        <i class="fas fa-save mr-2"></i>កំពុងរក្សាទុក...
+    </div>
+
+    <!-- Floating Action Buttons -->
+    <div class="fab-actions" id="fabActions">
+        <button onclick="exportToExcel()" class="fab-action fab-export" title="Export to Excel">
+            <i class="fas fa-file-excel"></i>
+        </button>
+        <button onclick="goToRankingPage()" class="fab-action fab-ranking" title="មើលចំណាត់ថ្នាក់">
+            <i class="fas fa-chart-bar"></i>
+        </button>
+        <button onclick="toggleFabActions()" class="fab-action fab-close" title="បិទ">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <button onclick="toggleFabActions()" class="fab fab-save" id="fabMain" title="សកម្មភាព">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Header -->
+    <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
+        <div class="progress-bar" id="saveProgress"></div>
+        <div class="container mx-auto px-3 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="bg-white p-2 rounded-full hover:bg-gray-100 transition">
+                        <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-lg font-bold">បញ្ចូលពិន្ទុសិស្ស - ថ្នាក់ 10A</h1>
+                        <p class="text-xs opacity-90" id="subjectCountDisplay">កំពុងផ្ទុកមុខវិជ្ជា...</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="openSubjectManager()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm">
+                        <i class="fas fa-cog"></i>
+                        <span class="hidden md:inline ml-1">គ្រប់គ្រងមុខវិជ្ជា</span>
+                    </button>
+                    <button onclick="goToRankingPage()" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="hidden md:inline ml-1">មើលចំណាត់ថ្នាក់</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-3 py-4">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">សិស្សសរុប</p>
+                        <p class="text-lg font-bold text-blue-600" id="totalStudents">0</p>
+                    </div>
+                    <i class="fas fa-users text-blue-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">មធ្យមភាគថ្នាក់</p>
+                        <p class="text-lg font-bold text-green-600" id="classAverage">0.00</p>
+                    </div>
+                    <i class="fas fa-chart-line text-green-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">ចំនួនពិន្ទុបានបញ្ចូល</p>
+                        <p class="text-lg font-bold text-purple-600" id="scoresEntered">0</p>
+                    </div>
+                    <i class="fas fa-check-circle text-purple-500"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-xs">ពិន្ទុក្នុងមួយសិស្ស</p>
+                        <p class="text-lg font-bold text-red-600" id="scoresPerStudent">0/0</p>
+                    </div>
+                    <i class="fas fa-clipboard-check text-red-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 1: Table View (Default) -->
+        <div id="view-table" class="view-content">
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-4">
+                <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+                    <div class="flex items-center justify-between">
+                        <h2 class="font-bold text-gray-800">តារាងបញ្ចូលពិន្ទុ</h2>
+                        <div class="text-xs text-gray-600">
+                            <span class="swipe-hint"><i class="fas fa-arrows-left-right mr-1"></i>អូសទៅឆ្វេង/ស្ដាំ</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-1">ពិន្ទុនឹងរក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-50" id="tableHeader">
+                                <!-- Headers will be populated dynamically -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-gray-100">
+                            <!-- Table will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 border-t bg-gray-50 text-xs text-gray-600">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <i class="fas fa-info-circle mr-1"></i>
+                            <span>ចុចលើពិន្ទុដើម្បីកែសម្រួល • ពិន្ទុ 0-10 • អូសទៅឆ្វេងសម្រាប់មុខវិជ្ជាផ្សេងទៀត</span>
+                        </div>
+                        <div id="lastSaveTime" class="text-gray-500">
+                            <i class="fas fa-clock mr-1"></i>មិនទាន់រក្សាទុក
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View 2: Student View -->
+        <div id="view-student" class="view-content hidden">
+            <div class="mb-4">
+                <div class="relative">
+                    <input type="text" id="studentSearch" 
+                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="ស្វែងរកសិស្ស...">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div id="studentCardsContainer">
+                <!-- Student cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Instructions for Mobile -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+            <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-mobile-alt mr-2"></i>ការប្រើប្រាស់</h3>
+            <ul class="text-blue-700 space-y-1">
+                <li>• បញ្ចូលពិន្ទុ 0-10 ក្នុងក្រឡានីមួយៗ (អាចប្រើ 0.5)</li>
+                <li>• ពិន្ទុនឹងរក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</li>
+                <li>• អូសឆ្វេង/ស្ដាំដើម្បីមើលមុខវិជ្ជាទាំងអស់</li>
+                <li>• ចុចប៊ូតុង <span class="font-bold text-yellow-600">"គ្រប់គ្រងមុខវិជ្ជា"</span> ដើម្បីកែប្រែបញ្ជីមុខវិជ្ជា</li>
+                <li>• ចុច <span class="font-bold text-purple-600">"មើលចំណាត់ថ្នាក់"</span> ដើម្បីមើលលំដាប់ពិន្ទុ</li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Student Detail Modal -->
+    <div id="studentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
+        <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+            <div class="bg-white rounded-xl w-full max-w-md">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="font-bold text-lg" id="modalStudentName"></h3>
+                    <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-600 text-xs">លេខសម្គាល់</p>
+                            <p class="font-bold" id="modalStudentId"></p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-600 text-xs">ភេទ</p>
+                            <p class="font-bold" id="modalStudentGender"></p>
+                        </div>
+                    </div>
+                    
+                    <h4 class="font-bold mb-3">ពិន្ទុមុខវិជ្ជា</h4>
+                    <div id="modalScoresContainer" class="space-y-2">
+                        <!-- Scores will be populated here -->
+                    </div>
+                </div>
+                <div class="p-4 border-t flex justify-end">
+                    <button onclick="closeStudentModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                        បិទ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subject Management Modal -->
+    <div id="subjectManagerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
+        <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+            <div class="bg-white rounded-xl w-full max-w-2xl">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="font-bold text-lg">គ្រប់គ្រងមុខវិជ្ជា</h3>
+                    <button onclick="closeSubjectManager()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <div class="mb-6">
+                        <p class="text-gray-600 mb-3">បន្ថែម កែសម្រួល ឬលុបមុខវិជ្ជា។ អូសដើម្បីផ្លាស់ប្តូរលំដាប់។</p>
+                        
+                        <div class="flex space-x-2 mb-4">
+                            <input type="text" 
+                                   id="newSubjectInput" 
+                                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   placeholder="បញ្ចូលឈ្មោះមុខវិជ្ជាថ្មី...">
+                            <button onclick="addNewSubject()" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                <i class="fas fa-plus mr-2"></i>បន្ថែម
+                            </button>
+                        </div>
+                        
+                        <div id="subjectListContainer" class="space-y-2">
+                            <!-- Subject list will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 class="font-bold text-yellow-800 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>ការព្រមាន</h4>
+                        <p class="text-yellow-700 text-sm">
+                            ការកែប្រែបញ្ជីមុខវិជ្ជានឹងបោះបង់ពិន្ទុចាស់ទាំងអស់។ 
+                            សូមធ្វើការរក្សាទុកមុនពេលកែប្រែ។
+                        </p>
+                    </div>
+                </div>
+                <div class="p-4 border-t flex justify-end space-x-3">
+                    <button onclick="closeSubjectManager()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                        បោះបង់
+                    </button>
+                    <button onclick="saveSubjects()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                        <i class="fas fa-save mr-2"></i>រក្សាទុកការផ្លាស់ប្តូរ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let students = [];
+        let scores = {};
+        let subjects = []; // Now dynamic!
+        let currentView = 'table';
+        let selectedStudentId = null;
+        let autoSaveInterval;
+        let lastSaveTime = null;
+        let hasUnsavedChanges = false;
+        let isFabOpen = false;
+
+        // Initialize data
+        function initializeData() {
+            // Load students from class10A_students
+            const savedStudents = localStorage.getItem('class10A_students');
+            students = savedStudents ? JSON.parse(savedStudents) : [];
+            
+            // Load subjects from localStorage or use default
+            const savedSubjects = localStorage.getItem('class10A_subjects');
+            if (savedSubjects) {
+                subjects = JSON.parse(savedSubjects);
+            } else {
+                // Default subjects if none exist
+                subjects = [
+                    "ការអាន",
+                    "ការសរសេរ", 
+                    "ការនិយាយ",
+                    "ការស្ដាប់",
+                    "ចំនួន",
+                    "ធរណីមាត្រ",
+                    "គំនូរ",
+                    "កសិកម្ម",
+                    "សីលធម៌-ពលរដ្ឋ",
+                    "ព័ត៌មានវិទ្យា",
+                    "អប់រំកាយ",
+                    "សិល្បៈ"
+                ];
+                localStorage.setItem('class10A_subjects', JSON.stringify(subjects));
+            }
+            
+            // Update subject count display
+            document.getElementById('subjectCountDisplay').textContent = 
+                `បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ${subjects.length}`;
+            
+            // Load scores from class10A_scores
+            const savedScores = localStorage.getItem('class10A_scores');
+            scores = savedScores ? JSON.parse(savedScores) : {};
+            
+            // Initialize scores for students who don't have scores yet or adjust for subject count changes
+            students.forEach(student => {
+                if (!scores[student.id]) {
+                    scores[student.id] = Array(subjects.length).fill(0);
+                } else if (scores[student.id].length !== subjects.length) {
+                    // Adjust scores array length if subject count changed
+                    const newScores = Array(subjects.length).fill(0);
+                    const minLength = Math.min(scores[student.id].length, subjects.length);
+                    for (let i = 0; i < minLength; i++) {
+                        newScores[i] = scores[student.id][i];
+                    }
+                    scores[student.id] = newScores;
+                    hasUnsavedChanges = true;
+                }
+            });
+            
+            // Load last save time
+            lastSaveTime = localStorage.getItem('class10A_lastSave');
+            if (lastSaveTime) {
+                updateLastSaveDisplay();
+            }
+            
+            renderAllViews();
+            updateStats();
+            
+            // Start auto-save
+            startAutoSave();
+        }
+
+        // Toggle Floating Action Buttons
+        function toggleFabActions() {
+            const fabActions = document.getElementById('fabActions');
+            const fabMain = document.getElementById('fabMain');
+            
+            if (isFabOpen) {
+                fabActions.classList.remove('show');
+                fabMain.innerHTML = '<i class="fas fa-bars"></i>';
+                fabMain.title = "សកម្មភាព";
+            } else {
+                fabActions.classList.add('show');
+                fabMain.innerHTML = '<i class="fas fa-times"></i>';
+                fabMain.title = "បិទ";
+            }
+            
+            isFabOpen = !isFabOpen;
+        }
+
+        // Close FAB on outside click
+        document.addEventListener('click', function(event) {
+            const fabActions = document.getElementById('fabActions');
+            const fabMain = document.getElementById('fabMain');
+            
+            if (isFabOpen && !fabActions.contains(event.target) && !fabMain.contains(event.target)) {
+                toggleFabActions();
+            }
+        });
+
+        // Start auto-save functionality
+        function startAutoSave() {
+            // Clear any existing interval
+            if (autoSaveInterval) {
+                clearInterval(autoSaveInterval);
+            }
+            
+            // Auto-save every 30 seconds
+            autoSaveInterval = setInterval(() => {
+                if (hasUnsavedChanges) {
+                    saveAllScores();
+                }
+            }, 30000); // 30 seconds
+            
+            console.log('Auto-save started (30 second interval)');
+        }
+
+        // Switch between views
+        function switchView(view) {
+            currentView = view;
+            
+            // Update active tab
+            document.getElementById('tab-table').classList.remove('border-blue-500', 'text-blue-600');
+            document.getElementById('tab-student').classList.remove('border-blue-500', 'text-blue-600');
+            document.getElementById('tab-table').classList.add('text-gray-500');
+            document.getElementById('tab-student').classList.add('text-gray-500');
+            
+            document.getElementById(`tab-${view}`).classList.add('border-blue-500', 'text-blue-600');
+            document.getElementById(`tab-${view}`).classList.remove('text-gray-500');
+            
+            // Show/hide views
+            document.getElementById('view-table').classList.add('hidden');
+            document.getElementById('view-student').classList.add('hidden');
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            
+            // Render specific view if needed
+            if (view === 'student') {
+                renderStudentView();
+            }
+        }
+
+        // Render table view (score entry only)
+        function renderTableView() {
+            const tableHeader = document.getElementById('tableHeader');
+            const tableBody = document.getElementById('tableBody');
+            
+            if (!tableHeader || !tableBody) return;
+            
+            // Render table headers
+            let headerHtml = `
+                <th class="py-2 px-3 text-left mobile-sticky-column font-medium">ល.រ</th>
+                <th class="py-2 px-3 text-left mobile-sticky-column min-w-[140px] font-medium">ឈ្មោះសិស្ស</th>
+            `;
+            
+            subjects.forEach((subject, index) => {
+                const shortName = subject.length > 6 ? subject.substring(0, 6) + '...' : subject;
+                headerHtml += `
+                    <th class="py-2 px-2 text-center subject-header" title="${subject}">
+                        ${shortName}
+                    </th>
+                `;
+            });
+            
+            tableHeader.innerHTML = headerHtml;
+            
+            // Render table rows
+            let bodyHtml = '';
+            
+            students.forEach((student, index) => {
+                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
+                
+                bodyHtml += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-3 mobile-sticky-column text-center font-medium bg-gray-50">${index + 1}</td>
+                        <td class="py-3 px-3 mobile-sticky-column font-medium">
+                            <div class="font-medium text-gray-800">${student.name}</div>
+                            <div class="text-xs text-gray-500">${student.id}</div>
+                        </td>
+                `;
+                
+                // Add subject scores
+                studentScores.forEach((score, subjectIndex) => {
+                    const scoreClass = getScoreColorClass(score);
+                    bodyHtml += `
+                        <td class="py-2 px-2 text-center score-cell">
+                            <input type="number" 
+                                   min="0" 
+                                   max="10" 
+                                   step="0.5"
+                                   value="${score === 0 ? '' : score}"
+                                   placeholder="0"
+                                   class="mobile-score-input ${scoreClass}"
+                                   data-student="${student.id}"
+                                   data-subject="${subjectIndex}"
+                                   oninput="handleScoreInput('${student.id}', ${subjectIndex}, this)"
+                                   onfocus="this.select()">
+                        </td>
+                    `;
+                });
+                
+                bodyHtml += `</tr>`;
+            });
+            
+            tableBody.innerHTML = bodyHtml;
+        }
+
+        // Render student view (cards)
+        function renderStudentView() {
+            const container = document.getElementById('studentCardsContainer');
+            if (!container) return;
+            
+            let html = '';
+            
+            students.forEach(student => {
+                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
+                
+                html += `
+                    <div class="bg-white rounded-lg shadow mb-3 student-row-mobile">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold text-gray-800">${student.name}</h4>
+                                    <div class="flex items-center mt-1">
+                                        <span class="text-xs px-2 py-1 rounded-full ${
+                                            student.gender === 'male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600'
+                                        }">
+                                            ${student.gender === 'male' ? 'ប្រុស' : 'ស្រី'}
+                                        </span>
+                                        <span class="text-xs text-gray-500 ml-2">${student.id}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-2">
+                `;
+                
+                // Show subjects on card (up to 9 for better mobile display)
+                const maxSubjects = Math.min(9, subjects.length);
+                studentScores.slice(0, maxSubjects).forEach((score, index) => {
+                    const shortName = subjects[index].length > 5 ? 
+                        subjects[index].substring(0, 5) + '...' : subjects[index];
+                    
+                    html += `
+                        <div class="text-center">
+                            <div class="text-xs text-gray-600 mb-1" title="${subjects[index]}">${shortName}</div>
+                            <input type="number"
+                                   min="0"
+                                   max="10"
+                                   step="0.5"
+                                   value="${score === 0 ? '' : score}"
+                                   placeholder="0"
+                                   class="w-full py-1 text-center rounded border ${getScoreColorClass(score)}"
+                                   data-student="${student.id}"
+                                   data-subject="${index}"
+                                   oninput="handleScoreInput('${student.id}', ${index}, this)">
+                        </div>
+                    `;
+                });
+                
+                if (subjects.length > maxSubjects) {
+                    html += `
+                        <div class="text-center col-span-3 mt-2">
+                            <button onclick="openStudentModal('${student.id}')" class="text-xs text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-expand-alt mr-1"></i>មើលមុខវិជ្ជាទាំងអស់ (${subjects.length})
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Add search functionality
+            const searchInput = document.getElementById('studentSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const cards = container.querySelectorAll('.student-row-mobile');
+                    
+                    cards.forEach(card => {
+                        const studentName = card.querySelector('h4').textContent.toLowerCase();
+                        if (studentName.includes(searchTerm)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        // Render all views
+        function renderAllViews() {
+            renderTableView();
+            renderStudentView();
+        }
+
+        // Handle score input
+        function handleScoreInput(studentId, subjectIndex, inputElement) {
+            let value = inputElement.value.trim();
+            
+            // Allow empty value (for clearing)
+            if (value === '') {
+                updateScore(studentId, subjectIndex, 0);
+                inputElement.value = '';
+                return;
+            }
+            
+            // Validate score
+            let score = parseFloat(value);
+            if (isNaN(score)) {
+                score = 0;
+            }
+            
+            // Limit to 0-10
+            score = Math.max(0, Math.min(10, score));
+            
+            // Round to nearest 0.5 if needed
+            score = Math.round(score * 2) / 2;
+            
+            // Update score
+            updateScore(studentId, subjectIndex, score);
+            
+            // Update input value
+            inputElement.value = score === 0 ? '' : score;
+        }
+
+        // Update score
+        function updateScore(studentId, subjectIndex, value) {
+            let score = parseFloat(value);
+            if (isNaN(score)) score = 0;
+            score = Math.max(0, Math.min(10, score));
+            
+            // Check if score actually changed
+            const currentScore = scores[studentId]?.[subjectIndex] || 0;
+            if (Math.abs(currentScore - score) < 0.01) return;
+            
+            // Update scores object
+            if (!scores[studentId]) {
+                scores[studentId] = Array(subjects.length).fill(0);
+            }
+            scores[studentId][subjectIndex] = score;
+            
+            // Mark as unsaved
+            hasUnsavedChanges = true;
+            
+            // Update stats immediately
+            updateStats();
+            
+            // Update input color
+            updateInputColor(studentId, subjectIndex, score);
+        }
+
+        // Update input color
+        function updateInputColor(studentId, subjectIndex, score) {
+            const scoreClass = getScoreColorClass(score);
+            
+            // Find and update input in table view
+            const tableInputs = document.querySelectorAll(
+                `input[data-student="${studentId}"][data-subject="${subjectIndex}"]`
+            );
+            
+            tableInputs.forEach(input => {
+                // Remove existing score classes
+                input.classList.remove('score-9-10', 'score-7-8', 'score-5-6', 'score-3-4', 'score-1-2', 'score-0');
+                // Add new class
+                input.classList.add(scoreClass);
+            });
+        }
+
+        // Get score color class
+        function getScoreColorClass(score) {
+            if (score >= 9) return 'score-9-10';
+            if (score >= 7) return 'score-7-8';
+            if (score >= 5) return 'score-5-6';
+            if (score >= 3) return 'score-3-4';
+            if (score >= 1) return 'score-1-2';
+            return 'score-0';
+        }
+
+        // Calculate total score
+        function calculateTotal(scoresArray) {
+            return scoresArray.reduce((sum, score) => sum + score, 0);
+        }
+
+        // Calculate average (0-10)
+        function calculateAverage(scoresArray) {
+            const total = calculateTotal(scoresArray);
+            return scoresArray.length > 0 ? total / scoresArray.length : 0;
+        }
+
+        // Calculate scores entered count
+        function countScoresEntered() {
+            let count = 0;
+            students.forEach(student => {
+                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
+                count += studentScores.filter(score => score > 0).length;
+            });
+            return count;
+        }
+
+        // Calculate average scores per student
+        function calculateScoresPerStudent() {
+            const totalScores = countScoresEntered();
+            return `${Math.round(totalScores / students.length)}/${subjects.length}`;
+        }
+
+        // Update statistics
+        function updateStats() {
+            if (students.length === 0) return;
+            
+            document.getElementById('totalStudents').textContent = students.length;
+            
+            // Calculate class average
+            const averages = students.map(student => {
+                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
+                return calculateAverage(studentScores);
+            });
+            
+            const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
+            document.getElementById('classAverage').textContent = classAverage.toFixed(2);
+            
+            // Calculate scores entered
+            const scoresEntered = countScoresEntered();
+            document.getElementById('scoresEntered').textContent = scoresEntered;
+            
+            // Calculate scores per student
+            document.getElementById('scoresPerStudent').textContent = calculateScoresPerStudent();
+        }
+
+        // Save all scores
+        function saveAllScores() {
+            if (!hasUnsavedChanges && Object.keys(scores).length > 0) {
+                return; // No changes to save
+            }
+            
+            // Show saving indicator
+            showAutoSaveIndicator();
+            
+            // Save scores to localStorage
+            localStorage.setItem('class10A_scores', JSON.stringify(scores));
+            
+            // Update last save time
+            lastSaveTime = new Date().toISOString();
+            localStorage.setItem('class10A_lastSave', lastSaveTime);
+            
+            // Update display
+            updateLastSaveDisplay();
+            
+            // Reset unsaved changes flag
+            hasUnsavedChanges = false;
+            
+            console.log('Scores saved to localStorage:', lastSaveTime);
+        }
+
+        // Show auto-save indicator
+        function showAutoSaveIndicator() {
+            const indicator = document.getElementById('autoSaveIndicator');
+            const progressBar = document.getElementById('saveProgress');
+            
+            // Show progress animation
+            progressBar.style.width = '100%';
+            indicator.style.display = 'flex';
+            
+            setTimeout(() => {
+                indicator.style.display = 'none';
+                progressBar.style.width = '0%';
+            }, 2000);
+        }
+
+        // Update last save time display
+        function updateLastSaveDisplay() {
+            if (!lastSaveTime) return;
+            
+            const lastSaveElement = document.getElementById('lastSaveTime');
+            if (!lastSaveElement) return;
+            
+            const saveTime = new Date(lastSaveTime);
+            const now = new Date();
+            const diffMs = now - saveTime;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            let displayText;
+            if (diffMins < 1) {
+                displayText = 'ទើបតែរក្សាទុក';
+            } else if (diffMins < 60) {
+                displayText = `រក្សាទុក ${diffMins} នាទីមុន`;
+            } else {
+                const diffHours = Math.floor(diffMins / 60);
+                displayText = `រក្សាទុក ${diffHours} ម៉ោងមុន`;
+            }
+            
+            lastSaveElement.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i>${displayText}`;
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            // Create CSV content
+            const headers = ['ល.រ', 'ឈ្មោះសិស្ស', 'លេខសម្គាល់', 'ភេទ', ...subjects];
+            
+            const rows = students.map((student, index) => {
+                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
+                
+                return [
+                    index + 1,
+                    student.name,
+                    student.id,
+                    student.gender === 'male' ? 'ប្រុស' : 'ស្រី',
+                    ...studentScores.map(score => score.toFixed(1))
+                ];
+            });
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+            
+            // Create and download file
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            const dateStr = new Date().toISOString().slice(0,10);
+            link.setAttribute('download', `ពិន្ទុសិស្ស_10A_${dateStr}.csv`);
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('ទិន្នន័យត្រូវបានទាញយក!', 'success');
+            
+            // Close FAB if open
+            if (isFabOpen) {
+                toggleFabActions();
+            }
+        }
+
+        // Navigate to ranking page
+        function goToRankingPage() {
+            // First save any unsaved changes
+            if (hasUnsavedChanges) {
+                saveAllScores();
+            }
+            
+            // Navigate to ranking page
+            window.location.href = 'ranking.html';
+            
+            // Close FAB if open
+            if (isFabOpen) {
+                toggleFabActions();
+            }
+        }
+
+        // Open student modal
+        function openStudentModal(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            selectedStudentId = studentId;
+            const studentScores = scores[studentId] || Array(subjects.length).fill(0);
+            
+            // Set modal content
+            document.getElementById('modalStudentName').textContent = student.name;
+            document.getElementById('modalStudentId').textContent = student.id;
+            document.getElementById('modalStudentGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
+            
+            // Render scores
+            const scoresContainer = document.getElementById('modalScoresContainer');
+            let scoresHtml = '';
+            
+            studentScores.forEach((score, index) => {
+                scoresHtml += `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <div class="font-medium">${subjects[index]}</div>
+                            <div class="text-xs text-gray-500">ពិន្ទុ 0-10</div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <input type="number"
+                                   min="0"
+                                   max="10"
+                                   step="0.5"
+                                   value="${score === 0 ? '' : score}"
+                                   placeholder="0"
+                                   class="w-20 py-2 text-center rounded-lg border-2 ${getScoreColorClass(score)} font-bold"
+                                   data-student="${studentId}"
+                                   data-subject="${index}"
+                                   oninput="handleScoreInput('${studentId}', ${index}, this)">
+                            <span class="text-xs ${getScoreColorClass(score)} px-2 py-1 rounded">
+                                ${score.toFixed(1)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            scoresContainer.innerHTML = scoresHtml;
+            
+            // Show modal
+            document.getElementById('studentModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close student modal
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Open subject manager modal
+        function openSubjectManager() {
+            renderSubjectList();
+            document.getElementById('subjectManagerModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close subject manager modal
+        function closeSubjectManager() {
+            document.getElementById('subjectManagerModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Render subject list for management
+        function renderSubjectList() {
+            const container = document.getElementById('subjectListContainer');
+            let html = '';
+            
+            subjects.forEach((subject, index) => {
+                html += `
+                    <div class="subject-item" data-index="${index}" draggable="true">
+                        <div class="flex items-center">
+                            <div class="drag-handle mr-3">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                            <span class="font-medium">${index + 1}. ${subject}</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editSubject(${index})" class="px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="removeSubject(${index})" class="px-3 py-1 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Add drag and drop functionality
+            setupDragAndDrop();
+        }
+
+        // Setup drag and drop for subjects
+        function setupDragAndDrop() {
+            const container = document.getElementById('subjectListContainer');
+            let draggedItem = null;
+            
+            container.querySelectorAll('.subject-item').forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    draggedItem = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                
+                item.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    draggedItem = null;
+                });
+                
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                });
+                
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    if (draggedItem && draggedItem !== this) {
+                        const fromIndex = parseInt(draggedItem.getAttribute('data-index'));
+                        const toIndex = parseInt(this.getAttribute('data-index'));
+                        
+                        // Swap subjects in array
+                        [subjects[fromIndex], subjects[toIndex]] = [subjects[toIndex], subjects[fromIndex]];
+                        
+                        // Update scores for all students
+                        students.forEach(student => {
+                            if (scores[student.id]) {
+                                [scores[student.id][fromIndex], scores[student.id][toIndex]] = 
+                                [scores[student.id][toIndex], scores[student.id][fromIndex]];
+                            }
+                        });
+                        
+                        hasUnsavedChanges = true;
+                        renderSubjectList();
+                    }
+                });
+            });
+        }
+
+        // Add new subject
+        function addNewSubject() {
+            const input = document.getElementById('newSubjectInput');
+            const subjectName = input.value.trim();
+            
+            if (!subjectName) {
+                alert('សូមបញ្ចូលឈ្មោះមុខវិជ្ជា!');
+                return;
+            }
+            
+            if (subjects.includes(subjectName)) {
+                alert('មុខវិជ្ជានេះមានរួចហើយ!');
+                return;
+            }
+            
+            // Add new subject
+            subjects.push(subjectName);
+            
+            // Add score column for all students
+            students.forEach(student => {
+                if (!scores[student.id]) {
+                    scores[student.id] = [];
+                }
+                scores[student.id].push(0);
+            });
+            
+            // Clear input
+            input.value = '';
+            
+            // Update display
+            hasUnsavedChanges = true;
+            renderSubjectList();
+            
+            // Update subject count display
+            document.getElementById('subjectCountDisplay').textContent = 
+                `បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ${subjects.length}`;
+        }
+
+        // Edit subject
+        function editSubject(index) {
+            const newName = prompt('កែសម្រួលឈ្មោះមុខវិជ្ជា:', subjects[index]);
+            
+            if (newName && newName.trim() && newName.trim() !== subjects[index]) {
+                subjects[index] = newName.trim();
+                hasUnsavedChanges = true;
+                renderSubjectList();
+            }
+        }
+
+        // Remove subject
+        function removeSubject(index) {
+            if (!confirm(`តើអ្នកពិតជាចង់លុបមុខវិជ្ជា "${subjects[index]}" មែនទេ?\n\nពិន្ទុទាំងអស់សម្រាប់មុខវិជ្ជានេះនឹងត្រូវបានលុប។`)) {
+                return;
+            }
+            
+            // Remove subject
+            subjects.splice(index, 1);
+            
+            // Remove scores for this subject from all students
+            students.forEach(student => {
+                if (scores[student.id]) {
+                    scores[student.id].splice(index, 1);
+                }
+            });
+            
+            // Update display
+            hasUnsavedChanges = true;
+            renderSubjectList();
+            
+            // Update subject count display
+            document.getElementById('subjectCountDisplay').textContent = 
+                `បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ${subjects.length}`;
+        }
+
+        // Save subjects changes
+        function saveSubjects() {
+            // Save subjects to localStorage
+            localStorage.setItem('class10A_subjects', JSON.stringify(subjects));
+            
+            // Save updated scores
+            localStorage.setItem('class10A_scores', JSON.stringify(scores));
+            
+            // Update last save time
+            lastSaveTime = new Date().toISOString();
+            localStorage.setItem('class10A_lastSave', lastSaveTime);
+            
+            // Update all views
+            renderAllViews();
+            updateStats();
+            updateLastSaveDisplay();
+            
+            // Close modal
+            closeSubjectManager();
+            
+            // Show success message
+            showNotification('មុខវិជ្ជាត្រូវបានរក្សាទុក!', 'success');
+            
+            hasUnsavedChanges = false;
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-100px)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            
+            // Prevent accidental navigation
+            window.addEventListener('beforeunload', function(e) {
+                if (hasUnsavedChanges) {
+                    e.preventDefault();
+                    e.returnValue = 'ពិន្ទុមិនទាន់រក្សាទុកទេ។ តើអ្នកពិតជាចង់ចាកចេញមែនទេ?';
+                    return 'ពិន្ទុមិនទាន់រក្សាទុកទេ។ តើអ្នកពិតជាចង់ចាកចេញមែនទេ?';
+                }
+            });
+            
+            // Auto-save when page becomes visible (user returns to tab)
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden && hasUnsavedChanges) {
+                    saveAllScores();
+                }
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl+S or Cmd+S to save
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveAllScores();
+                }
+                
+                // Escape to close modals
+                if (e.key === 'Escape') {
+                    const studentModal = document.getElementById('studentModal');
+                    const subjectModal = document.getElementById('subjectManagerModal');
+                    
+                    if (!studentModal.classList.contains('hidden')) {
+                        closeStudentModal();
+                    } else if (!subjectModal.classList.contains('hidden')) {
+                        closeSubjectManager();
+                    } else if (isFabOpen) {
+                        toggleFabActions();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
