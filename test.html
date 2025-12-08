@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បញ្ជីរាយនាម្សិសស - Student Grade Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Battambang', 'Khmer OS Battambang', sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Battambang', sans-serif;
+        }
+
+        .student-inputs {
+            display: grid;
+            grid-template-columns: 50px 1fr 80px 80px 100px 60px;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Battambang', sans-serif;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+        }
+
+        .btn-secondary:hover {
+            background: #0b7dda;
+        }
+
+        .report {
+            background: white;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .emblem {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .motto {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .school-info {
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .statistics {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .stat-row {
+            margin-bottom: 8px;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .student-table th,
+        .student-table td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .student-table th {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .student-table td:nth-child(2),
+        .student-table td:nth-child(7) {
+            text-align: left;
+        }
+
+        .footer {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-section {
+            text-align: center;
+            width: 45%;
+        }
+
+        .signature-line {
+            margin-top: 60px;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .form-section {
+                display: none;
+            }
+            .report {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h2>បំពេញព័ត៌មាន - Fill Information</h2>
+            
+            <div class="form-group">
+                <label>ឈ្មោះសាលា - School Name:</label>
+                <input type="text" id="schoolName" value="សាលាបឋមសិក្សាអាស៊ី">
+            </div>
+
+            <div class="form-group">
+                <label>ថ្នាក់ - Grade:</label>
+                <input type="text" id="grade" value="ទី៦">
+            </div>
+
+            <div class="form-group">
+                <label>ក្រុម - Class:</label>
+                <input type="text" id="classRoom" value="ក">
+            </div>
+
+            <div class="form-group">
+                <label>ឆ្នាំសិក្សា - School Year:</label>
+                <input type="text" id="schoolYear" value="២០២៤-២០២៥">
+            </div>
+
+            <h3 style="margin-top: 20px;">សិស្ស - Students</h3>
+            <div id="studentList"></div>
+            <button onclick="addStudent()">បន្ថែមសិស្ស - Add Student</button>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn-secondary" onclick="generateReport()">បង្កើតរបាយការណ៍ - Generate Report</button>
+                <button class="btn-secondary" onclick="window.print()">បោះពុម្ព - Print</button>
+            </div>
+        </div>
+
+        <div class="report" id="report"></div>
+    </div>
+
+    <script>
+        let students = [];
+
+        function addStudent() {
+            const container = document.getElementById('studentList');
+            const index = students.length;
+            
+            const studentDiv = document.createElement('div');
+            studentDiv.className = 'student-inputs';
+            studentDiv.innerHTML = `
+                <span>${index + 1}</span>
+                <input type="text" placeholder="នាមនិងគោតនាម" id="name_${index}">
+                <select id="gender_${index}">
+                    <option value="ប">ប្រុស</option>
+                    <option value="ស">ស្រី</option>
+                </select>
+                <input type="number" step="0.01" placeholder="មធ្យមភាគ" id="avg_${index}">
+                <input type="text" placeholder="ចំណាត់ថ្នាក់" id="rank_${index}">
+                <button onclick="removeStudent(${index})" style="background: #f44336; padding: 5px 10px;">លុប</button>
+            `;
+            
+            container.appendChild(studentDiv);
+            students.push({ id: index });
+        }
+
+        function removeStudent(index) {
+            students = students.filter(s => s.id !== index);
+            document.getElementById('studentList').children[index].remove();
+        }
+
+        function generateReport() {
+            const schoolName = document.getElementById('schoolName').value;
+            const grade = document.getElementById('grade').value;
+            const classRoom = document.getElementById('classRoom').value;
+            const schoolYear = document.getElementById('schoolYear').value;
+
+            // Collect student data
+            const studentData = [];
+            for (let i = 0; i < students.length; i++) {
+                const name = document.getElementById(`name_${i}`)?.value || '';
+                const gender = document.getElementById(`gender_${i}`)?.value || '';
+                const avg = document.getElementById(`avg_${i}`)?.value || '';
+                const rank = document.getElementById(`rank_${i}`)?.value || '';
+                
+                if (name) {
+                    studentData.push({ name, gender, avg, rank });
+                }
+            }
+
+            // Calculate statistics
+            const totalStudents = studentData.length;
+            const femaleStudents = studentData.filter(s => s.gender === 'ស').length;
+            const passedStudents = studentData.filter(s => parseFloat(s.avg) >= 5.0).length;
+            const passedFemale = studentData.filter(s => s.gender === 'ស' && parseFloat(s.avg) >= 5.0).length;
+            const failedStudents = totalStudents - passedStudents;
+            const failedFemale = femaleStudents - passedFemale;
+
+            // Generate report HTML
+            let reportHTML = `
+                <div class="report-header">
+                    <div class="emblem">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                    <div class="motto">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                    <div style="height: 20px; border-bottom: 3px double #000; margin: 0 100px;"></div>
+                </div>
+
+                <div class="school-info">
+                    <div>ក្រុងសាលាបឋមសិក្សា ${schoolName}</div>
+                    <div>សាលាបឋមសិក្សា ${schoolName}</div>
+                    <div>បញ្ជីរាយនាមសិស្សថ្នាក់${grade} "${classRoom}"</div>
+                    <div>ឆ្នាំសិក្សា ${schoolYear}</div>
+                </div>
+
+                <div class="statistics">
+                    <div class="stat-row">- សិស្សសរុប ${totalStudents} នាក់ ស្រី ${femaleStudents} នាក់</div>
+                    <div class="stat-row">- ជាប់មធ្យមភាគ ${passedStudents} នាក់ ស្រី ${passedFemale} នាក់</div>
+                    <div class="stat-row">- ជាប់ធ្លាក់ភាគ ${failedStudents} នាក់ ស្រី ${failedFemale} នាក់</div>
+                </div>
+
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>ល.រ</th>
+                            <th>នាមនិងគោតនាម</th>
+                            <th>ភេទ</th>
+                            <th>មធ្យមភាគ</th>
+                            <th>ចំណាត់ថ្នាក់</th>
+                            <th>ល.រ</th>
+                            <th>នាមនិងគោតនាម</th>
+                            <th>ភេទ</th>
+                            <th>មធ្យមភាគ</th>
+                            <th>ចំណាត់ថ្នាក់</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Split students into two columns
+            const rowCount = Math.ceil(studentData.length / 2);
+            for (let i = 0; i < rowCount; i++) {
+                const left = studentData[i];
+                const right = studentData[i + rowCount];
+
+                reportHTML += '<tr>';
+                
+                // Left column
+                if (left) {
+                    reportHTML += `
+                        <td>${i + 1}</td>
+                        <td>${left.name}</td>
+                        <td>${left.gender}</td>
+                        <td>${left.avg}</td>
+                        <td>${left.rank}</td>
+                    `;
+                } else {
+                    reportHTML += '<td></td><td></td><td></td><td></td><td></td>';
+                }
+
+                // Right column
+                if (right) {
+                    reportHTML += `
+                        <td>${i + rowCount + 1}</td>
+                        <td>${right.name}</td>
+                        <td>${right.gender}</td>
+                        <td>${right.avg}</td>
+                        <td>${right.rank}</td>
+                    `;
+                } else {
+                    reportHTML += '<td></td><td></td><td></td><td></td><td></td>';
+                }
+
+                reportHTML += '</tr>';
+            }
+
+            reportHTML += `
+                    </tbody>
+                </table>
+
+                <div style="text-align: right; margin: 20px 0;">
+                    <div>ថ្ងៃ ......................... ខែ .............. ឆ្នាំ ........... ឆស័ក ព.ស ២៥៦.....</div>
+                    <div>ធ្វើនៅ ...................... ថ្ងៃទី ............... ខែ ............. ឆ្នាំ ២០........</div>
+                </div>
+
+                <div class="footer">
+                    <div class="signature-section">
+                        <div>គ្រូបន្ទុកថ្នាក់</div>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="signature-section">
+                        <div>នាយក</div>
+                        <div class="signature-line"></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('report').innerHTML = reportHTML;
+        }
+
+        // Add initial students
+        for (let i = 0; i < 5; i++) {
+            addStudent();
+        }
+    </script>
+</body>
+</html>

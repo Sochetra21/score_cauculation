@@ -24,25 +24,6 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .gold-gradient { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); }
-        .silver-gradient { background: linear-gradient(135deg, #C0C0C0 0%, #A9A9A9 100%); }
-        .bronze-gradient { background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%); }
-
-        .rank-1 { border-left: 4px solid #FFD700; }
-        .rank-2 { border-left: 4px solid #C0C0C0; }
-        .rank-3 { border-left: 4px solid #CD7F32; }
-
-        .medal {
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: bold;
-            color: white;
-        }
-
         .table-container {
             overflow-x: auto;
             max-width: 100%;
@@ -60,8 +41,8 @@
         .grade-F { background-color: #f3f4f6; color: #6b7280; }
 
         .progress-bar {
-            height: 8px;
-            border-radius: 4px;
+            height: 6px;
+            border-radius: 3px;
             overflow: hidden;
             background-color: #e5e7eb;
         }
@@ -79,19 +60,72 @@
                 background-color: white;
                 box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             }
-            
-            .rank-badge {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
-            }
         }
 
-        /* Print styles */
+        /* Print styles for report */
         @media print {
             .no-print { display: none !important; }
-            body { font-size: 12pt; }
+            body { 
+                font-size: 10pt; 
+                background: white !important;
+            }
             .table-container { overflow: visible; }
+            
+            /* Report page specific */
+            .report-page {
+                padding: 0.5cm;
+                margin: 0;
+                width: 100%;
+            }
+            
+            .report-header {
+                text-align: center;
+                margin-bottom: 10px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 5px;
+            }
+            
+            .report-title {
+                font-size: 16pt;
+                font-weight: bold;
+                margin-bottom: 3px;
+            }
+            
+            .report-subtitle {
+                font-size: 12pt;
+                margin-bottom: 3px;
+            }
+            
+            .report-table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 9pt;
+            }
+            
+            .report-table th {
+                background-color: #f0f0f0;
+                border: 1px solid #000;
+                padding: 3px;
+                text-align: center;
+                font-weight: bold;
+            }
+            
+            .report-table td {
+                border: 1px solid #000;
+                padding: 3px;
+                text-align: center;
+            }
+            
+            .report-footer {
+                margin-top: 10px;
+                padding-top: 5px;
+                border-top: 1px solid #000;
+                font-size: 9pt;
+            }
+            
+            .page-break {
+                page-break-after: always;
+            }
         }
     </style>
 </head>
@@ -114,9 +148,13 @@
                         <i class="fas fa-file-excel"></i>
                         <span class="hidden md:inline ml-1">Export Excel</span>
                     </button>
-                    <button onclick="window.print()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+                    <button onclick="generateReport()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
                         <i class="fas fa-print"></i>
-                        <span class="hidden md:inline ml-1">Print</span>
+                        <span class="hidden md:inline ml-1">របាយការណ៍</span>
+                    </button>
+                    <button onclick="viewStudentScores()" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">
+                        <i class="fas fa-eye"></i>
+                        <span class="hidden md:inline ml-1">មើល</span>
                     </button>
                 </div>
             </div>
@@ -125,113 +163,35 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-3 py-4">
-        <!-- Top 3 Students -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <!-- Gold - 1st Place -->
-            <div id="firstPlace" class="bg-white rounded-lg shadow overflow-hidden hidden">
-                <div class="gold-gradient p-4 text-white text-center">
-                    <div class="text-4xl mb-2">🥇</div>
-                    <h3 class="font-bold text-lg">ទី ១</h3>
-                </div>
-                <div class="p-4 text-center">
-                    <h4 class="font-bold text-gray-800 text-xl" id="firstPlaceName">-</h4>
-                    <p class="text-gray-600 text-sm" id="firstPlaceId">-</p>
-                    <div class="mt-3">
-                        <div class="text-3xl font-bold text-yellow-600" id="firstPlaceAvg">0.00</div>
-                        <p class="text-gray-600 text-sm">មធ្យមភាគ</p>
-                    </div>
-                    <div class="mt-2">
-                        <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm" id="firstPlaceGrade">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Silver - 2nd Place -->
-            <div id="secondPlace" class="bg-white rounded-lg shadow overflow-hidden hidden">
-                <div class="silver-gradient p-4 text-white text-center">
-                    <div class="text-4xl mb-2">🥈</div>
-                    <h3 class="font-bold text-lg">ទី ២</h3>
-                </div>
-                <div class="p-4 text-center">
-                    <h4 class="font-bold text-gray-800 text-xl" id="secondPlaceName">-</h4>
-                    <p class="text-gray-600 text-sm" id="secondPlaceId">-</p>
-                    <div class="mt-3">
-                        <div class="text-3xl font-bold text-gray-600" id="secondPlaceAvg">0.00</div>
-                        <p class="text-gray-600 text-sm">មធ្យមភាគ</p>
-                    </div>
-                    <div class="mt-2">
-                        <span class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm" id="secondPlaceGrade">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bronze - 3rd Place -->
-            <div id="thirdPlace" class="bg-white rounded-lg shadow overflow-hidden hidden">
-                <div class="bronze-gradient p-4 text-white text-center">
-                    <div class="text-4xl mb-2">🥉</div>
-                    <h3 class="font-bold text-lg">ទី ៣</h3>
-                </div>
-                <div class="p-4 text-center">
-                    <h4 class="font-bold text-gray-800 text-xl" id="thirdPlaceName">-</h4>
-                    <p class="text-gray-600 text-sm" id="thirdPlaceId">-</p>
-                    <div class="mt-3">
-                        <div class="text-3xl font-bold text-orange-600" id="thirdPlaceAvg">0.00</div>
-                        <p class="text-gray-600 text-sm">មធ្យមភាគ</p>
-                    </div>
-                    <div class="mt-2">
-                        <span class="inline-block px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm" id="thirdPlaceGrade">-</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Class Statistics -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <!-- Simplified Statistics -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
             <div class="bg-white rounded-lg shadow p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">សិស្សសរុប</p>
-                        <p class="text-lg font-bold text-blue-600" id="totalStudents">0</p>
-                    </div>
-                    <i class="fas fa-users text-blue-500"></i>
+                <div class="text-center">
+                    <p class="text-gray-600 text-xs mb-1">មធ្យមភាគថ្នាក់</p>
+                    <p class="text-xl font-bold text-blue-600" id="classAverage">0.00</p>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">មធ្យមភាគថ្នាក់</p>
-                        <p class="text-lg font-bold text-green-600" id="classAverage">0.00</p>
-                    </div>
-                    <i class="fas fa-chart-line text-green-500"></i>
+                <div class="text-center">
+                    <p class="text-gray-600 text-xs mb-1">ខ្ពស់បំផុត</p>
+                    <p class="text-xl font-bold text-green-600" id="highestAverage">0.00</p>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">ខ្ពស់បំផុត</p>
-                        <p class="text-lg font-bold text-purple-600" id="highestAverage">0.00</p>
-                    </div>
-                    <i class="fas fa-trophy text-purple-500"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">ទាបបំផុត</p>
-                        <p class="text-lg font-bold text-red-600" id="lowestAverage">0.00</p>
-                    </div>
-                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                <div class="text-center">
+                    <p class="text-gray-600 text-xs mb-1">ទាបបំផុត</p>
+                    <p class="text-xl font-bold text-red-600" id="lowestAverage">0.00</p>
                 </div>
             </div>
         </div>
 
         <!-- Grade Distribution -->
         <div class="bg-white rounded-lg shadow mb-6">
-            <div class="p-4 border-b">
-                <h3 class="font-bold text-gray-800">ការចែកចាយកម្រិតពិន្ទុ</h3>
+            <div class="p-3 border-b">
+                <h3 class="font-bold text-gray-800 text-sm">ការចែកចាយកម្រិតពិន្ទុ</h3>
             </div>
-            <div class="p-4">
-                <div id="gradeDistribution" class="grid grid-cols-2 md:grid-cols-6 gap-3">
+            <div class="p-3">
+                <div id="gradeDistribution" class="grid grid-cols-3 md:grid-cols-6 gap-2">
                     <!-- Grades will be populated dynamically -->
                 </div>
             </div>
@@ -239,9 +199,9 @@
 
         <!-- Ranking Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-            <div class="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+            <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
                 <div class="flex items-center justify-between">
-                    <h2 class="font-bold text-gray-800">តារាងចំណាត់ថ្នាក់</h2>
+                    <h2 class="font-bold text-gray-800 text-sm">តារាងចំណាត់ថ្នាក់</h2>
                     <div class="text-xs text-gray-600">
                         <i class="fas fa-sort-amount-down mr-1"></i>តម្រៀបតាមមធ្យមភាគ
                     </div>
@@ -249,17 +209,17 @@
             </div>
             
             <div class="table-container">
-                <table class="w-full text-sm">
+                <table class="w-full text-xs">
                     <thead>
                         <tr class="bg-gray-50">
-                            <th class="py-3 px-3 text-center mobile-sticky-column font-medium">ចំណាត់ថ្នាក់</th>
-                            <th class="py-3 px-3 text-left mobile-sticky-column min-w-[150px] font-medium">ឈ្មោះសិស្ស</th>
-                            <th class="py-3 px-3 text-left mobile-sticky-column font-medium">លេខសម្គាល់</th>
-                            <th class="py-3 px-3 text-left mobile-sticky-column font-medium">ភេទ</th>
-                            <th class="py-3 px-3 text-center font-medium">ពិន្ទុសរុប</th>
-                            <th class="py-3 px-3 text-center font-medium">មធ្យមភាគ</th>
-                            <th class="py-3 px-3 text-center font-medium">កម្រិត</th>
-                            <th class="py-3 px-3 text-center font-medium">សកម្មភាព</th>
+                            <th class="py-2 px-2 text-center font-medium">ល.រ</th>
+                            <th class="py-2 px-2 text-left font-medium">ឈ្មោះសិស្ស</th>
+                            <th class="py-2 px-2 text-left font-medium">លេខសម្គាល់</th>
+                            <th class="py-2 px-2 text-center font-medium">ភេទ</th>
+                            <th class="py-2 px-2 text-center font-medium">មធ្យមភាគ</th>
+                            <th class="py-2 px-2 text-center font-medium">កម្រិត</th>
+                            <th class="py-2 px-2 text-center font-medium text-red-600">ចំណាត់ថ្នាក់</th>
+                            <th class="py-2 px-2 text-center font-medium">សកម្មភាព</th>
                         </tr>
                     </thead>
                     <tbody id="rankingTableBody" class="divide-y divide-gray-100">
@@ -268,11 +228,11 @@
                 </table>
             </div>
             
-            <div class="p-3 border-t bg-gray-50 text-xs text-gray-600">
+            <div class="p-2 border-t bg-gray-50 text-xs text-gray-600">
                 <div class="flex justify-between items-center">
                     <div>
                         <i class="fas fa-info-circle mr-1"></i>
-                        <span>ចំណាត់ថ្នាក់ត្រូវបានគណនាតាមមធ្យមភាគ (ខ្ពស់ → ទាប)</span>
+                        <span>ពិន្ទុនីមួយៗមានពី 0-10 ពិន្ទុ</span>
                     </div>
                     <div id="lastUpdated" class="text-gray-500">
                         <i class="fas fa-sync-alt mr-1"></i>កំពុងអាប់ដេត...
@@ -282,75 +242,92 @@
         </div>
 
         <!-- Legend -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm mb-6">
-            <h3 class="font-bold text-yellow-800 mb-2"><i class="fas fa-info-circle mr-2"></i>ការពន្យល់</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs mb-6">
+            <h3 class="font-bold text-yellow-800 mb-1"><i class="fas fa-info-circle mr-1"></i>ការពន្យល់</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
                     <p class="font-medium text-gray-700 mb-1">កម្រិតពិន្ទុ:</p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2 py-1 rounded text-xs grade-A">A (90-100)</span>
-                        <span class="px-2 py-1 rounded text-xs grade-B">B (80-89)</span>
-                        <span class="px-2 py-1 rounded text-xs grade-C">C (70-79)</span>
-                        <span class="px-2 py-1 rounded text-xs grade-D">D (60-69)</span>
-                        <span class="px-2 py-1 rounded text-xs grade-E">E (50-59)</span>
-                        <span class="px-2 py-1 rounded text-xs grade-F">F (0-49)</span>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 rounded grade-A">A (9.0-10)</span>
+                        <span class="px-2 py-1 rounded grade-B">B (8.0-8.9)</span>
+                        <span class="px-2 py-1 rounded grade-C">C (7.0-7.9)</span>
+                        <span class="px-2 py-1 rounded grade-D">D (6.0-6.9)</span>
+                        <span class="px-2 py-1 rounded grade-E">E (5.0-5.9)</span>
+                        <span class="px-2 py-1 rounded grade-F">F (0-4.9)</span>
                     </div>
                 </div>
                 <div>
                     <p class="font-medium text-gray-700 mb-1">ការគណនា:</p>
-                    <ul class="text-gray-600 text-xs space-y-1">
-                        <li>• ពិន្ទុសរុប = ផលបូកពិន្ទុទាំង ១២ មុខវិជ្ជា (0-120)</li>
+                    <ul class="text-gray-600 space-y-0.5">
+                        <li>• ពិន្ទុសរុប = ផលបូកពិន្ទុទាំង ១២ មុខវិជ្ជា</li>
                         <li>• មធ្យមភាគ = ពិន្ទុសរុប ÷ ១២ (0-10)</li>
-                        <li>• កម្រិត = គណនាពីមធ្យមភាគ × ១០</li>
                     </ul>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Score Detail Modal -->
-    <div id="scoreDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
-        <div class="min-h-screen px-4 py-8 flex items-center justify-center">
-            <div class="bg-white rounded-xl w-full max-w-2xl">
-                <div class="p-4 border-b flex justify-between items-center">
-                    <h3 class="font-bold text-lg" id="detailStudentName"></h3>
-                    <button onclick="closeDetailModal()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times"></i>
-                    </button>
+    <!-- Student Scores Page (Hidden by default) -->
+    <div id="studentScoresPage" class="hidden">
+        <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-3 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="goBackToRanking()" class="bg-white p-2 rounded-full hover:bg-gray-100 transition">
+                            <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
+                        </button>
+                        <div>
+                            <h1 class="text-lg font-bold">ពិន្ទុមុខវិជ្ជាលម្អិត</h1>
+                            <p class="text-xs opacity-90" id="studentDetailTitle"></p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="printStudentScores()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
+                            <i class="fas fa-print"></i>
+                            <span class="hidden md:inline ml-1">Print</span>
+                        </button>
+                    </div>
                 </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-3 py-4">
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                <div class="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+                    <h2 class="font-bold text-gray-800" id="scorePageTitle">ពិន្ទុមុខវិជ្ជា</h2>
+                </div>
+                
                 <div class="p-4">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-gray-600 text-xs">លេខសម្គាល់</p>
-                            <p class="font-bold" id="detailStudentId"></p>
+                            <p class="font-bold" id="scoreStudentId"></p>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-gray-600 text-xs">ភេទ</p>
-                            <p class="font-bold" id="detailStudentGender"></p>
-                        </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">ពិន្ទុសរុប</p>
-                            <p class="font-bold text-blue-600" id="detailTotalScore"></p>
+                            <p class="font-bold" id="scoreStudentGender"></p>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-gray-600 text-xs">មធ្យមភាគ</p>
-                            <p class="font-bold text-green-600" id="detailAverage"></p>
+                            <p class="font-bold text-blue-600" id="scoreStudentAverage"></p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-gray-600 text-xs">កម្រិតសរុប</p>
+                            <span class="font-bold" id="scoreStudentGrade"></span>
                         </div>
                     </div>
                     
-                    <h4 class="font-bold mb-3 border-b pb-2">ពិន្ទុមុខវិជ្ជាលម្អិត</h4>
-                    <div class="overflow-x-auto">
+                    <div class="table-container">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="bg-gray-50">
                                     <th class="py-2 px-3 text-left">ល.រ</th>
                                     <th class="py-2 px-3 text-left">មុខវិជ្ជា</th>
-                                    <th class="py-2 px-3 text-center">ពិន្ទុ</th>
+                                    <th class="py-2 px-3 text-center">ពិន្ទុ (0-10)</th>
                                     <th class="py-2 px-3 text-center">កម្រិត</th>
-                                    <th class="py-2 px-3 text-center">ការវាយតម្លៃ</th>
                                 </tr>
                             </thead>
-                            <tbody id="detailScoresTable">
+                            <tbody id="studentScoresTable">
                                 <!-- Scores will be populated here -->
                             </tbody>
                         </table>
@@ -360,23 +337,75 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-gray-600 text-xs">សង្ខេបស្ថានភាព</p>
-                                <p class="text-lg font-bold text-blue-600" id="detailSummary"></p>
+                                <p class="text-sm font-bold text-blue-600" id="scoreSummary"></p>
                             </div>
                             <div class="text-right">
-                                <p class="text-gray-600 text-xs">កម្រិតសរុប</p>
-                                <span class="grade-badge text-lg font-bold" id="detailOverallGrade"></span>
+                                <p class="text-gray-600 text-xs">ចំណាត់ថ្នាក់</p>
+                                <span class="font-bold text-red-600" id="scoreRank"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="p-4 border-t flex justify-end space-x-3">
-                    <button onclick="closeDetailModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                        បិទ
-                    </button>
-                    <button onclick="printStudentDetail()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                        <i class="fas fa-print mr-2"></i>បោះពុម្ព
-                    </button>
-                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Report Page (Hidden by default, only for printing) -->
+    <div id="reportPage" class="hidden">
+        <div class="report-page">
+            <!-- Report Header -->
+            <div class="report-header">
+                <div class="report-title">របាយការណ៍ពិន្ទុសិស្ស</div>
+                <div class="report-subtitle">ថ្នាក់ 10A - ឆ្នាំសិក្សា 2024-2025</div>
+                <div class="text-xs">កាលបរិច្ឆេទ៖ <span id="reportDate"></span></div>
+            </div>
+            
+            <!-- Class Information -->
+            <div style="margin: 10px 0; font-size: 10pt;">
+                <div><strong>ព័ត៌មានថ្នាក់៖</strong></div>
+                <div>មធ្យមភាគថ្នាក់៖ <span id="reportClassAvg"></span></div>
+                <div>ចំនួនសិស្សសរុប៖ <span id="reportTotalStudents"></span> នាក់</div>
+            </div>
+            
+            <!-- Main Report Table -->
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">ល.រ</th>
+                        <th rowspan="2">ឈ្មោះសិស្ស</th>
+                        <th rowspan="2">លេខសម្គាល់</th>
+                        <th colspan="12">ពិន្ទុមុខវិជ្ជា</th>
+                        <th rowspan="2">សរុប</th>
+                        <th rowspan="2">មធ្យម</th>
+                        <th rowspan="2">កម្រិត</th>
+                        <th rowspan="2">ចំណាត់ថ្នាក់</th>
+                    </tr>
+                    <tr>
+                        <th>ខ្មែរ</th>
+                        <th>គណិត</th>
+                        <th>រូបវិទ្យា</th>
+                        <th>គីមី</th>
+                        <th>ជីវវិទ្យា</th>
+                        <th>ប្រវត្តិ</th>
+                        <th>ភូមិវិទ្យា</th>
+                        <th>អង់គ្លេស</th>
+                        <th>សីលធម៌</th>
+                        <th>ព័ត៌មាន</th>
+                        <th>អប់រំកាយ</th>
+                        <th>សិល្បៈ</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody">
+                    <!-- Report data will be populated here -->
+                </tbody>
+            </table>
+            
+            <!-- Footer Notes -->
+            <div class="report-footer">
+                <div><strong>កំណត់សម្គាល់៖</strong></div>
+                <div>១. ពិន្ទុទាំងអស់គិតជាល្បឿន 0-10</div>
+                <div>២. កម្រិតពិន្ទុ៖ A(9.0-10), B(8.0-8.9), C(7.0-7.9), D(6.0-6.9), E(5.0-5.9), F(0-4.9)</div>
+                <div>៣. ចំណាត់ថ្នាក់គិតតាមមធ្យមភាគ (ខ្ពស់ → ទាប)</div>
             </div>
         </div>
     </div>
@@ -423,7 +452,7 @@
             updateLastUpdated();
         }
 
-        // Calculate total score (0-120)
+        // Calculate total score
         function calculateTotal(scoresArray) {
             if (!scoresArray) return 0;
             return scoresArray.reduce((sum, score) => sum + score, 0);
@@ -436,13 +465,13 @@
             return total / scoresArray.length;
         }
 
-        // Get grade from score (0-100 scale)
+        // Get grade from score (0-10 scale)
         function getGradeFromScore(score) {
-            if (score >= 90) return 'A';
-            if (score >= 80) return 'B';
-            if (score >= 70) return 'C';
-            if (score >= 60) return 'D';
-            if (score >= 50) return 'E';
+            if (score >= 9.0) return 'A';
+            if (score >= 8.0) return 'B';
+            if (score >= 7.0) return 'C';
+            if (score >= 6.0) return 'D';
+            if (score >= 5.0) return 'E';
             return 'F';
         }
 
@@ -466,7 +495,7 @@
                 const studentScores = scores[student.id] || Array(12).fill(0);
                 const total = calculateTotal(studentScores);
                 const average = calculateAverage(studentScores);
-                const grade = getGradeFromScore(average * 10);
+                const grade = getGradeFromScore(average);
                 
                 return {
                     ...student,
@@ -504,7 +533,6 @@
         // Update all displays
         function updateAllDisplays() {
             updateStatistics();
-            updateTopThree();
             updateGradeDistribution();
             updateRankingTable();
         }
@@ -512,8 +540,6 @@
         // Update statistics
         function updateStatistics() {
             if (rankedStudents.length === 0) return;
-            
-            document.getElementById('totalStudents').textContent = rankedStudents.length;
             
             // Calculate class statistics
             const averages = rankedStudents.map(s => s.average);
@@ -524,39 +550,6 @@
             document.getElementById('classAverage').textContent = classAverage.toFixed(2);
             document.getElementById('highestAverage').textContent = highestAverage.toFixed(2);
             document.getElementById('lowestAverage').textContent = lowestAverage.toFixed(2);
-        }
-
-        // Update top three students
-        function updateTopThree() {
-            if (rankedStudents.length >= 1) {
-                const first = rankedStudents[0];
-                document.getElementById('firstPlace').classList.remove('hidden');
-                document.getElementById('firstPlaceName').textContent = first.name;
-                document.getElementById('firstPlaceId').textContent = first.id;
-                document.getElementById('firstPlaceAvg').textContent = first.average.toFixed(2);
-                document.getElementById('firstPlaceGrade').textContent = first.grade;
-                document.getElementById('firstPlaceGrade').className = `inline-block px-3 py-1 rounded-full text-sm ${getGradeColorClass(first.grade)}`;
-            }
-            
-            if (rankedStudents.length >= 2) {
-                const second = rankedStudents[1];
-                document.getElementById('secondPlace').classList.remove('hidden');
-                document.getElementById('secondPlaceName').textContent = second.name;
-                document.getElementById('secondPlaceId').textContent = second.id;
-                document.getElementById('secondPlaceAvg').textContent = second.average.toFixed(2);
-                document.getElementById('secondPlaceGrade').textContent = second.grade;
-                document.getElementById('secondPlaceGrade').className = `inline-block px-3 py-1 rounded-full text-sm ${getGradeColorClass(second.grade)}`;
-            }
-            
-            if (rankedStudents.length >= 3) {
-                const third = rankedStudents[2];
-                document.getElementById('thirdPlace').classList.remove('hidden');
-                document.getElementById('thirdPlaceName').textContent = third.name;
-                document.getElementById('thirdPlaceId').textContent = third.id;
-                document.getElementById('thirdPlaceAvg').textContent = third.average.toFixed(2);
-                document.getElementById('thirdPlaceGrade').textContent = third.grade;
-                document.getElementById('thirdPlaceGrade').className = `inline-block px-3 py-1 rounded-full text-sm ${getGradeColorClass(third.grade)}`;
-            }
         }
 
         // Update grade distribution
@@ -580,10 +573,9 @@
                 
                 html += `
                     <div class="text-center">
-                        <div class="${getGradeColorClass(grade)} p-3 rounded-lg">
-                            <div class="text-2xl font-bold">${grade}</div>
-                            <div class="text-lg font-bold mt-1">${count}</div>
-                            <div class="text-xs mt-1">សិស្ស</div>
+                        <div class="${getGradeColorClass(grade)} p-2 rounded-lg">
+                            <div class="font-bold">${grade}</div>
+                            <div class="text-xs mt-1">${count} នាក់</div>
                             <div class="text-xs opacity-75">${percentage}%</div>
                         </div>
                     </div>
@@ -599,53 +591,44 @@
             let html = '';
             
             rankedStudents.forEach((student, index) => {
-                const rankClass = student.rank === 1 ? 'rank-1' : 
-                                 student.rank === 2 ? 'rank-2' : 
-                                 student.rank === 3 ? 'rank-3' : '';
+                const rowNumber = index + 1;
                 
                 html += `
-                    <tr class="student-row ${rankClass}">
-                        <td class="py-3 px-3 text-center mobile-sticky-column">
-                            <div class="flex items-center justify-center">
-                                ${student.rank <= 3 ? 
-                                    `<div class="medal ${student.rank === 1 ? 'gold-gradient' : student.rank === 2 ? 'silver-gradient' : 'bronze-gradient'}">
-                                        ${student.rank}
-                                    </div>` :
-                                    `<span class="text-gray-700 font-bold">${student.rank}</span>`
-                                }
-                            </div>
+                    <tr class="student-row">
+                        <td class="py-2 px-2 text-center font-medium text-gray-900">
+                            ${rowNumber}
                         </td>
-                        <td class="py-3 px-3 mobile-sticky-column font-medium">
+                        <td class="py-2 px-2 font-medium">
                             ${student.name}
                         </td>
-                        <td class="py-3 px-3 mobile-sticky-column text-sm font-mono">
+                        <td class="py-2 px-2 text-sm font-mono">
                             ${student.id}
                         </td>
-                        <td class="py-3 px-3 mobile-sticky-column">
-                            <span class="px-2 py-1 rounded-full text-xs ${
+                        <td class="py-2 px-2 text-center">
+                            <span class="px-2 py-0.5 rounded-full text-xs ${
                                 student.gender === 'male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600'
                             }">
                                 ${student.gender === 'male' ? 'ប្រុស' : 'ស្រី'}
                             </span>
                         </td>
-                        <td class="py-3 px-3 text-center font-bold">
-                            ${student.total.toFixed(1)}
-                        </td>
-                        <td class="py-3 px-3 text-center">
-                            <div class="font-bold ${getGradeColorClass(student.grade)}">${student.average.toFixed(2)}</div>
+                        <td class="py-2 px-2 text-center">
+                            <div class="font-bold">${student.average.toFixed(2)}</div>
                             <div class="progress-bar mt-1">
                                 <div class="progress-fill ${getGradeColorClass(student.grade)}" 
                                      style="width: ${student.average * 10}%"></div>
                             </div>
                         </td>
-                        <td class="py-3 px-3 text-center">
-                            <span class="px-3 py-1 rounded-full text-sm font-medium ${getGradeColorClass(student.grade)}">
+                        <td class="py-2 px-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-xs font-medium ${getGradeColorClass(student.grade)}">
                                 ${student.grade}
                             </span>
                         </td>
-                        <td class="py-3 px-3 text-center">
-                            <button onclick="viewStudentDetail('${student.id}')" 
-                                    class="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">
+                        <td class="py-2 px-2 text-center font-bold text-red-600">
+                            ${student.rank}
+                        </td>
+                        <td class="py-2 px-2 text-center">
+                            <button onclick="viewStudentScores('${student.id}')" 
+                                    class="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-xs">
                                 <i class="fas fa-eye mr-1"></i>មើល
                             </button>
                         </td>
@@ -654,6 +637,84 @@
             });
             
             tableBody.innerHTML = html;
+        }
+
+        // Generate and print report
+        function generateReport() {
+            if (rankedStudents.length === 0) {
+                alert('មិនមានទិន្នន័យសិស្សទេ!');
+                return;
+            }
+            
+            // Prepare report data
+            const now = new Date();
+            const dateString = now.toLocaleDateString('km-KH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            // Calculate class statistics
+            const averages = rankedStudents.map(s => s.average);
+            const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
+            
+            // Update report header
+            document.getElementById('reportDate').textContent = dateString;
+            document.getElementById('reportClassAvg').textContent = classAverage.toFixed(2);
+            document.getElementById('reportTotalStudents').textContent = rankedStudents.length;
+            
+            // Populate report table
+            const reportBody = document.getElementById('reportTableBody');
+            let reportHtml = '';
+            
+            rankedStudents.forEach((student, index) => {
+                reportHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td style="text-align: left; padding-left: 5px;">${student.name}</td>
+                        <td>${student.id}</td>
+                        <td>${student.scores[0]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[1]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[2]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[3]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[4]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[5]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[6]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[7]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[8]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[9]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[10]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.scores[11]?.toFixed(2) || '0.00'}</td>
+                        <td>${student.total.toFixed(2)}</td>
+                        <td>${student.average.toFixed(2)}</td>
+                        <td>${student.grade}</td>
+                        <td style="font-weight: bold; color: #dc2626;">${student.rank}</td>
+                    </tr>
+                `;
+            });
+            
+            reportBody.innerHTML = reportHtml;
+            
+            // Store current display state
+            const originalMain = document.querySelector('main').style.display;
+            const originalHeader = document.querySelector('header').style.display;
+            
+            // Hide main page
+            document.querySelector('main').style.display = 'none';
+            document.querySelector('header').style.display = 'none';
+            
+            // Show report page
+            document.getElementById('reportPage').classList.remove('hidden');
+            
+            // Print report
+            window.print();
+            
+            // Restore original state
+            setTimeout(() => {
+                document.querySelector('main').style.display = originalMain;
+                document.querySelector('header').style.display = originalHeader;
+                document.getElementById('reportPage').classList.add('hidden');
+            }, 100);
         }
 
         // Update last updated time
@@ -675,80 +736,105 @@
             `;
         }
 
-        // View student detail
-        function viewStudentDetail(studentId) {
+        // View student scores - navigates to scores page
+        function viewStudentScores(studentId) {
+            // Hide ranking page
+            document.querySelector('main').style.display = 'none';
+            document.querySelector('header').style.display = 'none';
+            
+            // Show scores page
+            document.getElementById('studentScoresPage').classList.remove('hidden');
+            
+            // If studentId is provided, show that student's scores
+            if (studentId) {
+                loadStudentScores(studentId);
+            } else {
+                // Otherwise show first student's scores
+                if (rankedStudents.length > 0) {
+                    loadStudentScores(rankedStudents[0].id);
+                }
+            }
+        }
+
+        // Load student scores into the scores page
+        function loadStudentScores(studentId) {
             const student = rankedStudents.find(s => s.id === studentId);
             if (!student) return;
             
             // Set basic info
-            document.getElementById('detailStudentName').textContent = student.name;
-            document.getElementById('detailStudentId').textContent = student.id;
-            document.getElementById('detailStudentGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
-            document.getElementById('detailTotalScore').textContent = student.total.toFixed(1);
-            document.getElementById('detailAverage').textContent = student.average.toFixed(2);
-            document.getElementById('detailOverallGrade').textContent = student.grade;
-            document.getElementById('detailOverallGrade').className = `grade-badge text-lg font-bold ${getGradeColorClass(student.grade)}`;
+            document.getElementById('studentDetailTitle').textContent = `${student.name} - ${student.id}`;
+            document.getElementById('scorePageTitle').textContent = `ពិន្ទុមុខវិជ្ជា - ${student.name}`;
+            document.getElementById('scoreStudentId').textContent = student.id;
+            document.getElementById('scoreStudentGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
+            document.getElementById('scoreStudentAverage').textContent = student.average.toFixed(2);
+            document.getElementById('scoreStudentGrade').textContent = student.grade;
+            document.getElementById('scoreStudentGrade').className = `font-bold ${getGradeColorClass(student.grade)}`;
+            document.getElementById('scoreRank').textContent = `ទី ${student.rank}`;
             
             // Calculate summary
             const subjectsWithScores = student.scores.filter(score => score > 0).length;
-            document.getElementById('detailSummary').textContent = 
+            document.getElementById('scoreSummary').textContent = 
                 `បានបញ្ចូលពិន្ទុ ${subjectsWithScores}/12 មុខវិជ្ជា`;
             
             // Populate scores table
-            const scoresTable = document.getElementById('detailScoresTable');
+            const scoresTable = document.getElementById('studentScoresTable');
             let scoresHtml = '';
             
             student.scores.forEach((score, index) => {
-                const grade = getGradeFromScore(score * 10);
-                const evaluation = getEvaluation(score);
+                const grade = getGradeFromScore(score);
                 
                 scoresHtml += `
                     <tr class="border-b border-gray-100">
                         <td class="py-2 px-3">${index + 1}</td>
                         <td class="py-2 px-3">${subjects[index]}</td>
-                        <td class="py-2 px-3 text-center font-bold">${score.toFixed(1)}</td>
+                        <td class="py-2 px-3 text-center font-bold">${score.toFixed(2)}</td>
                         <td class="py-2 px-3 text-center">
                             <span class="px-2 py-1 rounded text-xs ${getGradeColorClass(grade)}">${grade}</span>
                         </td>
-                        <td class="py-2 px-3 text-center text-sm">${evaluation}</td>
                     </tr>
                 `;
             });
             
             scoresTable.innerHTML = scoresHtml;
+        }
+
+        // Go back to ranking page
+        function goBackToRanking() {
+            // Show ranking page
+            document.querySelector('main').style.display = 'block';
+            document.querySelector('header').style.display = 'block';
             
-            // Show modal
-            document.getElementById('scoreDetailModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            // Hide scores page
+            document.getElementById('studentScoresPage').classList.add('hidden');
         }
 
-        // Get evaluation text
-        function getEvaluation(score) {
-            if (score >= 9) return 'ល្អណាស់';
-            if (score >= 7) return 'ល្អ';
-            if (score >= 5) return 'មធ្យម';
-            if (score >= 3) return 'ខ្សោយ';
-            return 'ខ្សោយណាស់';
-        }
-
-        // Close detail modal
-        function closeDetailModal() {
-            document.getElementById('scoreDetailModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Print student detail
-        function printStudentDetail() {
-            // Temporarily show print dialog
-            const printContent = document.getElementById('scoreDetailModal').innerHTML;
-            const originalContent = document.body.innerHTML;
+        // Print student scores
+        function printStudentScores() {
+            // Store current display state
+            const originalMain = document.querySelector('main').style.display;
+            const originalHeader = document.querySelector('header').style.display;
+            const originalScoresPage = document.getElementById('studentScoresPage').classList.contains('hidden');
             
-            document.body.innerHTML = printContent;
+            // Show only scores page for printing
+            document.querySelector('main').style.display = 'none';
+            document.querySelector('header').style.display = 'none';
+            document.getElementById('studentScoresPage').classList.remove('hidden');
+            
+            // Remove print button from print view
+            const printButton = document.querySelector('#studentScoresPage button');
+            const originalDisplay = printButton.style.display;
+            printButton.style.display = 'none';
+            
+            // Print
             window.print();
-            document.body.innerHTML = originalContent;
             
-            // Re-initialize
-            initializeData();
+            // Restore original state
+            printButton.style.display = originalDisplay;
+            document.querySelector('main').style.display = originalMain;
+            document.querySelector('header').style.display = originalHeader;
+            if (originalScoresPage) {
+                document.getElementById('studentScoresPage').classList.add('hidden');
+            }
         }
 
         // Export to Excel
@@ -760,26 +846,26 @@
             
             // Prepare data for Excel
             const headers = [
-                'ចំណាត់ថ្នាក់',
+                'ល.រ',
                 'ឈ្មោះសិស្ស',
                 'លេខសម្គាល់',
                 'ភេទ',
-                'ពិន្ទុសរុប',
                 'មធ្យមភាគ',
                 'កម្រិត',
+                'ចំណាត់ថ្នាក់',
                 ...subjects
             ];
             
-            const rows = rankedStudents.map(student => {
+            const rows = rankedStudents.map((student, index) => {
                 return [
-                    student.rank,
+                    index + 1,
                     student.name,
                     student.id,
                     student.gender === 'male' ? 'ប្រុស' : 'ស្រី',
-                    student.total.toFixed(1),
                     student.average.toFixed(2),
                     student.grade,
-                    ...student.scores.map(score => score.toFixed(1))
+                    student.rank,
+                    ...student.scores.map(score => score.toFixed(2))
                 ];
             });
             
@@ -788,13 +874,13 @@
             
             // Set column widths
             const wscols = [
-                { wch: 10 }, // Rank
+                { wch: 5 },  // No.
                 { wch: 25 }, // Name
                 { wch: 15 }, // ID
                 { wch: 8 },  // Gender
-                { wch: 12 }, // Total
                 { wch: 12 }, // Average
                 { wch: 8 },  // Grade
+                { wch: 10 }, // Rank
                 ...Array(12).fill({ wch: 10 }) // Subject scores
             ];
             ws['!cols'] = wscols;
