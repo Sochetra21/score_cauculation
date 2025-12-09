@@ -129,7 +129,7 @@
         /* Floating Action Button */
         .fab {
             position: fixed;
-            bottom: 80px;
+            bottom: 20px;
             right: 20px;
             width: 56px;
             height: 56px;
@@ -152,51 +152,13 @@
             color: white;
         }
 
-        .fab-actions {
-            position: fixed;
-            bottom: 150px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 99;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
+        .fab-save.unsaved {
+            animation: pulse 2s infinite;
         }
 
-        .fab-actions.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .fab-action {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            color: white;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .fab-action:hover {
-            transform: translateY(-2px);
-        }
-
-        .fab-export {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        }
-
-        .fab-ranking {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        }
-
-        .fab-close {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+            50% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         }
 
         /* Subject Management Modal */
@@ -231,6 +193,35 @@
         .drag-handle:hover {
             color: #6b7280;
         }
+
+        /* Quick Stats Bar */
+        .quick-stats {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -239,21 +230,9 @@
         <i class="fas fa-save mr-2"></i>កំពុងរក្សាទុក...
     </div>
 
-    <!-- Floating Action Buttons -->
-    <div class="fab-actions" id="fabActions">
-        <button onclick="exportToExcel()" class="fab-action fab-export" title="Export to Excel">
-            <i class="fas fa-file-excel"></i>
-        </button>
-        <button onclick="goToRankingPage()" class="fab-action fab-ranking" title="មើលចំណាត់ថ្នាក់">
-            <i class="fas fa-chart-bar"></i>
-        </button>
-        <button onclick="toggleFabActions()" class="fab-action fab-close" title="បិទ">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    
-    <button onclick="toggleFabActions()" class="fab fab-save" id="fabMain" title="សកម្មភាព">
-        <i class="fas fa-bars"></i>
+    <!-- Floating Save Button -->
+    <button onclick="saveAllScores()" class="fab fab-save" id="fabSave" title="រក្សាទុកពិន្ទុ">
+        <i class="fas fa-save"></i>
     </button>
 
     <!-- Header -->
@@ -266,7 +245,7 @@
                         <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
                     </a>
                     <div>
-                        <h1 class="text-lg font-bold">បញ្ចូលពិន្ទុសិស្ស - ថ្នាក់ 10A</h1>
+                        <h1 class="text-lg font-bold">បញ្ចូលពិន្ទុសិស្ស</h1>
                         <p class="text-xs opacity-90" id="subjectCountDisplay">កំពុងផ្ទុកមុខវិជ្ជា...</p>
                     </div>
                 </div>
@@ -286,45 +265,23 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-3 py-4">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            <div class="bg-white rounded-lg shadow p-3">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">សិស្សសរុប</p>
-                        <p class="text-lg font-bold text-blue-600" id="totalStudents">0</p>
-                    </div>
-                    <i class="fas fa-users text-blue-500"></i>
+        <!-- Quick Stats Bar -->
+        <!-- <div class="quick-stats">
+            <div class="grid grid-cols-3 gap-2">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalStudents">0</div>
+                    <div class="stat-label">សិស្សសរុប</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="classAverage">0.00</div>
+                    <div class="stat-label">មធ្យមភាគថ្នាក់</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="scoresPerStudent">0/0</div>
+                    <div class="stat-label">ពិន្ទុ/សិស្ស</div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow p-3">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">មធ្យមភាគថ្នាក់</p>
-                        <p class="text-lg font-bold text-green-600" id="classAverage">0.00</p>
-                    </div>
-                    <i class="fas fa-chart-line text-green-500"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-3">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">ចំនួនពិន្ទុបានបញ្ចូល</p>
-                        <p class="text-lg font-bold text-purple-600" id="scoresEntered">0</p>
-                    </div>
-                    <i class="fas fa-check-circle text-purple-500"></i>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-3">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-xs">ពិន្ទុក្នុងមួយសិស្ស</p>
-                        <p class="text-lg font-bold text-red-600" id="scoresPerStudent">0/0</p>
-                    </div>
-                    <i class="fas fa-clipboard-check text-red-500"></i>
-                </div>
-            </div>
-        </div>
+        </div> -->
 
         <!-- View 1: Table View (Default) -->
         <div id="view-table" class="view-content">
@@ -386,9 +343,9 @@
             <ul class="text-blue-700 space-y-1">
                 <li>• បញ្ចូលពិន្ទុ 0-10 ក្នុងក្រឡានីមួយៗ (អាចប្រើ 0.5)</li>
                 <li>• ពិន្ទុនឹងរក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</li>
-                <li>• អូសឆ្វេង/ស្ដាំដើម្បីមើលមុខវិជ្ជាទាំងអស់</li>
                 <li>• ចុចប៊ូតុង <span class="font-bold text-yellow-600">"គ្រប់គ្រងមុខវិជ្ជា"</span> ដើម្បីកែប្រែបញ្ជីមុខវិជ្ជា</li>
                 <li>• ចុច <span class="font-bold text-purple-600">"មើលចំណាត់ថ្នាក់"</span> ដើម្បីមើលលំដាប់ពិន្ទុ</li>
+                <li>• ចុច <span class="font-bold text-green-600">ប៊ូតុងរក្សាទុក</span> ដើម្បីរក្សាទុកពិន្ទុភ្លាមៗ</li>
             </ul>
         </div>
     </main>
@@ -488,7 +445,7 @@
         let autoSaveInterval;
         let lastSaveTime = null;
         let hasUnsavedChanges = false;
-        let isFabOpen = false;
+        let isFabAnimating = false;
 
         // Initialize data
         function initializeData() {
@@ -554,35 +511,23 @@
             
             // Start auto-save
             startAutoSave();
+            
+            // Update FAB animation state
+            updateFABAnimation();
         }
 
-        // Toggle Floating Action Buttons
-        function toggleFabActions() {
-            const fabActions = document.getElementById('fabActions');
-            const fabMain = document.getElementById('fabMain');
+        // Update FAB animation
+        function updateFABAnimation() {
+            const fabSave = document.getElementById('fabSave');
             
-            if (isFabOpen) {
-                fabActions.classList.remove('show');
-                fabMain.innerHTML = '<i class="fas fa-bars"></i>';
-                fabMain.title = "សកម្មភាព";
+            if (hasUnsavedChanges) {
+                fabSave.classList.add('unsaved');
+                fabSave.title = "រក្សាទុកពិន្ទុ (មានការផ្លាស់ប្តូរ)";
             } else {
-                fabActions.classList.add('show');
-                fabMain.innerHTML = '<i class="fas fa-times"></i>';
-                fabMain.title = "បិទ";
+                fabSave.classList.remove('unsaved');
+                fabSave.title = "រក្សាទុកពិន្ទុ";
             }
-            
-            isFabOpen = !isFabOpen;
         }
-
-        // Close FAB on outside click
-        document.addEventListener('click', function(event) {
-            const fabActions = document.getElementById('fabActions');
-            const fabMain = document.getElementById('fabMain');
-            
-            if (isFabOpen && !fabActions.contains(event.target) && !fabMain.contains(event.target)) {
-                toggleFabActions();
-            }
-        });
 
         // Start auto-save functionality
         function startAutoSave() {
@@ -604,15 +549,6 @@
         // Switch between views
         function switchView(view) {
             currentView = view;
-            
-            // Update active tab
-            document.getElementById('tab-table').classList.remove('border-blue-500', 'text-blue-600');
-            document.getElementById('tab-student').classList.remove('border-blue-500', 'text-blue-600');
-            document.getElementById('tab-table').classList.add('text-gray-500');
-            document.getElementById('tab-student').classList.add('text-gray-500');
-            
-            document.getElementById(`tab-${view}`).classList.add('border-blue-500', 'text-blue-600');
-            document.getElementById(`tab-${view}`).classList.remove('text-gray-500');
             
             // Show/hide views
             document.getElementById('view-table').classList.add('hidden');
@@ -836,6 +772,9 @@
             // Mark as unsaved
             hasUnsavedChanges = true;
             
+            // Update FAB animation
+            updateFABAnimation();
+            
             // Update stats immediately
             updateStats();
             
@@ -894,7 +833,8 @@
         // Calculate average scores per student
         function calculateScoresPerStudent() {
             const totalScores = countScoresEntered();
-            return `${Math.round(totalScores / students.length)}/${subjects.length}`;
+            const avgPerStudent = students.length > 0 ? Math.round(totalScores / students.length) : 0;
+            return `${avgPerStudent}/${subjects.length}`;
         }
 
         // Update statistics
@@ -912,10 +852,6 @@
             const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
             document.getElementById('classAverage').textContent = classAverage.toFixed(2);
             
-            // Calculate scores entered
-            const scoresEntered = countScoresEntered();
-            document.getElementById('scoresEntered').textContent = scoresEntered;
-            
             // Calculate scores per student
             document.getElementById('scoresPerStudent').textContent = calculateScoresPerStudent();
         }
@@ -923,6 +859,7 @@
         // Save all scores
         function saveAllScores() {
             if (!hasUnsavedChanges && Object.keys(scores).length > 0) {
+                showNotification('គ្មានការផ្លាស់ប្តូរ ដើម្បីរក្សាទុក', 'info');
                 return; // No changes to save
             }
             
@@ -942,7 +879,13 @@
             // Reset unsaved changes flag
             hasUnsavedChanges = false;
             
+            // Update FAB animation
+            updateFABAnimation();
+            
             console.log('Scores saved to localStorage:', lastSaveTime);
+            
+            // Show success message
+            showNotification('ពិន្ទុត្រូវបានរក្សាទុកដោយជោគជ័យ!', 'success');
         }
 
         // Show auto-save indicator
@@ -985,49 +928,6 @@
             lastSaveElement.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i>${displayText}`;
         }
 
-        // Export to Excel
-        function exportToExcel() {
-            // Create CSV content
-            const headers = ['ល.រ', 'ឈ្មោះសិស្ស', 'លេខសម្គាល់', 'ភេទ', ...subjects];
-            
-            const rows = students.map((student, index) => {
-                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
-                
-                return [
-                    index + 1,
-                    student.name,
-                    student.id,
-                    student.gender === 'male' ? 'ប្រុស' : 'ស្រី',
-                    ...studentScores.map(score => score.toFixed(1))
-                ];
-            });
-            
-            const csvContent = [
-                headers.join(','),
-                ...rows.map(row => row.join(','))
-            ].join('\n');
-            
-            // Create and download file
-            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            const dateStr = new Date().toISOString().slice(0,10);
-            link.setAttribute('download', `ពិន្ទុសិស្ស_10A_${dateStr}.csv`);
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showNotification('ទិន្នន័យត្រូវបានទាញយក!', 'success');
-            
-            // Close FAB if open
-            if (isFabOpen) {
-                toggleFabActions();
-            }
-        }
-
         // Navigate to ranking page
         function goToRankingPage() {
             // First save any unsaved changes
@@ -1037,11 +937,6 @@
             
             // Navigate to ranking page
             window.location.href = 'ranking.html';
-            
-            // Close FAB if open
-            if (isFabOpen) {
-                toggleFabActions();
-            }
         }
 
         // Open student modal
@@ -1185,6 +1080,7 @@
                         });
                         
                         hasUnsavedChanges = true;
+                        updateFABAnimation();
                         renderSubjectList();
                     }
                 });
@@ -1222,6 +1118,7 @@
             
             // Update display
             hasUnsavedChanges = true;
+            updateFABAnimation();
             renderSubjectList();
             
             // Update subject count display
@@ -1236,6 +1133,7 @@
             if (newName && newName.trim() && newName.trim() !== subjects[index]) {
                 subjects[index] = newName.trim();
                 hasUnsavedChanges = true;
+                updateFABAnimation();
                 renderSubjectList();
             }
         }
@@ -1258,6 +1156,7 @@
             
             // Update display
             hasUnsavedChanges = true;
+            updateFABAnimation();
             renderSubjectList();
             
             // Update subject count display
@@ -1282,13 +1181,15 @@
             updateStats();
             updateLastSaveDisplay();
             
+            // Reset unsaved changes flag
+            hasUnsavedChanges = false;
+            updateFABAnimation();
+            
             // Close modal
             closeSubjectManager();
             
             // Show success message
             showNotification('មុខវិជ្ជាត្រូវបានរក្សាទុក!', 'success');
-            
-            hasUnsavedChanges = false;
         }
 
         // Show notification
@@ -1356,8 +1257,6 @@
                         closeStudentModal();
                     } else if (!subjectModal.classList.contains('hidden')) {
                         closeSubjectManager();
-                    } else if (isFabOpen) {
-                        toggleFabActions();
                     }
                 }
             });
