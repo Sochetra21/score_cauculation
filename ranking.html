@@ -1,749 +1,1160 @@
 <!DOCTYPE html>
 <html lang="km">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ចំណាត់ថ្នាក់ពិន្ទុសិស្ស - ថ្នាក់ 10A</title>
     <!-- Tailwind CSS -->
     <script src="./tailwind.js"></script>
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SheetJS for Excel export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <!-- Khmer Mool Font -->
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Khmer&display=swap" rel="stylesheet"> -->
-    <link href="https://fonts.googleapis.com/css2?family=Battambang&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Battambang&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        * {
-            font-family: 'Khmer OS Battambang', sans-serif;
-        }
-        
-        @font-face {
-            font-family: 'Khmer OS Battambang';
-            src: url('https://fonts.googleapis.com/css2?family=Khmer+OS+Battambang&display=swap');
-        }
-        
-        .khmer-mool {
-            font-family: 'Khmer', serif;
+      * {
+        font-family: "Khmer OS Battambang", sans-serif;
+      }
+
+      @font-face {
+        font-family: "Khmer OS Battambang";
+        src: url("https://fonts.googleapis.com/css2?family=Khmer+OS+Battambang&display=swap");
+      }
+
+      .header-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .table-container {
+        overflow-x: auto;
+        max-width: 100%;
+      }
+
+      .student-row:hover {
+        background-color: #f7fafc;
+      }
+
+      .grade-A {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+      .grade-B {
+        background-color: #dbeafe;
+        color: #1e40af;
+      }
+      .grade-C {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
+      .grade-D {
+        background-color: #fde68a;
+        color: #92400e;
+      }
+      .grade-E {
+        background-color: #fecaca;
+        color: #991b1b;
+      }
+      .grade-F {
+        background-color: #f3f4f6;
+        color: #6b7280;
+      }
+
+      .progress-bar {
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+        background-color: #e5e7eb;
+      }
+
+      .progress-fill {
+        height: 100%;
+        transition: width 0.3s;
+      }
+
+      /* Single Line Stat Tile Styles */
+      .single-line-tile {
+        background: white;
+        border-radius: 8px;
+        padding: 12px 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        min-height: auto;
+        width: 100%;
+      }
+
+      .single-line-tile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .tile-main-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+
+      .tile-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        white-space: nowrap;
+      }
+
+      .tile-main-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1e40af;
+        white-space: nowrap;
+      }
+
+      .tile-details-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        color: #6b7280;
+        padding-top: 2px;
+        border-top: 1px dashed #e5e7eb;
+      }
+
+      .tile-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .gender-male {
+        color: #3b82f6;
+        font-weight: 600;
+      }
+
+      .gender-female {
+        color: #ec4899;
+        font-weight: 600;
+      }
+
+      .percentage-badge-small {
+        background-color: #dbeafe;
+        color: #1e40af;
+        padding: 1px 6px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      /* Color variations for different ranges */
+      .tile-color-total {
+        border-left: 3px solid #8b5cf6;
+      }
+      .tile-color-passed {
+        border-left: 3px solid #10b981;
+      }
+      .tile-color-failed {
+        border-left: 3px solid #ef4444;
+      }
+      .tile-color-9-10 {
+        border-left: 3px solid #059669;
+      }
+      .tile-color-8-9 {
+        border-left: 3px solid #3b82f6;
+      }
+      .tile-color-6-7 {
+        border-left: 3px solid #f59e0b;
+      }
+      .tile-color-5-6 {
+        border-left: 3px solid #f97316;
+      }
+      .tile-color-below-5 {
+        border-left: 3px solid #dc2626;
+      }
+      .tile-color-average {
+        border-left: 3px solid #8b5cf6;
+      }
+
+      /* Parent containers for tile groups */
+      .tile-group-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .tile-group-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      .tiles-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 12px;
+      }
+
+      /* Class Average Tile Styles */
+      .class-average-tile {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        border-left: 3px solid #8b5cf6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .class-average-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #8b5cf6;
+        margin-bottom: 4px;
+      }
+
+      .class-average-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #4b5563;
+        margin-bottom: 8px;
+      }
+
+      .class-average-details {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .average-detail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .average-detail-value {
+        font-weight: 600;
+        color: #374151;
+      }
+
+      /* View Button Styles */
+      .view-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        background-color: #3b82f6;
+        color: white;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+      }
+
+      .view-btn:hover {
+        background-color: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+      }
+
+      .view-btn:active {
+        transform: translateY(0);
+      }
+
+      .view-btn i {
+        margin-right: 4px;
+        font-size: 10px;
+      }
+
+      /* Report Button Styles */
+      .report-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        background-color: #8b5cf6;
+        color: white;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+      }
+
+      .report-btn:hover {
+        background-color: #7c3aed;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(139, 92, 246, 0.3);
+      }
+
+      .report-btn:active {
+        transform: translateY(0);
+      }
+
+      .report-btn i {
+        margin-right: 6px;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .tiles-row {
+          grid-template-columns: 1fr;
         }
 
-        .header-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .single-line-tile {
+          padding: 10px 12px;
         }
 
-        .table-container {
-            overflow-x: auto;
-            max-width: 100%;
+        .tile-title {
+          font-size: 12px;
         }
 
-        .student-row:hover {
-            background-color: #f7fafc;
+        .tile-main-value {
+          font-size: 15px;
         }
 
-        .grade-A { background-color: #dcfce7; color: #166534; }
-        .grade-B { background-color: #dbeafe; color: #1e40af; }
-        .grade-C { background-color: #fef3c7; color: #92400e; }
-        .grade-D { background-color: #fde68a; color: #92400e; }
-        .grade-E { background-color: #fecaca; color: #991b1b; }
-        .grade-F { background-color: #f3f4f6; color: #6b7280; }
-
-        .progress-bar {
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            background-color: #e5e7eb;
+        .tile-details-row {
+          font-size: 10px;
         }
 
-        .progress-fill {
-            height: 100%;
-            transition: width 0.3s;
+        .class-average-value {
+          font-size: 28px;
         }
 
-        /* Print styles for official report */
-        @media print {
-            @page {
-                size: A4;
-                margin: 1.5cm;
-            }
-            
-            body { 
-                font-size: 12pt !important; 
-                background: white !important;
-                color: black !important;
-                font-family: 'Khmer OS Battambang', sans-serif !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                line-height: 1.3;
-            }
-            
-            .no-print { 
-                display: none !important; 
-            }
-            
-            .print-only { 
-                display: block !important; 
-            }
-            
-            .print-report {
-                width: 100%;
-                height: 100%;
-            }
-            
-            .table-container { 
-                overflow: visible !important; 
-            }
-            
-            /* Single table with 10 columns */
-            .ten-column-table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 9.5pt;
-                table-layout: fixed;
-                margin-top: 10px;
-                margin-bottom: 15px;
-            }
-            
-            .ten-column-table th,
-            .ten-column-table td {
-                border: 1px solid #000;
-                padding: 1px 2px;
-                height: 20px;
-                overflow: hidden;
-                text-align: center;
-                vertical-align: middle;
-            }
-            
-            .ten-column-table th {
-                background-color: #f0f0f0 !important;
-                font-weight: bold;
-                height: 22px;
-                font-size: 9pt;
-            }
-            
-            .khmer-header {
-                text-align: center;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            
-            .khmer-mool {
-                font-family: 'Khmer', serif !important;
-                font-size: 16pt !important;
-            }
-            
-            .school-info {
-                margin: 10px 0;
-            }
-            
-            .left-align {
-                text-align: left;
-            }
-            
-            .center-align {
-                text-align: center;
-            }
-            
-            .right-align {
-                text-align: right;
-            }
-            
-            .stats-section {
-                margin-top: 15px;
-                text-align: left;
-                font-size: 10pt;
-            }
-            
-            .footer-section {
-                margin-top: 20px;
-                font-size: 10pt;
-            }
-            
-            .signature-section {
-                margin-top: 60px;
-                display: flex;
-                justify-content: space-between;
-            }
-            
-            .signature-box {
-                text-align: center;
-                width: 40%;
-            }
-            
-            .signature-line {
-                border-top: 1px solid #000;
-                width: 200px;
-                padding-top: 5px;
-                margin: 0 auto;
-            }
-            
-            .page-break {
-                page-break-after: always;
-            }
-            
-            .no-border {
-                border: none !important;
-            }
-            
-            .separator {
-                border-top: 2px solid #000;
-                margin: 10px 0;
-            }
-            
-            /* Column widths for 10-column table */
-            .col-no { width: 4%; }
-            .col-name { width: 25%; }
-            .col-gender { width: 6%; }
-            .col-average { width: 10%; }
-            .col-rank { width: 5%; }
-            
-            .student-name {
-                text-align: left;
-                padding-left: 3px !important;
-                font-size: 9pt;
-            }
+        .view-btn {
+          padding: 4px 8px;
+          font-size: 11px;
         }
-        
-        .print-only {
-            display: none;
+
+        .report-btn {
+          padding: 6px 12px;
+          font-size: 12px;
         }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .tiles-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 1025px) {
+        .tiles-row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .tiles-row.range-tiles {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
     </style>
-</head>
-<body class="bg-gray-50 min-h-screen">
+  </head>
+  <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
-    <header class="header-gradient text-white shadow-lg sticky top-0 z-50 no-print">
-        <div class="container mx-auto px-3 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <a href="javascript:history.back()" class="bg-white p-2 rounded-full hover:bg-gray-100 transition no-print">
-                        <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
-                    </a>
-                    <div>
-                        <h1 class="text-lg font-bold">ចំណាត់ថ្នាក់ពិន្ទុសិស្ស</h1>
-                        <p class="text-xs opacity-90">ថ្នាក់ 10A - តាមមធ្យមភាគពិន្ទុ</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-2 no-print">
-                    <button onclick="exportToExcel()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm">
-                        <i class="fas fa-file-excel"></i>
-                        <span class="hidden md:inline ml-1">Export Excel</span>
-                    </button>
-                    <button onclick="generateOfficialReport()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
-                        <i class="fas fa-print"></i>
-                        <span class="hidden md:inline ml-1">របាយការណ៍ផ្លូវការ</span>
-                    </button>
-                    <button onclick="viewStudentScores()" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">
-                        <i class="fas fa-eye"></i>
-                        <span class="hidden md:inline ml-1">មើល</span>
-                    </button>
-                </div>
+    <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
+      <div class="container mx-auto px-3 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <a
+              href="javascript:history.back()"
+              class="bg-white p-2 rounded-full hover:bg-gray-100 transition"
+            >
+              <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
+            </a>
+            <div>
+              <h1 class="text-lg font-bold">ចំណាត់ថ្នាក់ពិន្ទុសិស្ស</h1>
+              <p class="text-xs opacity-90">ថ្នាក់ 10A - តាមមធ្យមភាគពិន្ទុ</p>
             </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button
+              onclick="goToReport()"
+              class="report-btn"
+            >
+              <i class="fas fa-file-alt"></i>
+              <span class="hidden md:inline">របាយការណ៍</span>
+            </button>
+          </div>
         </div>
+      </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-3 py-4">
-        <!-- Simplified Statistics -->
-        <div class="grid grid-cols-3 gap-3 mb-6 no-print">
-            <div class="bg-white rounded-lg shadow p-4">
-                <div class="text-center">
-                    <p class="text-gray-600 text-xs mb-1">មធ្យមភាគថ្នាក់</p>
-                    <p class="text-xl font-bold text-blue-600" id="classAverage">0.00</p>
-                </div>
+      <!-- Group 1: Student Summary Tiles -->
+      <div class="tile-group-container">
+        <div class="tile-group-title">សង្ខេបសិស្ស</div>
+        <div class="tiles-row">
+          <!-- Tile 1: Total Students -->
+          <div class="single-line-tile tile-color-total">
+            <div class="tile-main-row">
+              <span class="tile-title">សិស្សសរុប</span>
+              <span class="tile-main-value" id="totalStudentsValue"
+                >0 នាក់</span
+              >
             </div>
-            <div class="bg-white rounded-lg shadow p-4">
-                <div class="text-center">
-                    <p class="text-gray-600 text-xs mb-1">ខ្ពស់បំផុត</p>
-                    <p class="text-xl font-bold text-green-600" id="highestAverage">0.00</p>
-                </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="femaleStudentsCount"
+                  >0 នាក់</span
+                >
+              </div>
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="maleStudentsCount">0 នាក់</span>
+              </div>
             </div>
-            <div class="bg-white rounded-lg shadow p-4">
-                <div class="text-center">
-                    <p class="text-gray-600 text-xs mb-1">ទាបបំផុត</p>
-                    <p class="text-xl font-bold text-red-600" id="lowestAverage">0.00</p>
-                </div>
+          </div>
+
+          <!-- Tile 2: Passing Students -->
+          <div class="single-line-tile tile-color-passed">
+            <div class="tile-main-row">
+              <span class="tile-title">ជាប់មធ្យមភាគ</span>
+              <span class="tile-main-value" id="passedStudentsValue"
+                >0 នាក់</span
+              >
             </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="femalePassedCount">0 នាក់</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="malePassedCount">0 នាក់</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 3: Failing Students -->
+          <div class="single-line-tile tile-color-failed">
+            <div class="tile-main-row">
+              <span class="tile-title">ធ្លាក់មធ្យមភាគ</span>
+              <span class="tile-main-value" id="failedStudentsValue"
+                >0 នាក់</span
+              >
+            </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="femaleFailedCount">0 នាក់</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="maleFailedCount">0 នាក់</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group 2: Average Range Tiles -->
+      <div class="tile-group-container">
+        <div class="tile-group-title">ការចែកចាយមធ្យមភាគ</div>
+        <div class="tiles-row range-tiles">
+          <!-- Tile 4: Range 9.5-10 -->
+          <div class="single-line-tile tile-color-9-10">
+            <div class="tile-main-row">
+              <span class="tile-title">មធ្យមភាគ 9.5-10</span>
+              <div class="flex items-center gap-2">
+                <span class="tile-main-value" id="range-9-10-value"
+                  >0 នាក់</span
+                >
+                <span class="percentage-badge-small" id="range-9-10-percent"
+                  >០%</span
+                >
+              </div>
+            </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="range-9-10-male">0</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="range-9-10-female">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 5: Range 8.0-9.49 -->
+          <div class="single-line-tile tile-color-8-9">
+            <div class="tile-main-row">
+              <span class="tile-title">មធ្យមភាគ 8.0-9.49</span>
+              <div class="flex items-center gap-2">
+                <span class="tile-main-value" id="range-8-9-value">0 នាក់</span>
+                <span class="percentage-badge-small" id="range-8-9-percent"
+                  >០%</span
+                >
+              </div>
+            </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="range-8-9-male">0</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="range-8-9-female">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 6: Range 6.50-7.99 -->
+          <div class="single-line-tile tile-color-6-7">
+            <div class="tile-main-row">
+              <span class="tile-title">មធ្យមភាគ 6.50-7.99</span>
+              <div class="flex items-center gap-2">
+                <span class="tile-main-value" id="range-6-7-value">0 នាក់</span>
+                <span class="percentage-badge-small" id="range-6-7-percent"
+                  >០%</span
+                >
+              </div>
+            </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="range-6-7-male">0</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="range-6-7-female">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 7: Range 5.00-6.49 -->
+          <div class="single-line-tile tile-color-5-6">
+            <div class="tile-main-row">
+              <span class="tile-title">មធ្យមភាគ 5.00-6.49</span>
+              <div class="flex items-center gap-2">
+                <span class="tile-main-value" id="range-5-6-value">0 នាក់</span>
+                <span class="percentage-badge-small" id="range-5-6-percent"
+                  >០%</span
+                >
+              </div>
+            </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="range-5-6-male">0</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="range-5-6-female">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 8: Range Below 5.00 -->
+          <div class="single-line-tile tile-color-below-5">
+            <div class="tile-main-row">
+              <span class="tile-title">មធ្យមភាគតិចជាង 5.00</span>
+              <div class="flex items-center gap-2">
+                <span class="tile-main-value" id="range-below-5-value"
+                  >0 នាក់</span
+                >
+                <span class="percentage-badge-small" id="range-below-5-percent"
+                  >០%</span
+                >
+              </div>
+            </div>
+            <div class="tile-details-row">
+              <div class="tile-detail-item">
+                <span>ប្រុស</span>
+                <span class="gender-male" id="range-below-5-male">0</span>
+              </div>
+              <div class="tile-detail-item">
+                <span>ស្រី</span>
+                <span class="gender-female" id="range-below-5-female">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tile 9: Class Average (Special tile) -->
+          <div class="class-average-tile">
+            <div class="class-average-value" id="classAverageValue">0.00</div>
+            <div class="class-average-label">មធ្យមភាគថ្នាក់</div>
+            <div class="class-average-details">
+              <div class="average-detail">
+                <div class="text-xs text-gray-500">ខ្ពស់បំផុត</div>
+                <div class="average-detail-value" id="highestAverageValue">
+                  0.00
+                </div>
+              </div>
+              <div class="average-detail">
+                <div class="text-xs text-gray-500">ទាបបំផុត</div>
+                <div class="average-detail-value" id="lowestAverageValue">
+                  0.00
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grade Distribution -->
+      <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-3 border-b">
+          <h3 class="font-bold text-gray-800 text-sm">ការចែកចាយកម្រិតពិន្ទុ</h3>
+        </div>
+        <div class="p-3">
+          <div
+            id="gradeDistribution"
+            class="grid grid-cols-3 md:grid-cols-6 gap-2"
+          >
+            <!-- Grades will be populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Ranking Table -->
+      <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+        <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+          <div class="flex items-center justify-between">
+            <h2 class="font-bold text-gray-800 text-sm">តារាងចំណាត់ថ្នាក់</h2>
+            <div class="text-xs text-gray-600">
+              <i class="fas fa-sort-amount-down mr-1"></i>តម្រៀបតាមមធ្យមភាគ
+            </div>
+          </div>
         </div>
 
-        <!-- Grade Distribution -->
-        <div class="bg-white rounded-lg shadow mb-6 no-print">
-            <div class="p-3 border-b">
-                <h3 class="font-bold text-gray-800 text-sm">ការចែកចាយកម្រិតពិន្ទុ</h3>
-            </div>
-            <div class="p-3">
-                <div id="gradeDistribution" class="grid grid-cols-3 md:grid-cols-6 gap-2">
-                    <!-- Grades will be populated dynamically -->
-                </div>
-            </div>
+        <div class="table-container">
+          <table class="w-full text-xs">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="py-2 px-2 text-center font-medium">ល.រ</th>
+                <th class="py-2 px-2 text-left font-medium">ឈ្មោះសិស្ស</th>
+                <th class="py-2 px-2 text-center font-medium">ភេទ</th>
+                <th class="py-2 px-2 text-center font-medium">មធ្យមភាគ</th>
+                <th class="py-2 px-2 text-center font-medium">កម្រិត</th>
+                <th class="py-2 px-2 text-center font-medium text-red-600">
+                  ចំណាត់ថ្នាក់
+                </th>
+                <th class="py-2 px-2 text-center font-medium">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody id="rankingTableBody" class="divide-y divide-gray-100">
+              <!-- Ranking table will be populated by JavaScript -->
+            </tbody>
+          </table>
         </div>
 
-        <!-- Ranking Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden mb-6 no-print">
-            <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
-                <div class="flex items-center justify-between">
-                    <h2 class="font-bold text-gray-800 text-sm">តារាងចំណាត់ថ្នាក់</h2>
-                    <div class="text-xs text-gray-600">
-                        <i class="fas fa-sort-amount-down mr-1"></i>តម្រៀបតាមមធ្យមភាគ
-                    </div>
-                </div>
+        <div class="p-2 border-t bg-gray-50 text-xs text-gray-600">
+          <div class="flex justify-between items-center">
+            <div>
+              <i class="fas fa-info-circle mr-1"></i>
+              <span>ពិន្ទុនីមួយៗមានពី 0-10 ពិន្ទុ</span>
             </div>
-            
-            <div class="table-container">
-                <table class="w-full text-xs">
-                    <thead>
-                        <tr class="bg-gray-50">
-                            <th class="py-2 px-2 text-center font-medium">ល.រ</th>
-                            <th class="py-2 px-2 text-left font-medium">ឈ្មោះសិស្ស</th>
-                            
-                            <th class="py-2 px-2 text-center font-medium">ភេទ</th>
-                            <th class="py-2 px-2 text-center font-medium">មធ្យមភាគ</th>
-                            <th class="py-2 px-2 text-center font-medium">កម្រិត</th>
-                            <th class="py-2 px-2 text-center font-medium text-red-600">ចំណាត់ថ្នាក់</th>
-                            <th class="py-2 px-2 text-center font-medium">សកម្មភាព</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rankingTableBody" class="divide-y divide-gray-100">
-                        <!-- Ranking table will be populated by JavaScript -->
-                    </tbody>
-                </table>
+            <div id="lastUpdated" class="text-gray-500">
+              <i class="fas fa-sync-alt mr-1"></i>កំពុងអាប់ដេត...
             </div>
-            
-            <div class="p-2 border-t bg-gray-50 text-xs text-gray-600">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <i class="fas fa-info-circle mr-1"></i>
-                        <span>ពិន្ទុនីមួយៗមានពី 0-10 ពិន្ទុ</span>
-                    </div>
-                    <div id="lastUpdated" class="text-gray-500">
-                        <i class="fas fa-sync-alt mr-1"></i>កំពុងអាប់ដេត...
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
 
-        <!-- Legend -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs mb-6 no-print">
-            <h3 class="font-bold text-yellow-800 mb-1"><i class="fas fa-info-circle mr-1"></i>ការពន្យល់</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div>
-                    <p class="font-medium text-gray-700 mb-1">កម្រិតពិន្ទុ:</p>
-                    <div class="flex flex-wrap gap-1">
-                        <span class="px-2 py-1 rounded grade-A">A (9.0-10)</span>
-                        <span class="px-2 py-1 rounded grade-B">B (8.0-8.9)</span>
-                        <span class="px-2 py-1 rounded grade-C">C (7.0-7.9)</span>
-                        <span class="px-2 py-1 rounded grade-D">D (6.0-6.9)</span>
-                        <span class="px-2 py-1 rounded grade-E">E (5.0-5.9)</span>
-                        <span class="px-2 py-1 rounded grade-F">F (0-4.9)</span>
-                    </div>
-                </div>
-                <div>
-                    <p class="font-medium text-gray-700 mb-1">ការគណនា:</p>
-                    <ul class="text-gray-600 space-y-0.5">
-                        <li>• ពិន្ទុសរុប = ផលបូកពិន្ទុទាំង ១២ មុខវិជ្ជា</li>
-                        <li>• មធ្យមភាគ = ពិន្ទុសរុប ÷ ១២ (0-10)</li>
-                    </ul>
-                </div>
+      <!-- Legend -->
+      <div
+        class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs mb-6"
+      >
+        <h3 class="font-bold text-yellow-800 mb-1">
+          <i class="fas fa-info-circle mr-1"></i>ការពន្យល់
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div>
+            <p class="font-medium text-gray-700 mb-1">កម្រិតពិន្ទុ:</p>
+            <div class="flex flex-wrap gap-1">
+              <span class="px-2 py-1 rounded grade-A">A (9.0-10)</span>
+              <span class="px-2 py-1 rounded grade-B">B (8.0-8.9)</span>
+              <span class="px-2 py-1 rounded grade-C">C (7.0-7.9)</span>
+              <span class="px-2 py-1 rounded grade-D">D (6.0-6.9)</span>
+              <span class="px-2 py-1 rounded grade-E">E (5.0-5.9)</span>
+              <span class="px-2 py-1 rounded grade-F">F (0-4.9)</span>
             </div>
+          </div>
+          <div>
+            <p class="font-medium text-gray-700 mb-1">ការគណនា:</p>
+            <ul class="text-gray-600 space-y-0.5">
+              <li>• ពិន្ទុសរុប = ផលបូកពិន្ទុទាំង ១២ មុខវិជ្ជា</li>
+              <li>• មធ្យមភាគ = ពិន្ទុសរុប ÷ ១២ (0-10)</li>
+            </ul>
+          </div>
         </div>
+      </div>
     </main>
 
-    <!-- Student Scores Page (Hidden by default) -->
-    <div id="studentScoresPage" class="hidden no-print">
-        <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
-            <div class="container mx-auto px-3 py-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <button onclick="goBackToRanking()" class="bg-white p-2 rounded-full hover:bg-gray-100 transition">
-                            <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
-                        </button>
-                        <div>
-                            <h1 class="text-lg font-bold">ពិន្ទុមុខវិជ្ជាលម្អិត</h1>
-                            <p class="text-xs opacity-90" id="studentDetailTitle"></p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="printStudentScores()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm">
-                            <i class="fas fa-print"></i>
-                            <span class="hidden md:inline ml-1">Print</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <main class="container mx-auto px-3 py-4">
-            <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
-                <div class="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
-                    <h2 class="font-bold text-gray-800" id="scorePageTitle">ពិន្ទុមុខវិជ្ជា</h2>
-                </div>
-                
-                <div class="p-4">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">លេខសម្គាល់</p>
-                            <p class="font-bold" id="scoreStudentId"></p>
-                        </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">ភេទ</p>
-                            <p class="font-bold" id="scoreStudentGender"></p>
-                        </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">មធ្យមភាគ</p>
-                            <p class="font-bold text-blue-600" id="scoreStudentAverage"></p>
-                        </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">កម្រិតសរុប</p>
-                            <span class="font-bold" id="scoreStudentGrade"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="table-container">
-                        <table class="w-full text-sm">
-                            <thead>
-                                <tr class="bg-gray-50">
-                                    <th class="py-2 px-3 text-left">ល.រ</th>
-                                    <th class="py-2 px-3 text-left">មុខវិជ្ជា</th>
-                                    <th class="py-2 px-3 text-center">ពិន្ទុ (0-10)</th>
-                                    <th class="py-2 px-3 text-center">កម្រិត</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studentScoresTable">
-                                <!-- Scores will be populated here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-gray-600 text-xs">សង្ខេបស្ថានភាព</p>
-                                <p class="text-sm font-bold text-blue-600" id="scoreSummary"></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-gray-600 text-xs">ចំណាត់ថ្នាក់</p>
-                                <span class="font-bold text-red-600" id="scoreRank"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Official Report Template (Hidden by default, only for printing) -->
-    <div id="officialReport" class="hidden print-only">
-        <div class="print-report">
-            <!-- Top Center: Kingdom of Cambodia with Khmer Mool font -->
-            <div class="khmer-header khmer-mool" style="margin-bottom: 5px;">
-                ព្រះរាជាណាចក្រកម្ពុជា
-            </div>
-            <div class="khmer-header khmer-mool" style="margin-bottom: 15px;">
-                ជាតិ សាសនា ព្រះមហាក្សត្រ
-            </div>
-            <div class="khmer-header" style="font-size: 20pt; margin-bottom: 10px; font-weight: normal;">
-                ៣
-            </div>
-            
-            <!-- School Information - Left Aligned -->
-            <div class="school-info left-align" style="margin-bottom: 10px;">
-                <div style="font-size: 11pt; margin-bottom: 3px;">
-                    រព្ម្ងសាលាបឋមសិក្សា...................................................................
-                </div>
-                <div style="font-size: 11pt;">
-                    សាលាបឋមសិក្សា..........................................................................
-                </div>
-            </div>
-            
-            <!-- Class Information - Center Aligned -->
-            <div class="center-align" style="margin-bottom: 10px;">
-                <div style="font-size: 11pt; margin-bottom: 3px;">
-                    បញ្ជីរាយនាមសិស្សថ្នាក់ទី <span id="reportGrade">10</span> "<span id="reportClassName">ក</span>"
-                </div>
-                <div style="font-size: 11pt;">
-                    ឆ្នាំសិក្សា <span id="reportYearStart">2024</span> - <span id="reportYearEnd">2025</span>
-                </div>
-            </div>
-            
-            <!-- Single table with 10 columns (2 sets of 5 columns) -->
-            <table class="ten-column-table">
-                <thead>
-                    <tr>
-                        <!-- First set of 5 columns -->
-                        <th class="col-no">ល.រ</th>
-                        <th class="col-name">នាមនិងគោតនាម</th>
-                        <th class="col-gender">ភេទ</th>
-                        <th class="col-average">មធ្យមភាគ</th>
-                        <th class="col-rank">ចំណាត់ថ្នាក់</th>
-                        
-                        <!-- Second set of 5 columns -->
-                        <th class="col-no">ល.រ</th>
-                        <th class="col-name">នាមនិងគោតនាម</th>
-                        <th class="col-gender">ភេទ</th>
-                        <th class="col-average">មធ្យមភាគ</th>
-                        <th class="col-rank">ចំណាត់ថ្នាក់</th>
-                    </tr>
-                </thead>
-                <tbody id="officialReportTable">
-                    <!-- Table rows will be populated here -->
-                </tbody>
-            </table>
-            
-            <!-- Statistics Section - Below the table, Left Aligned -->
-            <div class="stats-section">
-                <div style="font-size: 10pt; margin-bottom: 2px;">
-                    - សិស្សសរុប <span id="reportTotalStudents" style="font-weight: bold;">0</span> នាក់ ស្រី <span id="reportFemaleTotal" style="font-weight: bold;">0</span> នាក់
-                </div>
-                <div style="font-size: 10pt; margin-bottom: 2px;">
-                    - ជាប់មធ្យមភាគ <span id="reportPassedStudents" style="font-weight: bold;">0</span> នាក់ ស្រី <span id="reportFemalePassed" style="font-weight: bold;">0</span> នាក់
-                </div>
-                <div style="font-size: 10pt;">
-                    - ធ្លាក់ <span id="reportFailedStudents" style="font-weight: bold;">0</span> នាក់ ស្រី <span id="reportFemaleFailed" style="font-weight: bold;">0</span> នាក់
-                </div>
-            </div>
-            
-            <!-- Footer Section - Right Aligned -->
-            <div class="footer-section right-align" style="margin-top: 20px;">
-                <div style="font-size: 10pt; margin-bottom: 5px;">
-                    ថ្ងៃ.........................ខែ..............ឆ្នាំ........... ឆស័ក ព.ស ២៥៦.......
-                </div>
-                <div style="font-size: 10pt; margin-bottom: 40px;">
-                    ធ្វើនៅ....................ថ្ងៃទី...............ខែ.............ឆ្នាំ ២០........
-                </div>
-                
-                <!-- Signatures -->
-                <div style="display: flex; justify-content: space-between; margin-top: 60px;">
-                    <div style="width: 45%; text-align: center;">
-                        <div class="signature-line"></div>
-                        <div style="font-size: 10pt; margin-top: 5px;">គ្រូបន្ទុកថ្នាក់</div>
-                    </div>
-                    <div style="width: 45%; text-align: center;">
-                        <div class="signature-line"></div>
-                        <div style="font-size: 10pt; margin-top: 5px;">នាយក</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Subjects list
-        const subjects = [
-            "ភាសាខ្មែរ",
-            "គណិតវិទ្យា", 
-            "រូបវិទ្យា",
-            "គីមីវិទ្យា",
-            "ជីវវិទ្យា",
-            "ប្រវត្តិវិទ្យា",
-            "ភូមិវិទ្យា",
-            "អង់គ្លេស",
-            "សីលធម៌-ពលរដ្ឋ",
-            "ព័ត៌មានវិទ្យា",
-            "អប់រំកាយ",
-            "សិល្បៈ"
-        ];
+      // Subjects list
+      const subjects = [
+        "ភាសាខ្មែរ",
+        "គណិតវិទ្យា",
+        "រូបវិទ្យា",
+        "គីមីវិទ្យា",
+        "ជីវវិទ្យា",
+        "ប្រវត្តិវិទ្យា",
+        "ភូមិវិទ្យា",
+        "អង់គ្លេស",
+        "សីលធម៌-ពលរដ្ឋ",
+        "ព័ត៌មានវិទ្យា",
+        "អប់រំកាយ",
+        "សិល្បៈ",
+      ];
 
-        // Global variables
-        let students = [];
-        let scores = {};
-        let rankedStudents = [];
+      // Global variables
+      let students = [];
+      let scores = {};
+      let rankedStudents = [];
 
-        // Configuration
-        const config = {
-            schoolName: "សាលាបឋមសិក្សា",
-            grade: "10",
-            className: "ក",
-            yearStart: "2024",
-            yearEnd: "2025",
-            passingGrade: 5.0 // Minimum average to pass
-        };
+      // Configuration
+      const config = {
+        passingGrade: 5.0, // Minimum average to pass
+      };
 
-        // Initialize data
-        function initializeData() {
-            // Load students from class10A_students
-            const savedStudents = localStorage.getItem('class10A_students');
-            students = savedStudents ? JSON.parse(savedStudents) : [];
-            
-            // Load scores from class10A_scores
-            const savedScores = localStorage.getItem('class10A_scores');
-            scores = savedScores ? JSON.parse(savedScores) : {};
-            
-            // Calculate rankings
-            calculateRankings();
-            
-            // Update display
-            updateAllDisplays();
-            
-            // Update last updated time
-            updateLastUpdated();
-        }
+      // Navigate to report page
+      function goToReport() {
+        window.location.href = "report.html";
+      }
 
-        // Calculate total score
-        function calculateTotal(scoresArray) {
-            if (!scoresArray) return 0;
-            return scoresArray.reduce((sum, score) => sum + score, 0);
-        }
+      // Navigate to student view page with ID parameter
+      function goToStudentView(studentId) {
+        window.location.href = `view-student.html?id=${studentId}`;
+      }
 
-        // Calculate average (0-10)
-        function calculateAverage(scoresArray) {
-            if (!scoresArray || scoresArray.length === 0) return 0;
-            const total = calculateTotal(scoresArray);
-            return total / scoresArray.length;
-        }
+      // Initialize data
+      function initializeData() {
+        // Load students from class10A_students
+        const savedStudents = localStorage.getItem("class10A_students");
+        students = savedStudents ? JSON.parse(savedStudents) : [];
 
-        // Get grade from score (0-10 scale)
-        function getGradeFromScore(score) {
-            if (score >= 9.0) return 'A';
-            if (score >= 8.0) return 'B';
-            if (score >= 7.0) return 'C';
-            if (score >= 6.0) return 'D';
-            if (score >= 5.0) return 'E';
-            return 'F';
-        }
-
-        // Get grade color class
-        function getGradeColorClass(grade) {
-            switch(grade) {
-                case 'A': return 'grade-A';
-                case 'B': return 'grade-B';
-                case 'C': return 'grade-C';
-                case 'D': return 'grade-D';
-                case 'E': return 'grade-E';
-                case 'F': return 'grade-F';
-                default: return 'grade-F';
-            }
-        }
+        // Load scores from class10A_scores
+        const savedScores = localStorage.getItem("class10A_scores");
+        scores = savedScores ? JSON.parse(savedScores) : {};
 
         // Calculate rankings
-        function calculateRankings() {
-            // Prepare student data with scores
-            const studentsWithScores = students.map(student => {
-                const studentScores = scores[student.id] || Array(12).fill(0);
-                const total = calculateTotal(studentScores);
-                const average = calculateAverage(studentScores);
-                const grade = getGradeFromScore(average);
-                
-                return {
-                    ...student,
-                    scores: studentScores,
-                    total: total,
-                    average: average,
-                    grade: grade,
-                    passed: average >= config.passingGrade
-                };
-            });
-            
-            // Sort by average (descending)
-            rankedStudents = studentsWithScores.sort((a, b) => b.average - a.average);
-            
-            // Add ranking positions (handle ties)
-            let currentRank = 1;
-            let previousAverage = null;
-            let skipCount = 0;
-            
-            rankedStudents.forEach((student, index) => {
-                if (previousAverage !== null && Math.abs(student.average - previousAverage) < 0.01) {
-                    // Same average as previous student (tie)
-                    skipCount++;
-                    student.rank = currentRank - 1;
-                } else {
-                    // Different average
-                    currentRank += skipCount;
-                    skipCount = 0;
-                    student.rank = currentRank;
-                    currentRank++;
-                }
-                previousAverage = student.average;
-            });
+        calculateRankings();
+
+        // Update display
+        updateAllDisplays();
+
+        // Update last updated time
+        updateLastUpdated();
+      }
+
+      // Calculate total score
+      function calculateTotal(scoresArray) {
+        if (!scoresArray) return 0;
+        return scoresArray.reduce((sum, score) => sum + score, 0);
+      }
+
+      // Calculate average (0-10)
+      function calculateAverage(scoresArray) {
+        if (!scoresArray || scoresArray.length === 0) return 0;
+        const total = calculateTotal(scoresArray);
+        return total / scoresArray.length;
+      }
+
+      // Get grade from score (0-10 scale)
+      function getGradeFromScore(score) {
+        if (score >= 9.0) return "A";
+        if (score >= 8.0) return "B";
+        if (score >= 7.0) return "C";
+        if (score >= 6.0) return "D";
+        if (score >= 5.0) return "E";
+        return "F";
+      }
+
+      // Get grade color class
+      function getGradeColorClass(grade) {
+        switch (grade) {
+          case "A":
+            return "grade-A";
+          case "B":
+            return "grade-B";
+          case "C":
+            return "grade-C";
+          case "D":
+            return "grade-D";
+          case "E":
+            return "grade-E";
+          case "F":
+            return "grade-F";
+          default:
+            return "grade-F";
+        }
+      }
+
+      // Calculate statistics
+      function calculateStatistics() {
+        if (rankedStudents.length === 0) {
+          return {
+            total: 0,
+            female: 0,
+            male: 0,
+            passed: 0,
+            femalePassed: 0,
+            malePassed: 0,
+            failed: 0,
+            femaleFailed: 0,
+            maleFailed: 0,
+            classAverage: 0,
+            highestAverage: 0,
+            lowestAverage: 0,
+            ranges: {
+              "9.5-10": { total: 0, male: 0, female: 0, percent: 0 },
+              "8.0-9.49": { total: 0, male: 0, female: 0, percent: 0 },
+              "6.50-7.99": { total: 0, male: 0, female: 0, percent: 0 },
+              "5.00-6.49": { total: 0, male: 0, female: 0, percent: 0 },
+              "below-5": { total: 0, male: 0, female: 0, percent: 0 },
+            },
+          };
         }
 
-        // Update all displays
-        function updateAllDisplays() {
-            updateStatistics();
-            updateGradeDistribution();
-            updateRankingTable();
-        }
+        // Calculate basic statistics
+        const femaleStudents = rankedStudents.filter(
+          (s) => s.gender === "female"
+        );
+        const maleStudents = rankedStudents.filter((s) => s.gender === "male");
 
-        // Update statistics
-        function updateStatistics() {
-            if (rankedStudents.length === 0) return;
-            
-            // Calculate class statistics
-            const averages = rankedStudents.map(s => s.average);
-            const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
-            const highestAverage = Math.max(...averages);
-            const lowestAverage = Math.min(...averages);
-            
-            document.getElementById('classAverage').textContent = classAverage.toFixed(2);
-            document.getElementById('highestAverage').textContent = highestAverage.toFixed(2);
-            document.getElementById('lowestAverage').textContent = lowestAverage.toFixed(2);
-        }
+        const passedStudents = rankedStudents.filter((s) => s.passed);
+        const femalePassed = passedStudents.filter(
+          (s) => s.gender === "female"
+        );
+        const malePassed = passedStudents.filter((s) => s.gender === "male");
 
-        // Update grade distribution
-        function updateGradeDistribution() {
-            const gradeCounts = {
-                'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'F': 0
-            };
-            
-            rankedStudents.forEach(student => {
-                gradeCounts[student.grade]++;
-            });
-            
-            const container = document.getElementById('gradeDistribution');
-            let html = '';
-            
-            ['A', 'B', 'C', 'D', 'E', 'F'].forEach(grade => {
-                const count = gradeCounts[grade];
-                const percentage = rankedStudents.length > 0 
-                    ? Math.round((count / rankedStudents.length) * 100) 
-                    : 0;
-                
-                html += `
+        const failedStudents = rankedStudents.filter((s) => !s.passed);
+        const femaleFailed = failedStudents.filter(
+          (s) => s.gender === "female"
+        );
+        const maleFailed = failedStudents.filter((s) => s.gender === "male");
+
+        // Calculate class averages
+        const averages = rankedStudents.map((s) => s.average);
+        const classAverage =
+          averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
+        const highestAverage = Math.max(...averages);
+        const lowestAverage = Math.min(...averages);
+
+        // Calculate range statistics
+        const ranges = {
+          "9.5-10": { total: 0, male: 0, female: 0, percent: 0 },
+          "8.0-9.49": { total: 0, male: 0, female: 0, percent: 0 },
+          "6.50-7.99": { total: 0, male: 0, female: 0, percent: 0 },
+          "5.00-6.49": { total: 0, male: 0, female: 0, percent: 0 },
+          "below-5": { total: 0, male: 0, female: 0, percent: 0 },
+        };
+
+        rankedStudents.forEach((student) => {
+          const avg = student.average;
+
+          if (avg >= 9.5) {
+            ranges["9.5-10"].total++;
+            if (student.gender === "male") ranges["9.5-10"].male++;
+            else ranges["9.5-10"].female++;
+          } else if (avg >= 8.0) {
+            ranges["8.0-9.49"].total++;
+            if (student.gender === "male") ranges["8.0-9.49"].male++;
+            else ranges["8.0-9.49"].female++;
+          } else if (avg >= 6.5) {
+            ranges["6.50-7.99"].total++;
+            if (student.gender === "male") ranges["6.50-7.99"].male++;
+            else ranges["6.50-7.99"].female++;
+          } else if (avg >= 5.0) {
+            ranges["5.00-6.49"].total++;
+            if (student.gender === "male") ranges["5.00-6.49"].male++;
+            else ranges["5.00-6.49"].female++;
+          } else {
+            ranges["below-5"].total++;
+            if (student.gender === "male") ranges["below-5"].male++;
+            else ranges["below-5"].female++;
+          }
+        });
+
+        // Calculate percentages
+        Object.keys(ranges).forEach((range) => {
+          ranges[range].percent =
+            rankedStudents.length > 0
+              ? Math.round((ranges[range].total / rankedStudents.length) * 100)
+              : 0;
+        });
+
+        return {
+          total: rankedStudents.length,
+          female: femaleStudents.length,
+          male: maleStudents.length,
+          passed: passedStudents.length,
+          femalePassed: femalePassed.length,
+          malePassed: malePassed.length,
+          failed: failedStudents.length,
+          femaleFailed: femaleFailed.length,
+          maleFailed: maleFailed.length,
+          classAverage,
+          highestAverage,
+          lowestAverage,
+          ranges,
+        };
+      }
+
+      // Calculate rankings
+      function calculateRankings() {
+        // Prepare student data with scores
+        const studentsWithScores = students.map((student) => {
+          const studentScores = scores[student.id] || Array(12).fill(0);
+          const total = calculateTotal(studentScores);
+          const average = calculateAverage(studentScores);
+          const grade = getGradeFromScore(average);
+
+          return {
+            ...student,
+            scores: studentScores,
+            total: total,
+            average: average,
+            grade: grade,
+            passed: average >= config.passingGrade,
+          };
+        });
+
+        // Sort by average (descending)
+        rankedStudents = studentsWithScores.sort(
+          (a, b) => b.average - a.average
+        );
+
+        // Add ranking positions (handle ties)
+        let currentRank = 1;
+        let previousAverage = null;
+        let skipCount = 0;
+
+        rankedStudents.forEach((student, index) => {
+          if (
+            previousAverage !== null &&
+            Math.abs(student.average - previousAverage) < 0.01
+          ) {
+            // Same average as previous student (tie)
+            skipCount++;
+            student.rank = currentRank - 1;
+          } else {
+            // Different average
+            currentRank += skipCount;
+            skipCount = 0;
+            student.rank = currentRank;
+            currentRank++;
+          }
+          previousAverage = student.average;
+        });
+      }
+
+      // Update all displays
+      function updateAllDisplays() {
+        const stats = calculateStatistics();
+
+        // Update Tile 1: Total Students
+        document.getElementById(
+          "totalStudentsValue"
+        ).textContent = `${stats.total} នាក់`;
+        document.getElementById(
+          "femaleStudentsCount"
+        ).textContent = `${stats.female} នាក់`;
+        document.getElementById(
+          "maleStudentsCount"
+        ).textContent = `${stats.male} នាក់`;
+
+        // Update Tile 2: Passing Students
+        document.getElementById(
+          "passedStudentsValue"
+        ).textContent = `${stats.passed} នាក់`;
+        document.getElementById(
+          "femalePassedCount"
+        ).textContent = `${stats.femalePassed} នាក់`;
+        document.getElementById(
+          "malePassedCount"
+        ).textContent = `${stats.malePassed} នាក់`;
+
+        // Update Tile 3: Failing Students
+        document.getElementById(
+          "failedStudentsValue"
+        ).textContent = `${stats.failed} នាក់`;
+        document.getElementById(
+          "femaleFailedCount"
+        ).textContent = `${stats.femaleFailed} នាក់`;
+        document.getElementById(
+          "maleFailedCount"
+        ).textContent = `${stats.maleFailed} នាក់`;
+
+        // Update Tile 4: Range 9.5-10
+        document.getElementById(
+          "range-9-10-value"
+        ).textContent = `${stats.ranges["9.5-10"].total} នាក់`;
+        document.getElementById(
+          "range-9-10-percent"
+        ).textContent = `០${stats.ranges["9.5-10"].percent}%`;
+        document.getElementById("range-9-10-male").textContent =
+          stats.ranges["9.5-10"].male;
+        document.getElementById("range-9-10-female").textContent =
+          stats.ranges["9.5-10"].female;
+
+        // Update Tile 5: Range 8.0-9.49
+        document.getElementById(
+          "range-8-9-value"
+        ).textContent = `${stats.ranges["8.0-9.49"].total} នាក់`;
+        document.getElementById(
+          "range-8-9-percent"
+        ).textContent = `០${stats.ranges["8.0-9.49"].percent}%`;
+        document.getElementById("range-8-9-male").textContent =
+          stats.ranges["8.0-9.49"].male;
+        document.getElementById("range-8-9-female").textContent =
+          stats.ranges["8.0-9.49"].female;
+
+        // Update Tile 6: Range 6.50-7.99
+        document.getElementById(
+          "range-6-7-value"
+        ).textContent = `${stats.ranges["6.50-7.99"].total} នាក់`;
+        document.getElementById(
+          "range-6-7-percent"
+        ).textContent = `០${stats.ranges["6.50-7.99"].percent}%`;
+        document.getElementById("range-6-7-male").textContent =
+          stats.ranges["6.50-7.99"].male;
+        document.getElementById("range-6-7-female").textContent =
+          stats.ranges["6.50-7.99"].female;
+
+        // Update Tile 7: Range 5.00-6.49
+        document.getElementById(
+          "range-5-6-value"
+        ).textContent = `${stats.ranges["5.00-6.49"].total} នាក់`;
+        document.getElementById(
+          "range-5-6-percent"
+        ).textContent = `០${stats.ranges["5.00-6.49"].percent}%`;
+        document.getElementById("range-5-6-male").textContent =
+          stats.ranges["5.00-6.49"].male;
+        document.getElementById("range-5-6-female").textContent =
+          stats.ranges["5.00-6.49"].female;
+
+        // Update Tile 8: Range Below 5.00
+        document.getElementById(
+          "range-below-5-value"
+        ).textContent = `${stats.ranges["below-5"].total} នាក់`;
+        document.getElementById(
+          "range-below-5-percent"
+        ).textContent = `០${stats.ranges["below-5"].percent}%`;
+        document.getElementById("range-below-5-male").textContent =
+          stats.ranges["below-5"].male;
+        document.getElementById("range-below-5-female").textContent =
+          stats.ranges["below-5"].female;
+
+        // Update Tile 9: Class Average
+        document.getElementById("classAverageValue").textContent =
+          stats.classAverage.toFixed(2);
+        document.getElementById("highestAverageValue").textContent =
+          stats.highestAverage.toFixed(2);
+        document.getElementById("lowestAverageValue").textContent =
+          stats.lowestAverage.toFixed(2);
+
+        updateGradeDistribution();
+        updateRankingTable();
+      }
+
+      // Update grade distribution
+      function updateGradeDistribution() {
+        const gradeCounts = {
+          A: 0,
+          B: 0,
+          C: 0,
+          D: 0,
+          E: 0,
+          F: 0,
+        };
+
+        rankedStudents.forEach((student) => {
+          gradeCounts[student.grade]++;
+        });
+
+        const container = document.getElementById("gradeDistribution");
+        let html = "";
+
+        ["A", "B", "C", "D", "E", "F"].forEach((grade) => {
+          const count = gradeCounts[grade];
+          const percentage =
+            rankedStudents.length > 0
+              ? Math.round((count / rankedStudents.length) * 100)
+              : 0;
+
+          html += `
                     <div class="text-center">
-                        <div class="${getGradeColorClass(grade)} p-2 rounded-lg">
+                        <div class="${getGradeColorClass(
+                          grade
+                        )} p-2 rounded-lg">
                             <div class="font-bold">${grade}</div>
                             <div class="text-xs mt-1">${count} នាក់</div>
                             <div class="text-xs opacity-75">${percentage}%</div>
                         </div>
                     </div>
                 `;
-            });
-            
-            container.innerHTML = html;
-        }
+        });
 
-        // Update ranking table
-        function updateRankingTable() {
-            const tableBody = document.getElementById('rankingTableBody');
-            let html = '';
-            
-            rankedStudents.forEach((student, index) => {
-                const rowNumber = index + 1;
-                
-                html += `
-                    <tr class="student-row">
+        container.innerHTML = html;
+      }
+
+      // Update ranking table
+      function updateRankingTable() {
+        const tableBody = document.getElementById("rankingTableBody");
+        let html = "";
+
+        rankedStudents.forEach((student, index) => {
+          const rowNumber = index + 1;
+
+          html += `
+                    <tr class="student-row hover:bg-gray-50">
                         <td class="py-2 px-2 text-center font-medium text-gray-900">
                             ${rowNumber}
                         </td>
                         <td class="py-2 px-2 font-medium">
                             ${student.name}
                         </td>
-                       
                         <td class="py-2 px-2 text-center">
                             <span class="px-2 py-0.5 rounded-full text-xs ${
-                                student.gender === 'male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600'
+                              student.gender === "male"
+                                ? "bg-blue-100 text-blue-600"
+                                : "bg-pink-100 text-pink-600"
                             }">
-                                ${student.gender === 'male' ? 'ប្រុស' : 'ស្រី'}
+                                ${student.gender === "male" ? "ប្រុស" : "ស្រី"}
                             </span>
                         </td>
                         <td class="py-2 px-2 text-center">
-                            <div class="font-bold">${student.average.toFixed(2)}</div>
+                            <div class="font-bold">${student.average.toFixed(
+                              2
+                            )}</div>
                             <div class="progress-bar mt-1">
-                                <div class="progress-fill ${getGradeColorClass(student.grade)}" 
-                                     style="width: ${student.average * 10}%"></div>
+                                <div class="progress-fill ${getGradeColorClass(
+                                  student.grade
+                                )}" 
+                                     style="width: ${
+                                       student.average * 10
+                                     }%"></div>
                             </div>
                         </td>
                         <td class="py-2 px-2 text-center">
-                            <span class="px-2 py-0.5 rounded text-xs font-medium ${getGradeColorClass(student.grade)}">
+                            <span class="px-2 py-0.5 rounded text-xs font-medium ${getGradeColorClass(
+                              student.grade
+                            )}">
                                 ${student.grade}
                             </span>
                         </td>
@@ -751,380 +1162,78 @@
                             ${student.rank}
                         </td>
                         <td class="py-2 px-2 text-center">
-                            <button onclick="viewStudentScores('${student.id}')" 
-                                    class="px-2 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 text-xs">
-                                <i class="fas fa-eye mr-1"></i>មើល
+                            <button onclick="goToStudentView('${
+                              student.id
+                            }')" class="view-btn">
+                                <i class="fas fa-eye"></i>
+                                មើល
                             </button>
                         </td>
                     </tr>
                 `;
-            });
-            
-            tableBody.innerHTML = html;
-        }
+        });
 
-        // Generate and print official report
-        function generateOfficialReport() {
-            if (rankedStudents.length === 0) {
-                alert('មិនមានទិន្នន័យសិស្សទេ!');
-                return;
-            }
-            
-            // Calculate statistics
-            const totalStudents = rankedStudents.length;
-            const femaleStudents = rankedStudents.filter(s => s.gender === 'female').length;
-            
-            const passedStudents = rankedStudents.filter(s => s.passed).length;
-            const femalePassed = rankedStudents.filter(s => s.passed && s.gender === 'female').length;
-            
-            const failedStudents = totalStudents - passedStudents;
-            const femaleFailed = femaleStudents - femalePassed;
-            
-            // Update report header
-            document.getElementById('reportGrade').textContent = config.grade;
-            document.getElementById('reportClassName').textContent = config.className;
-            document.getElementById('reportYearStart').textContent = config.yearStart;
-            document.getElementById('reportYearEnd').textContent = config.yearEnd;
-            
-            // Update summary statistics
-            document.getElementById('reportTotalStudents').textContent = totalStudents;
-            document.getElementById('reportFemaleTotal').textContent = femaleStudents;
-            document.getElementById('reportPassedStudents').textContent = passedStudents;
-            document.getElementById('reportFemalePassed').textContent = femalePassed;
-            document.getElementById('reportFailedStudents').textContent = failedStudents;
-            document.getElementById('reportFemaleFailed').textContent = femaleFailed;
-            
-            // Prepare data for 10-column table
-            // Each row in the table will have 2 students (one in left 5 columns, one in right 5 columns)
-            const rowsNeeded = Math.ceil(rankedStudents.length / 2);
-            const tableBody = document.getElementById('officialReportTable');
-            let tableHtml = '';
-            
-            // Fill rows with students
-            for (let i = 0; i < rowsNeeded; i++) {
-                const leftStudentIndex = i * 2;
-                const rightStudentIndex = i * 2 + 1;
-                
-                const leftStudent = rankedStudents[leftStudentIndex];
-                const rightStudent = rankedStudents[rightStudentIndex];
-                
-                tableHtml += `
-                    <tr>
-                        <!-- Left student (first 5 columns) -->
-                        <td>${leftStudentIndex + 1}</td>
-                        <td class="student-name">${leftStudent ? leftStudent.name : ''}</td>
-                        <td>${leftStudent ? (leftStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី') : ''}</td>
-                        <td>${leftStudent ? leftStudent.average.toFixed(2) : ''}</td>
-                        <td style="font-weight: ${leftStudent ? 'bold' : 'normal'};">${leftStudent ? leftStudent.rank : ''}</td>
-                        
-                        <!-- Right student (next 5 columns) -->
-                        <td>${rightStudentIndex + 1}</td>
-                        <td class="student-name">${rightStudent ? rightStudent.name : ''}</td>
-                        <td>${rightStudent ? (rightStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី') : ''}</td>
-                        <td>${rightStudent ? rightStudent.average.toFixed(2) : ''}</td>
-                        <td style="font-weight: ${rightStudent ? 'bold' : 'normal'};">${rightStudent ? rightStudent.rank : ''}</td>
-                    </tr>
-                `;
-            }
-            
-            // Add empty rows if needed to make at least 25 rows (for formatting)
-            const minRows = 25;
-            if (rowsNeeded < minRows) {
-                for (let i = rowsNeeded; i < minRows; i++) {
-                    const leftNo = i * 2 + 1;
-                    const rightNo = i * 2 + 2;
-                    
-                    tableHtml += `
-                        <tr>
-                            <!-- Empty left student -->
-                            <td>${leftNo}</td>
-                            <td class="student-name"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            
-                            <!-- Empty right student -->
-                            <td>${rightNo}</td>
-                            <td class="student-name"></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    `;
-                }
-            }
-            
-            tableBody.innerHTML = tableHtml;
-            
-            // Store current display state
-            const originalMain = document.querySelector('main');
-            const originalHeader = document.querySelector('header');
-            const originalStudentPage = document.getElementById('studentScoresPage');
-            const originalReport = document.getElementById('officialReport');
-            
-            const mainDisplay = originalMain.style.display;
-            const headerDisplay = originalHeader.style.display;
-            const studentPageHidden = originalStudentPage.classList.contains('hidden');
-            
-            // Hide everything except report
-            originalMain.style.display = 'none';
-            originalHeader.style.display = 'none';
-            originalStudentPage.classList.add('hidden');
-            originalReport.classList.remove('hidden');
-            
-            // Add print-only class to body
-            document.body.classList.add('print-mode');
-            
-            // Print report
-            window.print();
-            
-            // Restore original state
-            setTimeout(() => {
-                originalMain.style.display = mainDisplay;
-                originalHeader.style.display = headerDisplay;
-                if (!studentPageHidden) {
-                    originalStudentPage.classList.remove('hidden');
-                }
-                originalReport.classList.add('hidden');
-                document.body.classList.remove('print-mode');
-            }, 100);
-        }
+        tableBody.innerHTML = html;
+      }
 
-        // Update last updated time
-        function updateLastUpdated() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('km-KH', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                hour12: false 
-            });
-            const dateString = now.toLocaleDateString('km-KH', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            
-            document.getElementById('lastUpdated').innerHTML = `
+      // Update last updated time
+      function updateLastUpdated() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString("km-KH", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+        const dateString = now.toLocaleDateString("km-KH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+
+        document.getElementById("lastUpdated").innerHTML = `
                 <i class="fas fa-clock mr-1"></i>អាប់ដេត ${timeString} ថ្ងៃ ${dateString}
             `;
-        }
+      }
 
-        // View student scores - navigates to scores page
-        function viewStudentScores(studentId) {
-            // Hide ranking page
-            document.querySelector('main').style.display = 'none';
-            document.querySelector('header').style.display = 'none';
-            
-            // Show scores page
-            document.getElementById('studentScoresPage').classList.remove('hidden');
-            
-            // If studentId is provided, show that student's scores
-            if (studentId) {
-                loadStudentScores(studentId);
-            } else {
-                // Otherwise show first student's scores
-                if (rankedStudents.length > 0) {
-                    loadStudentScores(rankedStudents[0].id);
-                }
-            }
-        }
+      // Show notification
+      function showNotification(message, type = "info") {
+        const colors = {
+          success: "bg-green-500",
+          error: "bg-red-500",
+          info: "bg-blue-500",
+          warning: "bg-yellow-500",
+        };
 
-        // Load student scores into the scores page
-        function loadStudentScores(studentId) {
-            const student = rankedStudents.find(s => s.id === studentId);
-            if (!student) return;
-            
-            // Set basic info
-            document.getElementById('studentDetailTitle').textContent = `${student.name} - ${student.id}`;
-            document.getElementById('scorePageTitle').textContent = `ពិន្ទុមុខវិជ្ជា - ${student.name}`;
-            document.getElementById('scoreStudentId').textContent = student.id;
-            document.getElementById('scoreStudentGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
-            document.getElementById('scoreStudentAverage').textContent = student.average.toFixed(2);
-            document.getElementById('scoreStudentGrade').textContent = student.grade;
-            document.getElementById('scoreStudentGrade').className = `font-bold ${getGradeColorClass(student.grade)}`;
-            document.getElementById('scoreRank').textContent = `ទី ${student.rank}`;
-            
-            // Calculate summary
-            const subjectsWithScores = student.scores.filter(score => score > 0).length;
-            document.getElementById('scoreSummary').textContent = 
-                `បានបញ្ចូលពិន្ទុ ${subjectsWithScores}/12 មុខវិជ្ជា`;
-            
-            // Populate scores table
-            const scoresTable = document.getElementById('studentScoresTable');
-            let scoresHtml = '';
-            
-            student.scores.forEach((score, index) => {
-                const grade = getGradeFromScore(score);
-                
-                scoresHtml += `
-                    <tr class="border-b border-gray-100">
-                        <td class="py-2 px-3">${index + 1}</td>
-                        <td class="py-2 px-3">${subjects[index]}</td>
-                        <td class="py-2 px-3 text-center font-bold">${score.toFixed(2)}</td>
-                        <td class="py-2 px-3 text-center">
-                            <span class="px-2 py-1 rounded text-xs ${getGradeColorClass(grade)}">${grade}</span>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            scoresTable.innerHTML = scoresHtml;
-        }
-
-        // Go back to ranking page
-        function goBackToRanking() {
-            // Show ranking page
-            document.querySelector('main').style.display = 'block';
-            document.querySelector('header').style.display = 'block';
-            
-            // Hide scores page
-            document.getElementById('studentScoresPage').classList.add('hidden');
-        }
-
-        // Print student scores
-        function printStudentScores() {
-            // Store current display state
-            const originalMain = document.querySelector('main').style.display;
-            const originalHeader = document.querySelector('header').style.display;
-            const originalScoresPage = document.getElementById('studentScoresPage').classList.contains('hidden');
-            
-            // Show only scores page for printing
-            document.querySelector('main').style.display = 'none';
-            document.querySelector('header').style.display = 'none';
-            document.getElementById('studentScoresPage').classList.remove('hidden');
-            
-            // Remove print button from print view
-            const printButton = document.querySelector('#studentScoresPage button');
-            const originalDisplay = printButton.style.display;
-            printButton.style.display = 'none';
-            
-            // Print
-            window.print();
-            
-            // Restore original state
-            printButton.style.display = originalDisplay;
-            document.querySelector('main').style.display = originalMain;
-            document.querySelector('header').style.display = originalHeader;
-            if (originalScoresPage) {
-                document.getElementById('studentScoresPage').classList.add('hidden');
-            }
-        }
-
-        // Export to Excel
-        function exportToExcel() {
-            if (rankedStudents.length === 0) {
-                alert('មិនមានទិន្នន័យសិស្សទេ!');
-                return;
-            }
-            
-            // Prepare data for Excel
-            const headers = [
-                'ល.រ',
-                'ឈ្មោះសិស្ស',
-                'លេខសម្គាល់',
-                'ភេទ',
-                'មធ្យមភាគ',
-                'កម្រិត',
-                'ចំណាត់ថ្នាក់',
-                ...subjects
-            ];
-            
-            const rows = rankedStudents.map((student, index) => {
-                return [
-                    index + 1,
-                    student.name,
-                    student.id,
-                    student.gender === 'male' ? 'ប្រុស' : 'ស្រី',
-                    student.average.toFixed(2),
-                    student.grade,
-                    student.rank,
-                    ...student.scores.map(score => score.toFixed(2))
-                ];
-            });
-            
-            // Create worksheet
-            const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-            
-            // Set column widths
-            const wscols = [
-                { wch: 5 },  // No.
-                { wch: 25 }, // Name
-                { wch: 15 }, // ID
-                { wch: 8 },  // Gender
-                { wch: 12 }, // Average
-                { wch: 8 },  // Grade
-                { wch: 10 }, // Rank
-                ...Array(12).fill({ wch: 10 }) // Subject scores
-            ];
-            ws['!cols'] = wscols;
-            
-            // Style header row
-            const range = XLSX.utils.decode_range(ws['!ref']);
-            for (let C = range.s.c; C <= range.e.c; ++C) {
-                const cell_address = {c: C, r: 0};
-                const cell_ref = XLSX.utils.encode_cell(cell_address);
-                if (ws[cell_ref]) {
-                    ws[cell_ref].s = {
-                        font: { bold: true, color: { rgb: "FFFFFF" } },
-                        fill: { fgColor: { rgb: "2563EB" } },
-                        alignment: { horizontal: 'center', vertical: 'center' }
-                    };
-                }
-            }
-            
-            // Create workbook
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "ចំណាត់ថ្នាក់ 10A");
-            
-            // Generate filename with current date
-            const now = new Date();
-            const dateStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
-            const filename = `ចំណាត់ថ្នាក់_10A_${dateStr}.xlsx`;
-            
-            // Download file
-            XLSX.writeFile(wb, filename);
-            
-            // Show notification
-            showNotification('ឯកសារ Excel ត្រូវបានទាញយក!', 'success');
-        }
-
-        // Show notification
-        function showNotification(message, type = 'info') {
-            const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                info: 'bg-blue-500',
-                warning: 'bg-yellow-500'
-            };
-            
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
-            notification.innerHTML = `
+        const notification = document.createElement("div");
+        notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
+        notification.innerHTML = `
                 <div class="flex items-center">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} mr-2"></i>
+                    <i class="fas fa-${
+                      type === "success" ? "check-circle" : "info-circle"
+                    } mr-2"></i>
                     <span>${message}</span>
                 </div>
             `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateY(-100px)';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
-        }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeData();
-            
-            // Auto-refresh every minute
-            setInterval(() => {
-                initializeData();
-            }, 60000);
-        });
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.style.transform = "translateY(-100px)";
+          setTimeout(() => {
+            notification.remove();
+          }, 300);
+        }, 3000);
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeData();
+
+        // Auto-refresh every minute
+        setInterval(() => {
+          initializeData();
+        }, 60000);
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ពិន្ទុសិស្សលម្អិត - ថ្នាក់ 10A</title>
+    <!-- Tailwind CSS -->
+    <script src="./tailwind.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Khmer Mool Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Battambang&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Khmer OS Battambang', sans-serif;
+        }
+        
+        @font-face {
+            font-family: 'Khmer OS Battambang';
+            src: url('https://fonts.googleapis.com/css2?family=Khmer+OS+Battambang&display=swap');
+        }
+
+        .header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        /* Score color coding */
+        .score-9-10 { background-color: #dcfce7; color: #166534; }
+        .score-7-8 { background-color: #dbeafe; color: #1e40af; }
+        .score-5-6 { background-color: #fef3c7; color: #92400e; }
+        .score-3-4 { background-color: #fde68a; color: #92400e; }
+        .score-1-2 { background-color: #fecaca; color: #991b1b; }
+        .score-0 { background-color: #f3f4f6; color: #6b7280; }
+
+        /* Progress bar */
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            background-color: #e5e7eb;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        /* Card styles */
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* Subject score cells */
+        .subject-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .subject-score:hover {
+            transform: scale(1.05);
+        }
+
+        /* Student info card */
+        .student-info-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
+            }
+            
+            .subject-score {
+                width: 36px;
+                height: 36px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="header-gradient text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-3 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="javascript:history.back()" class="bg-white p-2 rounded-full hover:bg-gray-100 transition">
+                        <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-lg font-bold">ពិន្ទុសិស្សលម្អិត</h1>
+                        <p class="text-xs opacity-90" id="pageTitle">កំពុងផ្ទុកទិន្នន័យ...</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="goToRanking()" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">
+                        <i class="fas fa-list-ol"></i>
+                        <span class="hidden md:inline ml-1">តារាងចំណាត់ថ្នាក់</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-3 py-4">
+        <!-- Student Information -->
+        <div class="student-info-card mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold text-gray-800" id="studentName">កំពុងផ្ទុក...</h2>
+                    <div class="flex items-center space-x-4 mt-2">
+                        <div class="flex items-center">
+                            <i class="fas fa-id-card text-gray-500 mr-2"></i>
+                            <span class="text-gray-600 text-sm" id="studentId">កំពុងផ្ទុក...</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-venus-mars text-gray-500 mr-2"></i>
+                            <span class="text-gray-600 text-sm" id="studentGender">កំពុងផ្ទុក...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="text-center">
+                        <div class="stat-value text-blue-600" id="averageScore">0.00</div>
+                        <div class="stat-label">មធ្យមភាគ</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="stat-value text-green-600" id="totalScore">0.00</div>
+                        <div class="stat-label">ពិន្ទុសរុប</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="stat-value text-purple-600" id="subjectCount">0</div>
+                        <div class="stat-label">មុខវិជ្ជា</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="stat-value text-red-600" id="rankingPosition">0</div>
+                        <div class="stat-label">ចំណាត់ថ្នាក់</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Scores Grid -->
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+            <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
+                <h3 class="font-bold text-gray-800 text-sm">ពិន្ទុមុខវិជ្ជា</h3>
+                <p class="text-xs text-gray-600 mt-1">ពិន្ទុនីមួយៗមានពី 0-10 ពិន្ទុ</p>
+            </div>
+            <div class="p-4">
+                <div id="subjectScoresGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <!-- Subject scores will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Scores Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+            <div class="p-3 bg-gradient-to-r from-green-50 to-green-100 border-b">
+                <h3 class="font-bold text-gray-800 text-sm">តារាងពិន្ទុលម្អិត</h3>
+                <p class="text-xs text-gray-600 mt-1">ពិន្ទុនិងកម្រិតរបស់មុខវិជ្ជានីមួយៗ</p>
+            </div>
+            <div class="table-container">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="py-2 px-3 text-left">ល.រ</th>
+                            <th class="py-2 px-3 text-left">មុខវិជ្ជា</th>
+                            <th class="py-2 px-3 text-center">ពិន្ទុ</th>
+                            <th class="py-2 px-3 text-center">កម្រិត</th>
+                            <th class="py-2 px-3 text-center">ស្ថានភាព</th>
+                            <th class="py-2 px-3 text-center">ផ្ទៃពណ៌</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailedScoresTable">
+                        <!-- Detailed scores will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Performance Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <!-- Performance Card 1 -->
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <div class="stat-value text-blue-600" id="passedSubjects">0</div>
+                        <div class="stat-label">ជាប់</div>
+                    </div>
+                    <div class="text-blue-500">
+                        <i class="fas fa-check-circle text-2xl"></i>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill bg-blue-500" id="passedProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Performance Card 2 -->
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <div class="stat-value text-yellow-600" id="averageSubjects">0</div>
+                        <div class="stat-label">មធ្យម</div>
+                    </div>
+                    <div class="text-yellow-500">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill bg-yellow-500" id="averageProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Performance Card 3 -->
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <div class="stat-value text-red-600" id="failedSubjects">0</div>
+                        <div class="stat-label">ធ្លាក់</div>
+                    </div>
+                    <div class="text-red-500">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill bg-red-500" id="failedProgress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs mb-6">
+            <h3 class="font-bold text-yellow-800 mb-1">
+                <i class="fas fa-info-circle mr-1"></i>ការពន្យល់ពណ៌ពិន្ទុ
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                <div class="flex items-center">
+                    <div class="subject-score score-9-10 mr-2">9-10</div>
+                    <span class="text-gray-700">ល្អណាស់</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="subject-score score-7-8 mr-2">7-8</div>
+                    <span class="text-gray-700">ល្អ</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="subject-score score-5-6 mr-2">5-6</div>
+                    <span class="text-gray-700">មធ្យម</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="subject-score score-3-4 mr-2">3-4</div>
+                    <span class="text-gray-700">ខ្សោយ</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="subject-score score-1-2 mr-2">1-2</div>
+                    <span class="text-gray-700">ខ្សោយណាស់</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="subject-score score-0 mr-2">0</div>
+                    <span class="text-gray-700">គ្មានពិន្ទុ</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        let studentId = null;
+        let student = null;
+        let scores = [];
+        let subjects = [];
+        let allStudents = [];
+        let allScores = {};
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get student ID from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            studentId = urlParams.get('id');
+            
+            if (!studentId) {
+                showError('មិនមានលេខសម្គាល់សិស្ស!');
+                return;
+            }
+            
+            // Load data from localStorage
+            loadStudentData();
+        });
+
+        // Load student data
+        function loadStudentData() {
+            try {
+                // Load subjects
+                const savedSubjects = localStorage.getItem('class10A_subjects');
+                subjects = savedSubjects ? JSON.parse(savedSubjects) : [];
+                
+                if (subjects.length === 0) {
+                    // Use default subjects if none exist
+                    subjects = [
+                        "ការអាន",
+                        "ការសរសេរ",
+                        "ការនិយាយ",
+                        "ការស្ដាប់",
+                        "ចំនួន",
+                        "ធរណីមាត្រ",
+                        "គំនូរ",
+                        "កសិកម្ម",
+                        "សីលធម៌-ពលរដ្ឋ",
+                        "អក្សរផ្ចង់",
+                        "អប់រំកាយ",
+                        "សិល្បៈ"
+                    ];
+                }
+                
+                // Load all students
+                const savedStudents = localStorage.getItem('class10A_students');
+                allStudents = savedStudents ? JSON.parse(savedStudents) : [];
+                
+                // Find the specific student
+                student = allStudents.find(s => s.id === studentId);
+                
+                if (!student) {
+                    showError('រកមិនឃើញសិស្សនេះទេ!');
+                    return;
+                }
+                
+                // Load all scores
+                const savedScores = localStorage.getItem('class10A_scores');
+                allScores = savedScores ? JSON.parse(savedScores) : {};
+                
+                // Get this student's scores
+                scores = allScores[studentId] || Array(subjects.length).fill(0);
+                
+                // Update UI
+                updateStudentInfo();
+                updateSubjectScores();
+                updateDetailedTable();
+                updatePerformanceSummary();
+                calculateRanking();
+                
+            } catch (error) {
+                console.error('Error loading student data:', error);
+                showError('មានបញ្ហាក្នុងការផ្ទុកទិន្នន័យ!');
+            }
+        }
+
+        // Update student information
+        function updateStudentInfo() {
+            if (!student) return;
+            
+            // Set page title
+            document.getElementById('pageTitle').textContent = `${student.name} - ${student.id}`;
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('studentId').textContent = `លេខសម្គាល់: ${student.id}`;
+            document.getElementById('studentGender').textContent = `ភេទ: ${student.gender === 'male' ? 'ប្រុស' : 'ស្រី'}`;
+            
+            // Calculate scores
+            const totalScore = scores.reduce((sum, score) => sum + score, 0);
+            const averageScore = scores.length > 0 ? totalScore / scores.length : 0;
+            const subjectCount = scores.filter(score => score > 0).length;
+            
+            // Update stats
+            document.getElementById('averageScore').textContent = averageScore.toFixed(2);
+            document.getElementById('totalScore').textContent = totalScore.toFixed(1);
+            document.getElementById('subjectCount').textContent = subjectCount;
+        }
+
+        // Calculate ranking position
+        function calculateRanking() {
+            if (allStudents.length === 0 || !student) return;
+            
+            // Calculate averages for all students
+            const studentAverages = allStudents.map(s => {
+                const studentScores = allScores[s.id] || Array(subjects.length).fill(0);
+                const total = studentScores.reduce((sum, score) => sum + score, 0);
+                return {
+                    id: s.id,
+                    average: studentScores.length > 0 ? total / studentScores.length : 0
+                };
+            });
+            
+            // Sort by average (descending)
+            studentAverages.sort((a, b) => b.average - a.average);
+            
+            // Find this student's rank (handle ties)
+            let currentRank = 1;
+            let previousAverage = null;
+            let skipCount = 0;
+            
+            for (let i = 0; i < studentAverages.length; i++) {
+                if (previousAverage !== null && Math.abs(studentAverages[i].average - previousAverage) < 0.01) {
+                    // Same average as previous student (tie)
+                    skipCount++;
+                    if (studentAverages[i].id === studentId) {
+                        document.getElementById('rankingPosition').textContent = currentRank - 1;
+                        return;
+                    }
+                } else {
+                    // Different average
+                    currentRank += skipCount;
+                    skipCount = 0;
+                    if (studentAverages[i].id === studentId) {
+                        document.getElementById('rankingPosition').textContent = currentRank;
+                        return;
+                    }
+                    currentRank++;
+                }
+                previousAverage = studentAverages[i].average;
+            }
+            
+            // If not found
+            document.getElementById('rankingPosition').textContent = 'N/A';
+        }
+
+        // Get score color class
+        function getScoreColorClass(score) {
+            if (score >= 9) return 'score-9-10';
+            if (score >= 7) return 'score-7-8';
+            if (score >= 5) return 'score-5-6';
+            if (score >= 3) return 'score-3-4';
+            if (score >= 1) return 'score-1-2';
+            return 'score-0';
+        }
+
+        // Get score grade
+        function getScoreGrade(score) {
+            if (score >= 9) return 'A';
+            if (score >= 8) return 'B';
+            if (score >= 7) return 'C';
+            if (score >= 6) return 'D';
+            if (score >= 5) return 'E';
+            return 'F';
+        }
+
+        // Get score status
+        function getScoreStatus(score) {
+            if (score >= 5) return 'ជាប់';
+            return 'ធ្លាក់';
+        }
+
+        // Update subject scores grid
+        function updateSubjectScores() {
+            const gridContainer = document.getElementById('subjectScoresGrid');
+            let html = '';
+            
+            scores.forEach((score, index) => {
+                const subject = subjects[index] || `មុខវិជ្ជា ${index + 1}`;
+                const scoreColorClass = getScoreColorClass(score);
+                
+                html += `
+                    <div class="flex flex-col items-center">
+                        <div class="subject-score ${scoreColorClass}" title="${subject}: ${score.toFixed(1)}">
+                            ${score.toFixed(1)}
+                        </div>
+                        <div class="text-xs text-gray-600 mt-2 text-center" title="${subject}">
+                            ${subject.length > 12 ? subject.substring(0, 12) + '...' : subject}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            gridContainer.innerHTML = html;
+        }
+
+        // Update detailed scores table
+        function updateDetailedTable() {
+            const tableBody = document.getElementById('detailedScoresTable');
+            let html = '';
+            
+            scores.forEach((score, index) => {
+                const subject = subjects[index] || `មុខវិជ្ជា ${index + 1}`;
+                const scoreColorClass = getScoreColorClass(score);
+                const grade = getScoreGrade(score);
+                const status = getScoreStatus(score);
+                const statusColor = score >= 5 ? 'text-green-600' : 'text-red-600';
+                
+                html += `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="py-2 px-3">${index + 1}</td>
+                        <td class="py-2 px-3 font-medium">${subject}</td>
+                        <td class="py-2 px-3 text-center font-bold">${score.toFixed(1)}</td>
+                        <td class="py-2 px-3 text-center font-bold">${grade}</td>
+                        <td class="py-2 px-3 text-center ${statusColor} font-medium">${status}</td>
+                        <td class="py-2 px-3 text-center">
+                            <div class="subject-score ${scoreColorClass} mx-auto">
+                                ${score.toFixed(1)}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+        }
+
+        // Update performance summary
+        function updatePerformanceSummary() {
+            const passedSubjects = scores.filter(score => score >= 5).length;
+            const averageSubjects = scores.filter(score => score >= 7 && score < 9).length;
+            const failedSubjects = scores.filter(score => score > 0 && score < 5).length;
+            const totalSubjects = scores.filter(score => score > 0).length;
+            
+            // Update counts
+            document.getElementById('passedSubjects').textContent = passedSubjects;
+            document.getElementById('averageSubjects').textContent = averageSubjects;
+            document.getElementById('failedSubjects').textContent = failedSubjects;
+            
+            // Update progress bars
+            const passedPercentage = totalSubjects > 0 ? (passedSubjects / totalSubjects) * 100 : 0;
+            const averagePercentage = totalSubjects > 0 ? (averageSubjects / totalSubjects) * 100 : 0;
+            const failedPercentage = totalSubjects > 0 ? (failedSubjects / totalSubjects) * 100 : 0;
+            
+            document.getElementById('passedProgress').style.width = `${passedPercentage}%`;
+            document.getElementById('averageProgress').style.width = `${averagePercentage}%`;
+            document.getElementById('failedProgress').style.width = `${failedPercentage}%`;
+        }
+
+        // Navigate to ranking page
+        function goToRanking() {
+            window.location.href = 'ranking.html';
+        }
+
+        // Show error message
+        function showError(message) {
+            const mainContent = document.querySelector('main');
+            mainContent.innerHTML = `
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <div class="text-red-500 text-4xl mb-4">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">បញ្ហា!</h3>
+                    <p class="text-gray-600 mb-4">${message}</p>
+                    <button onclick="goToRanking()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-arrow-left mr-2"></i>ត្រលប់ទៅតារាងចំណាត់ថ្នាក់
+                    </button>
+                </div>
+            `;
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500',
+                warning: 'bg-yellow-500'
+            };
+            
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-100px)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
