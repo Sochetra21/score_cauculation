@@ -25,47 +25,39 @@
             min-height: 29.7cm;
             margin: 0 auto;
             background: rgb(255, 255, 255);
-            padding: 1cm;
+            padding: 0.5cm;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
         }
         
         .report-header {
             text-align: center;
-            /* margin-bottom: 25px; */
-            /* padding-bottom: 5px; */
+        }
+
+        img{
+            width: 100px;
         }
         
         .kingdom-title {
             font-family: 'Moul', 'Khmer OS', serif;
             font-size: 16px;
             font-weight: bold;
-            
         }
         
-        
-        
-        /* .divider {
-            width: 100%;
-            height: 2px;
-            background-color: #333;
-            margin: 15px 0;
-        } */
-        
-        .school-info {
-           
+        .school-info {         
             text-align: left;
         }
         
         .school-name {
             font-size: 16px;
             font-weight: bold;
-            
+            margin: 0%;
         }
         
         .report-title {
             font-size: 16px;
-            text-align: center;       
+            text-align: center;    
+            margin: 0%;   
         }
         
         .academic-year {
@@ -75,18 +67,17 @@
         }
         
         .student-summary {
-            margin-bottom: 5px;
+            margin-top: 10px;
             font-size: 14px;
+            display:flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        
-        /* .student-summary div {
-            margin-bottom: 5px;
-        } */
         
         .report-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
+            margin-bottom: 10px 0 0 0;
             font-size: 12px;
         }
         
@@ -100,12 +91,14 @@
         
         .report-table td {
             border: 1px solid #333;
-            padding: 4px 5px;
+            padding: 1px 5px;
             text-align: center;
+            font-size: 12px;
         }
         
         .signature-section {
-            margin-top: 10px;
+            margin-top: 0px;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
             font-size: 16px;
@@ -118,7 +111,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        
         
         .date-section {
             text-align: right;
@@ -209,30 +201,22 @@
     </div>
     
     <div class="print-container">
-        <!-- <div class="watermark">បញ្ជីរាយនាមសិស្ស</div> -->
-        
         <div class="report-header">
             <div class="kingdom-title">ព្រះរាជាណាចក្រកម្ពុជា</div>
             <div class="kingdom-title">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+            <img src="icon.png" alt="">
             
             <div class="school-info">
-                <div class="school-name">កម្រងសាលាបឋមសិក្សា.....................</div>
-                <div class="school-name">សាលាបឋមសិក្សា......................</div>
+                <div class="school-name">កម្រងសាលាបឋមសិក្សា ស្វាយជាតិ</div>
+                <div class="school-name">សាលាបឋមសិក្សា​ ស្វាយជាតិ</div>
                 <div class="school-name">ថ្នាក់ទី​......."........."</div>
             </div>
         </div>
         
-        <div class="report-title">តារាងចំណាត់ថ្នាក់ប្រចាំខែ............</div>
-        
+        <div class="report-title">តារាងចំណាត់ថ្នាក់ប្រចាំខែ............</div>      
         <div class="academic-year">ឆ្នាំសិក្សា ២០.......... - ២០..........</div>
         
-        <div class="student-summary">
-            <div>- សិស្សសរុប ................នាក់ ស្រី..........នាក់</div>
-            <div>- ជាប់មធ្យមភាគ ............នាក់ ស្រី.........នាក់</div>
-            <div>- ជាប់ធ្លាក់ភាគ ..............នាក់ ស្រី..........នាក់</div>
-        </div>
-        
-        <table class="report-table">
+        <table class="report-table" id="rankingTable">
             <thead>
                 <tr>
                     <th>ល.រ</th>
@@ -247,249 +231,16 @@
                     <th>ចំណាត់ថ្នាក់</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>21</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>22</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>23</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>24</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>25</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>26</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>7</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>27</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>8</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>28</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>9</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>29</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>10</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>30</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>11</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>31</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>12</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>32</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>13</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>33</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>14</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>34</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>15</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>35</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>16</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>36</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>17</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>37</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>18</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>38</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>19</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>39</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>20</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>40</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
+            <tbody id="tableBody">
+                <!-- Data will be populated by JavaScript -->
             </tbody>
         </table>
+
+        <div class="student-summary">
+            <div>សិស្សសរុប: <span id="totalStudents">០</span> នាក់ (ស្រី: <span id="femaleStudents">០</span> នាក់)</div>
+            <div>ជាប់មធ្យមភាគ: <span id="passedStudents">០</span> នាក់ (ស្រី: <span id="femalePassed">០</span> នាក់)</div>
+            <div>ជាប់ធ្លាក់ភាគ: <span id="failedStudents">០</span> នាក់ (ស្រី: <span id="femaleFailed">០</span> នាក់)</div>
+        </div>
         
         <div class="date-section">
             <div>ថ្ងៃ.........................ខែ..............ឆ្នាំ........... ឆស័ក ព.ស ២៥៦.....</div>
@@ -505,18 +256,201 @@
     </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const now = new Date();
-            const day = now.getDate();
-            const month = now.getMonth() + 1;
-            const year = now.getFullYear();
+        // Configuration
+        const config = {
+            passingGrade: 5.0,
+            subjects: [
+                "ភាសាខ្មែរ", "គណិតវិទ្យា", "រូបវិទ្យា", "គីមីវិទ្យា", 
+                "ជីវវិទ្យា", "ប្រវត្តិវិទ្យា", "ភូមិវិទ្យា", "អង់គ្លេស", 
+                "សីលធម៌-ពលរដ្ឋ", "ព័ត៌មានវិទ្យា", "អប់រំកាយ", "សិល្បៈ"
+            ]
+        };
+
+        // Global variables
+        let students = [];
+        let scores = {};
+        let rankedStudents = [];
+
+        // Load data from localStorage
+        function loadData() {
+            const savedStudents = localStorage.getItem("class10A_students");
+            const savedScores = localStorage.getItem("class10A_scores");
             
-            console.log(`Current date: ${day}/${month}/${year}`);
-            
-            document.querySelector('.print-btn').addEventListener('click', function() {
-                window.print();
+            students = savedStudents ? JSON.parse(savedStudents) : [];
+            scores = savedScores ? JSON.parse(savedScores) : {};
+        }
+
+        // Calculate total score for a student
+        function calculateTotal(scoresArray) {
+            if (!scoresArray || scoresArray.length === 0) return 0;
+            return scoresArray.reduce((sum, score) => sum + (score || 0), 0);
+        }
+
+        // Calculate average score (0-10 scale)
+        function calculateAverage(scoresArray) {
+            if (!scoresArray || scoresArray.length === 0) return 0;
+            const total = calculateTotal(scoresArray);
+            return total / scoresArray.length;
+        }
+
+        // Calculate rankings with proper handling of ties
+        function calculateRankings() {
+            // Prepare student data with scores and averages
+            const studentsWithData = students.map(student => {
+                const studentScores = scores[student.id] || Array(12).fill(0);
+                const average = calculateAverage(studentScores);
+                
+                return {
+                    id: student.id,
+                    name: student.name,
+                    gender: student.gender,
+                    scores: studentScores,
+                    average: average,
+                    passed: average >= config.passingGrade
+                };
             });
+
+            // Sort students by average (highest to lowest)
+            studentsWithData.sort((a, b) => b.average - a.average);
+
+            // Assign ranks with tie handling
+            let currentRank = 1;
+            let previousAverage = null;
+            let sameRankCount = 0;
+
+            studentsWithData.forEach((student, index) => {
+                if (previousAverage !== null && 
+                    Math.abs(student.average - previousAverage) < 0.01) {
+                    // Same average as previous student (tie)
+                    student.rank = currentRank - 1;
+                    sameRankCount++;
+                } else {
+                    // New rank
+                    currentRank += sameRankCount;
+                    sameRankCount = 0;
+                    student.rank = currentRank;
+                    currentRank++;
+                }
+                previousAverage = student.average;
+            });
+
+            rankedStudents = studentsWithData;
+        }
+
+        // Calculate statistics
+        function calculateStatistics() {
+            const total = rankedStudents.length;
+            const female = rankedStudents.filter(s => s.gender === 'female').length;
+            const male = total - female;
+            
+            const passed = rankedStudents.filter(s => s.passed).length;
+            const femalePassed = rankedStudents.filter(s => s.passed && s.gender === 'female').length;
+            const malePassed = passed - femalePassed;
+            
+            const failed = total - passed;
+            const femaleFailed = female - femalePassed;
+            const maleFailed = male - malePassed;
+
+            return {
+                total, female, male,
+                passed, femalePassed, malePassed,
+                failed, femaleFailed, maleFailed
+            };
+        }
+
+        // Generate table rows for 52 students (26 rows × 2 columns)
+        function generateTableRows() {
+            const tableBody = document.getElementById('tableBody');
+            let html = '';
+            
+            // We need exactly 26 rows (52 student positions)
+            for (let row = 0; row < 20; row++) {
+                const leftIndex = row;
+                const rightIndex = row + 20;
+                
+                html += '<tr>';
+                
+                // Left column student (position 1-26)
+                if (leftIndex < rankedStudents.length) {
+                    const leftStudent = rankedStudents[leftIndex];
+                    html += `
+                        <td>${leftIndex + 1}</td>
+                        <td>${leftStudent.name}</td>
+                        <td>${leftStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី'}</td>
+                        <td>${leftStudent.average.toFixed(2)}</td>
+                        <td>${leftStudent.rank}</td>
+                    `;
+                } else {
+                    // Empty cell if no student
+                    html += `<td>${leftIndex + 1}</td><td></td><td></td><td></td><td></td>`;
+                }
+                
+                // Right column student (position 27-52)
+                if (rightIndex < rankedStudents.length) {
+                    const rightStudent = rankedStudents[rightIndex];
+                    html += `
+                        <td>${rightIndex + 1}</td>
+                        <td>${rightStudent.name}</td>
+                        <td>${rightStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី'}</td>
+                        <td>${rightStudent.average.toFixed(2)}</td>
+                        <td>${rightStudent.rank}</td>
+                    `;
+                } else {
+                    // Empty cell if no student
+                    html += `<td>${rightIndex + 1}</td><td></td><td></td><td></td><td></td>`;
+                }
+                
+                html += '</tr>';
+            }
+            
+            tableBody.innerHTML = html;
+        }
+
+        // Update summary statistics
+        function updateSummary() {
+            const stats = calculateStatistics();
+            
+            // Update summary display
+            document.getElementById('totalStudents').textContent = stats.total;
+            document.getElementById('femaleStudents').textContent = stats.female;
+            document.getElementById('passedStudents').textContent = stats.passed;
+            document.getElementById('femalePassed').textContent = stats.femalePassed;
+            document.getElementById('failedStudents').textContent = stats.failed;
+            document.getElementById('femaleFailed').textContent = stats.femaleFailed;
+            
+            // Update academic year with current year
+            const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
+            document.querySelector('.academic-year').textContent = 
+                `ឆ្នាំសិក្សា ២០...... - ២០.......`;
+        }
+
+        // Initialize and generate report
+        function generateReport() {
+            // Load data
+            loadData();
+            
+            // Calculate rankings
+            calculateRankings();
+            
+            // Generate table
+            generateTableRows();
+            
+            // Update summary
+            updateSummary();
+            
+            console.log('Report generated successfully');
+            console.log(`Total students: ${rankedStudents.length}`);
+            console.log('Rankings:', rankedStudents.map(s => `${s.name}: ${s.average.toFixed(2)} (Rank ${s.rank})`));
+        }
+
+        // Print functionality
+        document.querySelector('.print-btn').addEventListener('click', function() {
+            window.print();
         });
+
+        // Generate report when page loads
+        document.addEventListener('DOMContentLoaded', generateReport);
     </script>
 </body>
 </html>
