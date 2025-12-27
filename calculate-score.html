@@ -193,35 +193,6 @@
         .drag-handle:hover {
             color: #6b7280;
         }
-
-        /* Quick Stats Bar */
-        .quick-stats {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 16px;
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #1e40af;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: #64748b;
-            text-align: center;
-        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -265,24 +236,6 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-3 py-4">
-        <!-- Quick Stats Bar -->
-        <!-- <div class="quick-stats">
-            <div class="grid grid-cols-3 gap-2">
-                <div class="stat-item">
-                    <div class="stat-value" id="totalStudents">0</div>
-                    <div class="stat-label">សិស្សសរុប</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="classAverage">0.00</div>
-                    <div class="stat-label">មធ្យមភាគថ្នាក់</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="scoresPerStudent">0/0</div>
-                    <div class="stat-label">ពិន្ទុ/សិស្ស</div>
-                </div>
-            </div>
-        </div> -->
-
         <!-- View 1: Table View (Default) -->
         <div id="view-table" class="view-content">
             <div class="bg-white rounded-lg shadow overflow-hidden mb-4">
@@ -293,7 +246,7 @@
                             <span class="swipe-hint"><i class="fas fa-arrows-left-right mr-1"></i>អូសទៅឆ្វេង/ស្ដាំ</span>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-600 mt-1">ពិន្ទុនឹងរក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</p>
+                    <p class="text-xs text-gray-600 mt-1">បញ្ចូលពិន្ទុ 0 ដល់ 10 (អាចប្រើលេខទសភាគ ដូចជា 9.5, 8.7, 7.3, ...) - រក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -320,71 +273,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- View 2: Student View -->
-        <div id="view-student" class="view-content hidden">
-            <div class="mb-4">
-                <div class="relative">
-                    <input type="text" id="studentSearch" 
-                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           placeholder="ស្វែងរកសិស្ស...">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
-            
-            <div id="studentCardsContainer">
-                <!-- Student cards will be populated here -->
-            </div>
-        </div>
-
-        <!-- Instructions for Mobile -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
-            <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-mobile-alt mr-2"></i>ការប្រើប្រាស់</h3>
-            <ul class="text-blue-700 space-y-1">
-                <li>• បញ្ចូលពិន្ទុ 0-10 ក្នុងក្រឡានីមួយៗ (អាចប្រើ 0.5)</li>
-                <li>• ពិន្ទុនឹងរក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</li>
-                <li>• ចុចប៊ូតុង <span class="font-bold text-yellow-600">"គ្រប់គ្រងមុខវិជ្ជា"</span> ដើម្បីកែប្រែបញ្ជីមុខវិជ្ជា</li>
-                <li>• ចុច <span class="font-bold text-purple-600">"មើលចំណាត់ថ្នាក់"</span> ដើម្បីមើលលំដាប់ពិន្ទុ</li>
-                <li>• ចុច <span class="font-bold text-green-600">ប៊ូតុងរក្សាទុក</span> ដើម្បីរក្សាទុកពិន្ទុភ្លាមៗ</li>
-            </ul>
-        </div>
     </main>
-
-    <!-- Student Detail Modal -->
-    <div id="studentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
-        <div class="min-h-screen px-4 py-8 flex items-center justify-center">
-            <div class="bg-white rounded-xl w-full max-w-md">
-                <div class="p-4 border-b flex justify-between items-center">
-                    <h3 class="font-bold text-lg" id="modalStudentName"></h3>
-                    <button onclick="closeStudentModal()" class="text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="p-4">
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">លេខសម្គាល់</p>
-                            <p class="font-bold" id="modalStudentId"></p>
-                        </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <p class="text-gray-600 text-xs">ភេទ</p>
-                            <p class="font-bold" id="modalStudentGender"></p>
-                        </div>
-                    </div>
-                    
-                    <h4 class="font-bold mb-3">ពិន្ទុមុខវិជ្ជា</h4>
-                    <div id="modalScoresContainer" class="space-y-2">
-                        <!-- Scores will be populated here -->
-                    </div>
-                </div>
-                <div class="p-4 border-t flex justify-end">
-                    <button onclick="closeStudentModal()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                        បិទ
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Subject Management Modal -->
     <div id="subjectManagerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
@@ -439,13 +328,10 @@
         // Global variables
         let students = [];
         let scores = {};
-        let subjects = []; // Now dynamic!
-        let currentView = 'table';
-        let selectedStudentId = null;
-        let autoSaveInterval;
+        let subjects = [];
         let lastSaveTime = null;
         let hasUnsavedChanges = false;
-        let isFabAnimating = false;
+        let autoSaveInterval;
 
         // Initialize data
         function initializeData() {
@@ -478,7 +364,7 @@
             
             // Update subject count display
             document.getElementById('subjectCountDisplay').textContent = 
-                `បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ${subjects.length}`;
+                `មុខវិជ្ជា: ${subjects.length} មុខវិជ្ជា`;
             
             // Load scores from class10A_scores
             const savedScores = localStorage.getItem('class10A_scores');
@@ -506,13 +392,8 @@
                 updateLastSaveDisplay();
             }
             
-            renderAllViews();
-            updateStats();
-            
-            // Start auto-save
+            renderTableView();
             startAutoSave();
-            
-            // Update FAB animation state
             updateFABAnimation();
         }
 
@@ -541,27 +422,12 @@
                 if (hasUnsavedChanges) {
                     saveAllScores();
                 }
-            }, 30000); // 30 seconds
+            }, 30000);
             
             console.log('Auto-save started (30 second interval)');
         }
 
-        // Switch between views
-        function switchView(view) {
-            currentView = view;
-            
-            // Show/hide views
-            document.getElementById('view-table').classList.add('hidden');
-            document.getElementById('view-student').classList.add('hidden');
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            
-            // Render specific view if needed
-            if (view === 'student') {
-                renderStudentView();
-            }
-        }
-
-        // Render table view (score entry only)
+        // Render table view
         function renderTableView() {
             const tableHeader = document.getElementById('tableHeader');
             const tableBody = document.getElementById('tableBody');
@@ -603,13 +469,15 @@
                 // Add subject scores
                 studentScores.forEach((score, subjectIndex) => {
                     const scoreClass = getScoreColorClass(score);
+                    const displayScore = score === 0 ? '' : score;
+                    
                     bodyHtml += `
                         <td class="py-2 px-2 text-center score-cell">
                             <input type="number" 
                                    min="0" 
                                    max="10" 
-                                   step="0.5"
-                                   value="${score === 0 ? '' : score}"
+                                   step="0.1"
+                                   value="${displayScore}"
                                    placeholder="0"
                                    class="mobile-score-input ${scoreClass}"
                                    data-student="${student.id}"
@@ -626,104 +494,7 @@
             tableBody.innerHTML = bodyHtml;
         }
 
-        // Render student view (cards)
-        function renderStudentView() {
-            const container = document.getElementById('studentCardsContainer');
-            if (!container) return;
-            
-            let html = '';
-            
-            students.forEach(student => {
-                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
-                
-                html += `
-                    <div class="bg-white rounded-lg shadow mb-3 student-row-mobile">
-                        <div class="p-4">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 class="font-bold text-gray-800">${student.name}</h4>
-                                    <div class="flex items-center mt-1">
-                                        <span class="text-xs px-2 py-1 rounded-full ${
-                                            student.gender === 'male' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600'
-                                        }">
-                                            ${student.gender === 'male' ? 'ប្រុស' : 'ស្រី'}
-                                        </span>
-                                        <span class="text-xs text-gray-500 ml-2">${student.id}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-3 gap-2">
-                `;
-                
-                // Show subjects on card (up to 9 for better mobile display)
-                const maxSubjects = Math.min(9, subjects.length);
-                studentScores.slice(0, maxSubjects).forEach((score, index) => {
-                    const shortName = subjects[index].length > 5 ? 
-                        subjects[index].substring(0, 5) + '...' : subjects[index];
-                    
-                    html += `
-                        <div class="text-center">
-                            <div class="text-xs text-gray-600 mb-1" title="${subjects[index]}">${shortName}</div>
-                            <input type="number"
-                                   min="0"
-                                   max="10"
-                                   step="0.5"
-                                   value="${score === 0 ? '' : score}"
-                                   placeholder="0"
-                                   class="w-full py-1 text-center rounded border ${getScoreColorClass(score)}"
-                                   data-student="${student.id}"
-                                   data-subject="${index}"
-                                   oninput="handleScoreInput('${student.id}', ${index}, this)">
-                        </div>
-                    `;
-                });
-                
-                if (subjects.length > maxSubjects) {
-                    html += `
-                        <div class="text-center col-span-3 mt-2">
-                            <button onclick="openStudentModal('${student.id}')" class="text-xs text-blue-600 hover:text-blue-800">
-                                <i class="fas fa-expand-alt mr-1"></i>មើលមុខវិជ្ជាទាំងអស់ (${subjects.length})
-                            </button>
-                        </div>
-                    `;
-                }
-                
-                html += `
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-            
-            // Add search functionality
-            const searchInput = document.getElementById('studentSearch');
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.toLowerCase();
-                    const cards = container.querySelectorAll('.student-row-mobile');
-                    
-                    cards.forEach(card => {
-                        const studentName = card.querySelector('h4').textContent.toLowerCase();
-                        if (studentName.includes(searchTerm)) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            }
-        }
-
-        // Render all views
-        function renderAllViews() {
-            renderTableView();
-            renderStudentView();
-        }
-
-        // Handle score input
+        // Handle score input with full decimal support
         function handleScoreInput(studentId, subjectIndex, inputElement) {
             let value = inputElement.value.trim();
             
@@ -743,8 +514,8 @@
             // Limit to 0-10
             score = Math.max(0, Math.min(10, score));
             
-            // Round to nearest 0.5 if needed
-            score = Math.round(score * 2) / 2;
+            // Keep up to 2 decimal places
+            score = Math.round(score * 100) / 100;
             
             // Update score
             updateScore(studentId, subjectIndex, score);
@@ -753,15 +524,16 @@
             inputElement.value = score === 0 ? '' : score;
         }
 
-        // Update score
+        // Update score with decimal support
         function updateScore(studentId, subjectIndex, value) {
             let score = parseFloat(value);
             if (isNaN(score)) score = 0;
             score = Math.max(0, Math.min(10, score));
+            score = Math.round(score * 100) / 100; // Keep 2 decimal places
             
             // Check if score actually changed
             const currentScore = scores[studentId]?.[subjectIndex] || 0;
-            if (Math.abs(currentScore - score) < 0.01) return;
+            if (Math.abs(currentScore - score) < 0.001) return;
             
             // Update scores object
             if (!scores[studentId]) {
@@ -775,9 +547,6 @@
             // Update FAB animation
             updateFABAnimation();
             
-            // Update stats immediately
-            updateStats();
-            
             // Update input color
             updateInputColor(studentId, subjectIndex, score);
         }
@@ -786,17 +555,17 @@
         function updateInputColor(studentId, subjectIndex, score) {
             const scoreClass = getScoreColorClass(score);
             
-            // Find and update input in table view
-            const tableInputs = document.querySelectorAll(
+            // Find and update input
+            const input = document.querySelector(
                 `input[data-student="${studentId}"][data-subject="${subjectIndex}"]`
             );
             
-            tableInputs.forEach(input => {
+            if (input) {
                 // Remove existing score classes
                 input.classList.remove('score-9-10', 'score-7-8', 'score-5-6', 'score-3-4', 'score-1-2', 'score-0');
                 // Add new class
                 input.classList.add(scoreClass);
-            });
+            }
         }
 
         // Get score color class
@@ -809,57 +578,9 @@
             return 'score-0';
         }
 
-        // Calculate total score
-        function calculateTotal(scoresArray) {
-            return scoresArray.reduce((sum, score) => sum + score, 0);
-        }
-
-        // Calculate average (0-10)
-        function calculateAverage(scoresArray) {
-            const total = calculateTotal(scoresArray);
-            return scoresArray.length > 0 ? total / scoresArray.length : 0;
-        }
-
-        // Calculate scores entered count
-        function countScoresEntered() {
-            let count = 0;
-            students.forEach(student => {
-                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
-                count += studentScores.filter(score => score > 0).length;
-            });
-            return count;
-        }
-
-        // Calculate average scores per student
-        function calculateScoresPerStudent() {
-            const totalScores = countScoresEntered();
-            const avgPerStudent = students.length > 0 ? Math.round(totalScores / students.length) : 0;
-            return `${avgPerStudent}/${subjects.length}`;
-        }
-
-        // Update statistics
-        function updateStats() {
-            if (students.length === 0) return;
-            
-            document.getElementById('totalStudents').textContent = students.length;
-            
-            // Calculate class average
-            const averages = students.map(student => {
-                const studentScores = scores[student.id] || Array(subjects.length).fill(0);
-                return calculateAverage(studentScores);
-            });
-            
-            const classAverage = averages.reduce((sum, avg) => sum + avg, 0) / averages.length;
-            document.getElementById('classAverage').textContent = classAverage.toFixed(2);
-            
-            // Calculate scores per student
-            document.getElementById('scoresPerStudent').textContent = calculateScoresPerStudent();
-        }
-
         // Save all scores
         function saveAllScores() {
             if (!hasUnsavedChanges && Object.keys(scores).length > 0) {
-                showNotification('គ្មានការផ្លាស់ប្តូរ ដើម្បីរក្សាទុក', 'info');
                 return; // No changes to save
             }
             
@@ -883,9 +604,6 @@
             updateFABAnimation();
             
             console.log('Scores saved to localStorage:', lastSaveTime);
-            
-            // Show success message
-            showNotification('ពិន្ទុត្រូវបានរក្សាទុកដោយជោគជ័យ!', 'success');
         }
 
         // Show auto-save indicator
@@ -937,62 +655,6 @@
             
             // Navigate to ranking page
             window.location.href = 'ranking.html';
-        }
-
-        // Open student modal
-        function openStudentModal(studentId) {
-            const student = students.find(s => s.id === studentId);
-            if (!student) return;
-            
-            selectedStudentId = studentId;
-            const studentScores = scores[studentId] || Array(subjects.length).fill(0);
-            
-            // Set modal content
-            document.getElementById('modalStudentName').textContent = student.name;
-            document.getElementById('modalStudentId').textContent = student.id;
-            document.getElementById('modalStudentGender').textContent = student.gender === 'male' ? 'ប្រុស' : 'ស្រី';
-            
-            // Render scores
-            const scoresContainer = document.getElementById('modalScoresContainer');
-            let scoresHtml = '';
-            
-            studentScores.forEach((score, index) => {
-                scoresHtml += `
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                            <div class="font-medium">${subjects[index]}</div>
-                            <div class="text-xs text-gray-500">ពិន្ទុ 0-10</div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <input type="number"
-                                   min="0"
-                                   max="10"
-                                   step="0.5"
-                                   value="${score === 0 ? '' : score}"
-                                   placeholder="0"
-                                   class="w-20 py-2 text-center rounded-lg border-2 ${getScoreColorClass(score)} font-bold"
-                                   data-student="${studentId}"
-                                   data-subject="${index}"
-                                   oninput="handleScoreInput('${studentId}', ${index}, this)">
-                            <span class="text-xs ${getScoreColorClass(score)} px-2 py-1 rounded">
-                                ${score.toFixed(1)}
-                            </span>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            scoresContainer.innerHTML = scoresHtml;
-            
-            // Show modal
-            document.getElementById('studentModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Close student modal
-        function closeStudentModal() {
-            document.getElementById('studentModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
         }
 
         // Open subject manager modal
@@ -1123,7 +785,7 @@
             
             // Update subject count display
             document.getElementById('subjectCountDisplay').textContent = 
-                `បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ${subjects.length}`;
+                `មុខវិជ្ជា: ${subjects.length} មុខវិជ្ជា`;
         }
 
         // Edit subject
@@ -1161,7 +823,7 @@
             
             // Update subject count display
             document.getElementById('subjectCountDisplay').textContent = 
-                `បញ្ចូលពិន្ទុ 0-10 សម្រាប់មុខវិជ្ជា ${subjects.length}`;
+                `មុខវិជ្ជា: ${subjects.length} មុខវិជ្ជា`;
         }
 
         // Save subjects changes
@@ -1177,8 +839,7 @@
             localStorage.setItem('class10A_lastSave', lastSaveTime);
             
             // Update all views
-            renderAllViews();
-            updateStats();
+            renderTableView();
             updateLastSaveDisplay();
             
             // Reset unsaved changes flag
@@ -1187,37 +848,6 @@
             
             // Close modal
             closeSubjectManager();
-            
-            // Show success message
-            showNotification('មុខវិជ្ជាត្រូវបានរក្សាទុក!', 'success');
-        }
-
-        // Show notification
-        function showNotification(message, type = 'info') {
-            const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                info: 'bg-blue-500',
-                warning: 'bg-yellow-500'
-            };
-            
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300`;
-            notification.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} mr-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateY(-100px)';
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
         }
 
         // Initialize on page load
@@ -1248,15 +878,59 @@
                     saveAllScores();
                 }
                 
-                // Escape to close modals
+                // Escape to close modal
                 if (e.key === 'Escape') {
-                    const studentModal = document.getElementById('studentModal');
                     const subjectModal = document.getElementById('subjectManagerModal');
-                    
-                    if (!studentModal.classList.contains('hidden')) {
-                        closeStudentModal();
-                    } else if (!subjectModal.classList.contains('hidden')) {
+                    if (!subjectModal.classList.contains('hidden')) {
                         closeSubjectManager();
+                    }
+                }
+                
+                // Arrow keys for navigation between inputs
+                if (e.target.type === 'number') {
+                    const inputs = Array.from(document.querySelectorAll('input[type="number"]'));
+                    const currentIndex = inputs.indexOf(e.target);
+                    
+                    if (e.key === 'ArrowRight' && currentIndex < inputs.length - 1) {
+                        e.preventDefault();
+                        inputs[currentIndex + 1].focus();
+                        inputs[currentIndex + 1].select();
+                    } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                        e.preventDefault();
+                        inputs[currentIndex - 1].focus();
+                        inputs[currentIndex - 1].select();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        // Move to same column, next row
+                        const studentId = e.target.dataset.student;
+                        const subjectIndex = parseInt(e.target.dataset.subject);
+                        const currentStudentIndex = students.findIndex(s => s.id === studentId);
+                        if (currentStudentIndex < students.length - 1) {
+                            const nextStudentId = students[currentStudentIndex + 1].id;
+                            const nextInput = document.querySelector(
+                                `input[data-student="${nextStudentId}"][data-subject="${subjectIndex}"]`
+                            );
+                            if (nextInput) {
+                                nextInput.focus();
+                                nextInput.select();
+                            }
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        // Move to same column, previous row
+                        const studentId = e.target.dataset.student;
+                        const subjectIndex = parseInt(e.target.dataset.subject);
+                        const currentStudentIndex = students.findIndex(s => s.id === studentId);
+                        if (currentStudentIndex > 0) {
+                            const prevStudentId = students[currentStudentIndex - 1].id;
+                            const prevInput = document.querySelector(
+                                `input[data-student="${prevStudentId}"][data-subject="${subjectIndex}"]`
+                            );
+                            if (prevInput) {
+                                prevInput.focus();
+                                prevInput.select();
+                            }
+                        }
                     }
                 }
             });
