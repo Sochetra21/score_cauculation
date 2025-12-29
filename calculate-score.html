@@ -22,11 +22,79 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .score-cell {
-            min-width: 60px;
+        /* Score colors for better visibility */
+        .score-9-10 { background-color: #dcfce7; border-color: #86efac; }
+        .score-7-8 { background-color: #dbeafe; border-color: #93c5fd; }
+        .score-5-6 { background-color: #fef3c7; border-color: #fcd34d; }
+        .score-3-4 { background-color: #fde68a; border-color: #fbbf24; }
+        .score-1-2 { background-color: #fecaca; border-color: #f87171; }
+        .score-0 { background-color: #f3f4f6; border-color: #d1d5db; }
+
+        /* Table Styling */
+        .table-container {
+            position: relative;
+            max-height: 65vh;
+            overflow: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
         }
 
-        .mobile-score-input {
+        /* Sticky Headers */
+        .sticky-table-header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .sticky-table-header th {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            font-weight: 600;
+            padding: 12px 8px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        /* First column (No.) sticky on both axes */
+        .sticky-first-column {
+            position: sticky;
+            left: 0;
+            z-index: 25;
+            background-color: #f8fafc;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            min-width: 50px;
+        }
+
+        /* Second column (Name) sticky horizontally */
+        .sticky-second-column {
+            position: sticky;
+            left: 50px; /* Width of first column */
+            z-index: 25;
+            background-color: #f8fafc;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            min-width: 160px;
+            max-width: 160px;
+        }
+
+        /* Ensure table cells have proper background */
+        .sticky-table-header th.sticky-first-column,
+        .sticky-table-header th.sticky-second-column {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        /* Score cells */
+        .score-cell {
+            min-width: 80px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .score-input {
             width: 100%;
             height: 40px;
             text-align: center;
@@ -36,63 +104,58 @@
             transition: all 0.2s;
         }
 
-        .mobile-score-input:focus {
+        .score-input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
-        .mobile-score-input:hover {
+        .score-input:hover {
             border-color: #9ca3af;
-        }
-
-        /* Score colors for better visibility */
-        .score-9-10 { background-color: #dcfce7; border-color: #86efac; }
-        .score-7-8 { background-color: #dbeafe; border-color: #93c5fd; }
-        .score-5-6 { background-color: #fef3c7; border-color: #fcd34d; }
-        .score-3-4 { background-color: #fde68a; border-color: #fbbf24; }
-        .score-1-2 { background-color: #fecaca; border-color: #f87171; }
-        .score-0 { background-color: #f3f4f6; border-color: #d1d5db; }
-
-        .student-row-mobile {
-            border-radius: 10px;
-            margin-bottom: 8px;
-            overflow: hidden;
         }
 
         /* Mobile specific styles */
         @media (max-width: 768px) {
+            .table-container {
+                max-height: 60vh;
+            }
+            
+            .sticky-second-column {
+                left: 40px;
+                min-width: 120px;
+                max-width: 120px;
+            }
+            
+            .sticky-table-header th {
+                padding: 10px 6px;
+                font-size: 12px;
+            }
+            
+            .score-cell {
+                min-width: 70px;
+            }
+            
+            .score-input {
+                height: 36px;
+                font-size: 13px;
+            }
+            
             .mobile-sticky-header {
                 position: sticky;
                 top: 0;
                 z-index: 10;
                 background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             }
-            
-            .mobile-sticky-column {
-                position: sticky;
-                left: 0;
-                z-index: 5;
-                background-color: white;
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            }
-            
-            .subject-header {
-                min-width: 70px;
-                max-width: 70px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
         }
 
-        .swipe-hint {
-            animation: swipe 2s infinite;
+        /* Horizontal scroll indicator */
+        .scroll-hint {
+            animation: bounceRight 1.5s infinite;
         }
 
-        @keyframes swipe {
+        @keyframes bounceRight {
             0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(10px); }
+            50% { transform: translateX(5px); }
         }
 
         /* Auto-save indicator */
@@ -194,11 +257,69 @@
             color: #6b7280;
         }
 
-        /* Decimal input enhancement */
+        /* Decimal input hint */
         .decimal-input-hint {
             font-size: 10px;
             color: #6b7280;
             margin-top: 2px;
+        }
+
+        /* Scrollbar styling */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Scroll indicators */
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Student row hover effect */
+        .student-row:hover td:not(.sticky-first-column):not(.sticky-second-column) {
+            background-color: #f9fafb;
+        }
+
+        /* Subject header tooltip */
+        .subject-header {
+            position: relative;
+            cursor: help;
+        }
+
+        .subject-header:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 40;
         }
     </style>
 </head>
@@ -223,7 +344,7 @@
                         <i class="fas fa-arrow-left text-purple-700 text-sm"></i>
                     </a>
                     <div>
-                        <h1 class="text-lg font-bold">បញ្ចូលពិន្ទុសិស្ស</h1>
+                        <h1 class="text-lg font-bold">បញ្ចូលពិន្ទុសិស្ស - ថ្នាក់ 10A</h1>
                         <p class="text-xs opacity-90" id="subjectCountDisplay">កំពុងផ្ទុកមុខវិជ្ជា...</p>
                     </div>
                 </div>
@@ -243,25 +364,32 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-3 py-4">
-        <!-- View 1: Table View (Default) -->
+        <!-- Table View -->
         <div id="view-table" class="view-content">
             <div class="bg-white rounded-lg shadow overflow-hidden mb-4">
                 <div class="p-3 bg-gradient-to-r from-blue-50 to-blue-100 border-b">
                     <div class="flex items-center justify-between">
                         <h2 class="font-bold text-gray-800">តារាងបញ្ចូលពិន្ទុ</h2>
-                        <div class="text-xs text-gray-600">
-                            <span class="swipe-hint"><i class="fas fa-arrows-left-right mr-1"></i>អូសទៅឆ្វេង/ស្ដាំ</span>
+                        <div class="flex items-center space-x-3">
+                            <div class="text-xs text-gray-600 hidden md:block">
+                                <span class="scroll-hint"><i class="fas fa-arrows-left-right mr-1"></i>អូសទៅឆ្វេង/ស្ដាំ</span>
+                            </div>
+                            <div class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                <i class="fas fa-info-circle mr-1"></i>ក្បាលតារាងនឹងជាប់នៅពេលរំកិល
+                            </div>
                         </div>
                     </div>
                     <p class="text-xs text-gray-600 mt-1">បញ្ចូលពិន្ទុ 0 ដល់ 10 (អាចប្រើលេខទសភាគ ដូចជា 9.5, 8.75, 7.3, ...) - រក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</p>
                     <p class="text-xs text-yellow-600 mt-1 font-medium">
-                        <i class="fas fa-lightbulb mr-1"></i>គន្លឹះ៖ អាចបញ្ចូលទសភាគបាន (ដូចជា 8.5, 9.25, 7.75) • ចុច Enter ដើម្បីផ្លាស់ទីទៅក្រឡាបន្ទាប់
+                        <i class="fas fa-lightbulb mr-1"></i>គន្លឹះ៖ អាចបញ្ចូលទសភាគបាន (ដូចជា 8.5, 9.25, 7.75) • ចុច Enter ដើម្បីផ្លាស់ទីទៅក្រឡាបន្ទាប់ • ប្រើព្រួញ ↑↓←→ ដើម្បីផ្លាស់ទី
                     </p>
                 </div>
-                <div class="overflow-x-auto">
+                
+                <!-- Table Container with Fixed Headers -->
+                <div class="table-container">
                     <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-50" id="tableHeader">
+                        <thead class="sticky-table-header">
+                            <tr id="tableHeader">
                                 <!-- Headers will be populated dynamically -->
                             </tr>
                         </thead>
@@ -270,8 +398,9 @@
                         </tbody>
                     </table>
                 </div>
+                
                 <div class="p-3 border-t bg-gray-50 text-xs text-gray-600">
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0">
                         <div>
                             <i class="fas fa-info-circle mr-1"></i>
                             <span>ចុចលើពិន្ទុដើម្បីកែសម្រួល • ពិន្ទុ 0-10 • អូសទៅឆ្វេងសម្រាប់មុខវិជ្ជាផ្សេងទៀត</span>
@@ -283,6 +412,8 @@
                 </div>
             </div>
         </div>
+        
+        
     </main>
 
     <!-- Subject Management Modal -->
@@ -334,6 +465,8 @@
         </div>
     </div>
 
+    <!-- Scroll Indicators (will be created dynamically) -->
+    
     <script>
         // Global variables
         let students = [];
@@ -403,8 +536,10 @@
             }
             
             renderTableView();
+            updateSummary();
             startAutoSave();
             updateFABAnimation();
+            addScrollIndicators();
         }
 
         // Update FAB animation
@@ -437,7 +572,7 @@
             console.log('Auto-save started (30 second interval)');
         }
 
-        // Render table view
+        // Render table view with sticky headers
         function renderTableView() {
             const tableHeader = document.getElementById('tableHeader');
             const tableBody = document.getElementById('tableBody');
@@ -446,15 +581,22 @@
             
             // Render table headers
             let headerHtml = `
-                <th class="py-2 px-3 text-left mobile-sticky-column font-medium">ល.រ</th>
-                <th class="py-2 px-3 text-left mobile-sticky-column min-w-[140px] font-medium">ឈ្មោះសិស្ស</th>
+                <th class="sticky-first-column text-center py-3 px-3 font-medium">
+                    <div class="font-bold">ល.រ</div>
+                    <div class="text-xs opacity-90">លេខរៀង</div>
+                </th>
+                <th class="sticky-second-column text-left py-3 px-3 font-medium">
+                    <div class="font-bold">ឈ្មោះសិស្ស</div>
+                    <div class="text-xs opacity-90">លេខសំគាល់</div>
+                </th>
             `;
             
             subjects.forEach((subject, index) => {
                 const shortName = subject.length > 6 ? subject.substring(0, 6) + '...' : subject;
                 headerHtml += `
-                    <th class="py-2 px-2 text-center subject-header" title="${subject}">
-                        ${shortName}
+                    <th class="py-3 px-2 text-center subject-header" title="${subject}">
+                        <div class="font-bold">${index + 1}</div>
+                        <div class="text-xs opacity-90">${shortName}</div>
                     </th>
                 `;
             });
@@ -468,11 +610,13 @@
                 const studentScores = scores[student.id] || Array(subjects.length).fill(0);
                 
                 bodyHtml += `
-                    <tr class="hover:bg-gray-50">
-                        <td class="py-3 px-3 mobile-sticky-column text-center font-medium bg-gray-50">${index + 1}</td>
-                        <td class="py-3 px-3 mobile-sticky-column font-medium">
-                            <div class="font-medium text-gray-800">${student.name}</div>
-                            <div class="text-xs text-gray-500">${student.id}</div>
+                    <tr class="student-row hover:bg-gray-50">
+                        <td class="sticky-first-column py-3 px-3 text-center font-medium bg-gray-50 border-r border-gray-200">
+                            <span class="font-bold text-gray-800">${index + 1}</span>
+                        </td>
+                        <td class="sticky-second-column py-3 px-3 font-medium bg-gray-50 border-r border-gray-200">
+                            <div class="font-bold text-gray-800 truncate" title="${student.name}">${student.name}</div>
+                            <div class="text-xs text-gray-500 truncate" title="${student.id}">${student.id}</div>
                         </td>
                 `;
                 
@@ -482,17 +626,17 @@
                     const displayScore = score === 0 ? '' : score;
                     
                     bodyHtml += `
-                        <td class="py-2 px-2 text-center score-cell">
+                        <td class="py-2 px-2 text-center score-cell border border-gray-100">
                             <input type="text" 
                                    value="${displayScore}"
                                    placeholder="0"
-                                   class="mobile-score-input ${scoreClass} decimal-input"
+                                   class="score-input ${scoreClass} decimal-input w-full"
                                    data-student="${student.id}"
                                    data-subject="${subjectIndex}"
                                    oninput="handleScoreInput('${student.id}', ${subjectIndex}, this)"
                                    onfocus="this.select()"
                                    onkeydown="handleScoreKeydown(event, '${student.id}', ${subjectIndex}, this)">
-                            <div class="decimal-input-hint">0-10</div>
+                            <div class="decimal-input-hint text-xs mt-1">0-10</div>
                         </td>
                     `;
                 });
@@ -501,6 +645,74 @@
             });
             
             tableBody.innerHTML = bodyHtml;
+        }
+
+        // Add scroll indicators
+        function addScrollIndicators() {
+            const tableContainer = document.querySelector('.table-container');
+            if (!tableContainer) return;
+            
+            // Remove existing indicators
+            const existingIndicators = document.querySelectorAll('.scroll-indicator');
+            existingIndicators.forEach(ind => ind.remove());
+            
+            // Create right scroll indicator
+            const rightIndicator = document.createElement('div');
+            rightIndicator.className = 'scroll-indicator fixed right-4 bottom-24 bg-blue-500 text-white p-2 rounded-full shadow-lg';
+            rightIndicator.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            rightIndicator.style.display = 'none';
+            rightIndicator.style.zIndex = '40';
+            rightIndicator.onclick = () => {
+                tableContainer.scrollBy({ left: 200, behavior: 'smooth' });
+            };
+            document.body.appendChild(rightIndicator);
+            
+            // Create left scroll indicator
+            const leftIndicator = document.createElement('div');
+            leftIndicator.className = 'scroll-indicator fixed left-4 bottom-24 bg-blue-500 text-white p-2 rounded-full shadow-lg';
+            leftIndicator.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            leftIndicator.style.display = 'none';
+            leftIndicator.style.zIndex = '40';
+            leftIndicator.onclick = () => {
+                tableContainer.scrollBy({ left: -200, behavior: 'smooth' });
+            };
+            document.body.appendChild(leftIndicator);
+            
+            // Show/hide indicators based on scroll position
+            const updateIndicators = () => {
+                const scrollLeft = tableContainer.scrollLeft;
+                const scrollWidth = tableContainer.scrollWidth;
+                const clientWidth = tableContainer.clientWidth;
+                
+                // Show right indicator if not at right end
+                if (scrollLeft + clientWidth < scrollWidth - 10) {
+                    rightIndicator.style.display = 'block';
+                } else {
+                    rightIndicator.style.display = 'none';
+                }
+                
+                // Show left indicator if not at left end
+                if (scrollLeft > 10) {
+                    leftIndicator.style.display = 'block';
+                } else {
+                    leftIndicator.style.display = 'none';
+                }
+            };
+            
+            // Initial update
+            updateIndicators();
+            
+            // Update on scroll
+            tableContainer.addEventListener('scroll', updateIndicators);
+            
+            // Update on resize
+            window.addEventListener('resize', updateIndicators);
+            
+            // Hide indicators on desktop or large screens
+            if (window.innerWidth > 768) {
+                rightIndicator.style.display = 'none';
+                leftIndicator.style.display = 'none';
+            }
         }
 
         // Handle score input with full decimal support
@@ -554,6 +766,9 @@
             } else if (score > 0) {
                 inputElement.value = score;
             }
+            
+            // Update summary
+            updateSummary();
         }
 
         // Handle keyboard events for score input
@@ -720,6 +935,25 @@
             }
             
             lastSaveElement.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i>${displayText}`;
+        }
+
+        // Update summary statistics
+        function updateSummary() {
+            // Update student count
+            document.getElementById('totalStudents').textContent = students.length;
+            
+            // Update subject count
+            document.getElementById('totalSubjects').textContent = subjects.length;
+            
+            // Count total scores entered (non-zero)
+            let totalScores = 0;
+            Object.values(scores).forEach(studentScores => {
+                studentScores.forEach(score => {
+                    if (score > 0) totalScores++;
+                });
+            });
+            
+            document.getElementById('totalScores').textContent = totalScores;
         }
 
         // Navigate to ranking page
@@ -917,6 +1151,7 @@
             // Update all views
             renderTableView();
             updateLastSaveDisplay();
+            updateSummary();
             
             // Reset unsaved changes flag
             hasUnsavedChanges = false;
@@ -1009,6 +1244,11 @@
                         }
                     }
                 }
+            });
+            
+            // Update indicators on window resize
+            window.addEventListener('resize', function() {
+                setTimeout(addScrollIndicators, 100);
             });
         });
     </script>
