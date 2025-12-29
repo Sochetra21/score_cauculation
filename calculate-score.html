@@ -193,6 +193,13 @@
         .drag-handle:hover {
             color: #6b7280;
         }
+
+        /* Decimal input enhancement */
+        .decimal-input-hint {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -246,7 +253,10 @@
                             <span class="swipe-hint"><i class="fas fa-arrows-left-right mr-1"></i>អូសទៅឆ្វេង/ស្ដាំ</span>
                         </div>
                     </div>
-                    <p class="text-xs text-gray-600 mt-1">បញ្ចូលពិន្ទុ 0 ដល់ 10 (អាចប្រើលេខទសភាគ ដូចជា 9.5, 8.7, 7.3, ...) - រក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</p>
+                    <p class="text-xs text-gray-600 mt-1">បញ្ចូលពិន្ទុ 0 ដល់ 10 (អាចប្រើលេខទសភាគ ដូចជា 9.5, 8.75, 7.3, ...) - រក្សាទុកដោយស្វ័យប្រវត្តិរាល់ ៣០ វិនាទី</p>
+                    <p class="text-xs text-yellow-600 mt-1 font-medium">
+                        <i class="fas fa-lightbulb mr-1"></i>គន្លឹះ៖ អាចបញ្ចូលទសភាគបាន (ដូចជា 8.5, 9.25, 7.75) • ចុច Enter ដើម្បីផ្លាស់ទីទៅក្រឡាបន្ទាប់
+                    </p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
@@ -473,17 +483,16 @@
                     
                     bodyHtml += `
                         <td class="py-2 px-2 text-center score-cell">
-                            <input type="number" 
-                                   min="0" 
-                                   max="10" 
-                                   step="0.1"
+                            <input type="text" 
                                    value="${displayScore}"
                                    placeholder="0"
-                                   class="mobile-score-input ${scoreClass}"
+                                   class="mobile-score-input ${scoreClass} decimal-input"
                                    data-student="${student.id}"
                                    data-subject="${subjectIndex}"
                                    oninput="handleScoreInput('${student.id}', ${subjectIndex}, this)"
-                                   onfocus="this.select()">
+                                   onfocus="this.select()"
+                                   onkeydown="handleScoreKeydown(event, '${student.id}', ${subjectIndex}, this)">
+                            <div class="decimal-input-hint">0-10</div>
                         </td>
                     `;
                 });
@@ -505,8 +514,27 @@
                 return;
             }
             
-            // Validate score
+            // Replace comma with dot for decimal input
+            value = value.replace(',', '.');
+            
+            // Validate that the value is a valid number or decimal
+            const isValidDecimal = /^-?\d*\.?\d*$/.test(value);
+            if (!isValidDecimal) {
+                // Remove invalid characters
+                value = value.replace(/[^\d.,-]/g, '');
+                inputElement.value = value;
+                return;
+            }
+            
+            // If value ends with a dot, allow it for decimal input
+            if (value.endsWith('.')) {
+                return;
+            }
+            
+            // Parse the decimal value
             let score = parseFloat(value);
+            
+            // Validate score
             if (isNaN(score)) {
                 score = 0;
             }
@@ -520,8 +548,56 @@
             // Update score
             updateScore(studentId, subjectIndex, score);
             
-            // Update input value
-            inputElement.value = score === 0 ? '' : score;
+            // Update input value - show full decimal if it has decimal
+            if (value.includes('.') || value.includes(',')) {
+                inputElement.value = score.toFixed(2).replace(/\.?0+$/, '');
+            } else if (score > 0) {
+                inputElement.value = score;
+            }
+        }
+
+        // Handle keyboard events for score input
+        function handleScoreKeydown(event, studentId, subjectIndex, inputElement) {
+            // Enter key to move to next cell
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                
+                // Save the current input first
+                handleScoreInput(studentId, subjectIndex, inputElement);
+                
+                // Get all inputs
+                const inputs = Array.from(document.querySelectorAll('.decimal-input'));
+                const currentIndex = inputs.indexOf(inputElement);
+                
+                // Move to next input if exists
+                if (currentIndex < inputs.length - 1) {
+                    const nextInput = inputs[currentIndex + 1];
+                    nextInput.focus();
+                    nextInput.select();
+                }
+                return;
+            }
+            
+            // Allow: backspace, delete, tab, escape, enter
+            if ([46, 8, 9, 27, 13].includes(event.keyCode) ||
+                // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (event.ctrlKey === true && [65, 67, 86, 88].includes(event.keyCode)) ||
+                // Allow: home, end, left, right
+                (event.keyCode >= 35 && event.keyCode <= 39)) {
+                return;
+            }
+            
+            // Allow numbers and decimal point
+            if ((event.keyCode >= 48 && event.keyCode <= 57) || // number keys
+                (event.keyCode >= 96 && event.keyCode <= 105) || // numpad keys
+                event.keyCode === 190 || // decimal point (.)
+                event.keyCode === 188 || // comma (,)
+                event.keyCode === 110) { // decimal point (numpad)
+                return;
+            }
+            
+            // Prevent any other key
+            event.preventDefault();
         }
 
         // Update score with decimal support
@@ -557,7 +633,7 @@
             
             // Find and update input
             const input = document.querySelector(
-                `input[data-student="${studentId}"][data-subject="${subjectIndex}"]`
+                `.decimal-input[data-student="${studentId}"][data-subject="${subjectIndex}"]`
             );
             
             if (input) {
@@ -887,8 +963,8 @@
                 }
                 
                 // Arrow keys for navigation between inputs
-                if (e.target.type === 'number') {
-                    const inputs = Array.from(document.querySelectorAll('input[type="number"]'));
+                if (e.target.classList.contains('decimal-input')) {
+                    const inputs = Array.from(document.querySelectorAll('.decimal-input'));
                     const currentIndex = inputs.indexOf(e.target);
                     
                     if (e.key === 'ArrowRight' && currentIndex < inputs.length - 1) {
@@ -908,7 +984,7 @@
                         if (currentStudentIndex < students.length - 1) {
                             const nextStudentId = students[currentStudentIndex + 1].id;
                             const nextInput = document.querySelector(
-                                `input[data-student="${nextStudentId}"][data-subject="${subjectIndex}"]`
+                                `.decimal-input[data-student="${nextStudentId}"][data-subject="${subjectIndex}"]`
                             );
                             if (nextInput) {
                                 nextInput.focus();
@@ -924,7 +1000,7 @@
                         if (currentStudentIndex > 0) {
                             const prevStudentId = students[currentStudentIndex - 1].id;
                             const prevInput = document.querySelector(
-                                `input[data-student="${prevStudentId}"][data-subject="${subjectIndex}"]`
+                                `.decimal-input[data-student="${prevStudentId}"][data-subject="${subjectIndex}"]`
                             );
                             if (prevInput) {
                                 prevInput.focus();
