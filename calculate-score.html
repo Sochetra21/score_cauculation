@@ -536,7 +536,7 @@
             }
             
             renderTableView();
-            updateSummary();
+            //updateSummary();
             startAutoSave();
             updateFABAnimation();
             addScrollIndicators();
@@ -937,24 +937,24 @@
             lastSaveElement.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i>${displayText}`;
         }
 
-        // Update summary statistics
-        function updateSummary() {
-            // Update student count
-            document.getElementById('totalStudents').textContent = students.length;
+        // // Update summary statistics
+        // function updateSummary() {
+        //     // Update student count
+        //     document.getElementById('totalStudents').textContent = students.length;
             
-            // Update subject count
-            document.getElementById('totalSubjects').textContent = subjects.length;
+        //     // Update subject count
+        //     document.getElementById('totalSubjects').textContent = subjects.length;
             
-            // Count total scores entered (non-zero)
-            let totalScores = 0;
-            Object.values(scores).forEach(studentScores => {
-                studentScores.forEach(score => {
-                    if (score > 0) totalScores++;
-                });
-            });
+        //     // Count total scores entered (non-zero)
+        //     let totalScores = 0;
+        //     Object.values(scores).forEach(studentScores => {
+        //         studentScores.forEach(score => {
+        //             if (score > 0) totalScores++;
+        //         });
+        //     });
             
-            document.getElementById('totalScores').textContent = totalScores;
-        }
+        //     document.getElementById('totalScores').textContent = totalScores;
+        // }
 
         // Navigate to ranking page
         function goToRankingPage() {
