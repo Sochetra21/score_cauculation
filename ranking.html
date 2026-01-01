@@ -315,6 +315,22 @@
         margin-right: 6px;
       }
 
+      /* Total Score Styles */
+      .total-score-cell {
+        font-weight: 600;
+        color: #1e40af;
+      }
+
+      .total-score-badge {
+        background-color: #dbeafe;
+        color: #1e40af;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+      }
+
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .tiles-row {
@@ -350,6 +366,15 @@
           padding: 6px 12px;
           font-size: 12px;
         }
+
+        /* Responsive table adjustments */
+        table {
+          font-size: 11px;
+        }
+        
+        .table-container {
+          overflow-x: scroll;
+        }
       }
 
       @media (min-width: 769px) and (max-width: 1024px) {
@@ -383,14 +408,10 @@
             </a>
             <div>
               <h1 class="text-lg font-bold">ចំណាត់ថ្នាក់ពិន្ទុសិស្ស</h1>
-              
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <button
-              onclick="goToReport()"
-              class="report-btn"
-            >
+            <button onclick="goToReport()" class="report-btn">
               <i class="fas fa-file-alt"></i>
               <span class="hidden md:inline">របាយការណ៍</span>
             </button>
@@ -647,6 +668,7 @@
                 <th class="py-2 px-2 text-center font-medium">ល.រ</th>
                 <th class="py-2 px-2 text-left font-medium">ឈ្មោះសិស្ស</th>
                 <th class="py-2 px-2 text-center font-medium">ភេទ</th>
+                <th class="py-2 px-2 text-center font-medium">សរុប</th>
                 <th class="py-2 px-2 text-center font-medium">មធ្យមភាគ</th>
                 <th class="py-2 px-2 text-center font-medium">កម្រិត</th>
                 <th class="py-2 px-2 text-center font-medium text-red-600">
@@ -1137,6 +1159,11 @@
                             }">
                                 ${student.gender === "male" ? "ប្រុស" : "ស្រី"}
                             </span>
+                        </td>
+                        <td class="py-2 px-2 text-center total-score-cell">
+                            <div class="total-score-badge">${student.total.toFixed(
+                              2
+                            )}</div>
                         </td>
                         <td class="py-2 px-2 text-center">
                             <div class="font-bold">${student.average.toFixed(
