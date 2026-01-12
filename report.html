@@ -124,6 +124,10 @@
             font-weight: bold;
             margin-right: 15%;
         }
+
+        .ranking{
+            color: red;
+        }
         
         /* Print-specific styles */
         @media print {
@@ -136,7 +140,7 @@
                 width: 100%;
                 min-height: 100%;
                 margin: 0;
-                padding: 1cm;
+                padding: 0.7cm;
                 box-shadow: none;
             }
             
@@ -148,7 +152,7 @@
         /* Controls for printing */
         .print-controls {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             padding: 15px;
             background: white;
             border-radius: 5px;
@@ -378,7 +382,7 @@
                         <td>${leftStudent.name}</td>
                         <td>${leftStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី'}</td>
                         <td>${leftStudent.average.toFixed(2)}</td>
-                        <td>${leftStudent.rank}</td>
+                        <td class="ranking">${leftStudent.rank}</td>
                     `;
                 } else {
                     // Empty cell if no student
@@ -393,7 +397,7 @@
                         <td>${rightStudent.name}</td>
                         <td>${rightStudent.gender === 'male' ? 'ប្រុស' : 'ស្រី'}</td>
                         <td>${rightStudent.average.toFixed(2)}</td>
-                        <td>${rightStudent.rank}</td>
+                        <td class="ranking">${rightStudent.rank}</td>
                     `;
                 } else {
                     // Empty cell if no student
